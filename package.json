@@ -1,0 +1,24 @@
+{
+  "name": "numismatic",
+  "version": "1.0.0",
+  "description": "This project is an online shop where the owner of the shop can list any coins with numismatic value which are after 1700s.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon g.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeorgiZarev/Numismatic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GeorgiZarev/Numismatic/issues"
+  },
+  "homepage": "https://github.com/GeorgiZarev/Numismatic#readme",
+  "dependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
