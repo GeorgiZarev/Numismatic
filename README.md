@@ -33,6 +33,7 @@ Numismatic is an online shop platform where collectors and enthusiasts can explo
   ┓ 📁 hooks/              # Custom hooks (e.g., useApiRequest)
   ┓ 📁 pages/              # Page-level components
   ┓ 📁 services/           # API service functions
+  ┓ 📁 styles/             # CSS styles for the whole webapp
   ┓ 💜 App.js              # Main React component
   ┓ 💜 App.css             # Global styles
   ┓ 💜 index.js            # ReactDOM render entry point
