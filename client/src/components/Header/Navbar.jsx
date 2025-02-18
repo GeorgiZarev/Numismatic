@@ -1,18 +1,21 @@
+import React from 'react';
+import '../../styles/Navbar.css'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 
-function Header() {
+const Navbar = () => {
     return (
-        <header>
-            <h1>My React App</h1>
-            <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
+        <header className="header">
+            <a href="/" className="logo">Logo Here</a>
+
+            <nav className="header">
+                <a href="/">Home</a>
+                <a href="/">About</a>
+                <a href="/">Portfolio</a>
+                <a href="/">Services</a>
+                <a href="/">Contact</a>
             </nav>
-            <hr />  
         </header>
     );
 }
 
-export default Header;
+export default Navbar;
