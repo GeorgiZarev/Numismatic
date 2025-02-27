@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    padding: 20px 10%;
+    padding: 10px 5%;
     background: transparent;
     display: flex;
     justify-content: space-between;
@@ -12,29 +12,64 @@
 }
 
 .logo {
-    font-size: 32px;
+    font-size: 24px;
     color: hsl(0, 0, 80%);
     font-weight: 700;
 }
 
+.navbar {
+    display: flex;
+    gap: 20px;
+}
+
 .navbar a {
-    position: relative;
+    position: relative; /* Ensures ::before is positioned relative to the link */
     font-size: 18px;
     color: hsl(0, 0, 80%);
-    font-weight: 40px;
-    margin-left: 40px;
+    font-weight: 400;
+    text-decoration: none;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
 }
 
 .navbar a::before {
     content: '';
-    position: absolute;
-    top: 100%;
+    position: absolute; /* Positions relative to the navbar link */
+    top: 100%; /* Places underline just below the text */
     left: 0;
-    width: 100%;
+    width: 0%; /* for the line */
     height: 2px;
     background: hsl(0, 0, 80%);
+    transition: width 0.3s ease-in-out; 
+}
+
+.navbar a:hover {
+    color: hsl(0, 0%, 100%);
 }
 
 .navbar a:hover::before {
     width: 100%;
 }
+
+
+/*FOR <INPUT> FIELD*/
+/*Remove if we are using MUI's theme customization to set input text color globally*/
+.MuiInputBase-input {
+    color: white !important;
+} /*this is a material ui (MUI) class that is used to change the color of the input text*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
