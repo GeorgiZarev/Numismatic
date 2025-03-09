@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardMedia, Typography, Button, Box } from "@mui/material"; //Material UI components
 
-const CoinCard = ({ image, title, year, description, flag, onAddToCart }) => {
+const SmallCoinCard = ({ image, title, year, description, flag, onAddToCart }) => {
   return (
     <Card sx={{ display: "flex", alignItems: "center", padding: 2, boxShadow: 2 }}>
       {/* Coin Image */}
@@ -40,6 +40,7 @@ const CoinCard = ({ image, title, year, description, flag, onAddToCart }) => {
 };
 
 /* code for the app.js file:
+
 const CoinListing = () => {
   const handleAddToCart = () => {
     alert("Coin added to cart!");
@@ -62,4 +63,4 @@ return (
 export default CoinListing; //Export the CoinListing component
 */ 
 
-export default CoinCard;
+export default SmallCoinCard;
