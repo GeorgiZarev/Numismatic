@@ -3,73 +3,99 @@
     top: 0;
     left: 0;
     width: 100%;
-    padding: 10px 5%;
-    background: transparent;
+    padding: 20px 10%;
+    background: rgba(255, 255, 255, 0.9);
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between; 
     z-index: 100;
-}
-
-.logo {
-    font-size: 24px;
-    color: hsl(0, 0, 80%);
+    box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.1);
+  }
+  
+  .logo {
+    font-size: 32px;
+    color: #333;
     font-weight: 700;
-}
-
-.navbar {
+  }
+  
+  .navbar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 20px;
-}
-
-.navbar a {
-    position: relative; /* Ensures ::before is positioned relative to the link */
+    gap: 40px;
+  }
+  
+  .navbar a {
     font-size: 18px;
-    color: hsl(0, 0, 80%);
-    font-weight: 400;
+    color: #333;
     text-decoration: none;
-    padding: 5px 10px;
-    transition: color 0.3s ease;
-}
-
-.navbar a::before {
+    position: relative;
+  }
+  
+  .navbar a::before {
     content: '';
-    position: absolute; /* Positions relative to the navbar link */
-    top: 100%; /* Places underline just below the text */
+    position: absolute;
+    bottom: -4px;
     left: 0;
-    width: 0%; /* for the line */
+    width: 0;
     height: 2px;
-    background: hsl(0, 0, 80%);
-    transition: width 0.3s ease-in-out; 
-}
-
-.navbar a:hover {
-    color: hsl(0, 0%, 100%);
-}
-
-.navbar a:hover::before {
+    background: #333;
+    transition: width 0.3s;
+  }
+  
+  .navbar a:hover::before {
     width: 100%;
-}
-
-
-/*FOR <INPUT> FIELD*/
-/*Remove if we are using MUI's theme customization to set input text color globally*/
-.MuiInputBase-input {
-    color: white !important;
-} /*this is a material ui (MUI) class that is used to change the color of the input text*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }
+  
+  .navbar-mobile {
+    display: none;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .cart-icon {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .mobile-menu-icon {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    display: none; /* Hidden on desktop */
+  }
+  
+  /* RESPONSIVE ADJUSTMENTS */
+  @media (max-width: 768px) {
+    /* Hide desktop nav, show mobile nav */
+    .navbar {
+      position: static;
+      transform: none;
+      display: none;
+    }
+    .navbar-mobile {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      width: 200px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      gap: 15px;
+    }
+  
+    .mobile-menu-icon {
+      display: block;
+    }
+  }
+  

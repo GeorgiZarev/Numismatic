@@ -1,6 +1,4 @@
-<<<<<<< Updated upstream
-import logo from './logo.svg';
-=======
+// import logo from './logo.svg';
 //import React from 'react';
 //import Routes from './Routes';
 //import logo from './logo.svg';
@@ -9,24 +7,24 @@ import Navbar from './components/Header/Navbar';
 //import About from './pages/about';
 //import Contact from './pages/contact';
 //import Product from './pages/product';
-import SmallCoinCard from './components/cards/SmallCoinCard';
+//import SmallCoinCard from './components/cards/SmallCoinCard';
 //import LargeCoinCard from './components/cards/LargeCoinCard';
->>>>>>> Stashed changes
+//import ReactDOM from 'react-dom';
+//import { BrowserRouter } from 'react-router-dom';
 import './App.css';
+
 
 function App() {
   return (
-<<<<<<< Updated upstream
-=======
-    /*DESIGN TESTS FOR LARGE CARD*/
+    /*DESIGN TESTS*/
     <>
       <Navbar />
-      <SmallCoinCard />
-    </> 
+        </>
+      );
+    }
 
  
     /*
->>>>>>> Stashed changes
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -45,5 +43,6 @@ function App() {
     </div>
   );
 }
+  */
 
 export default App;
