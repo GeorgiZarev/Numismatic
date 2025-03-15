@@ -2,7 +2,8 @@
 //import React from 'react';
 //import Routes from './Routes';
 //import logo from './logo.svg';
-import Navbar from './components/Header/Navbar';
+//import Navbar from './components/Header/Navbar';
+import NavbarMain from './components/Header/NavbarMain';
 //import Home from './pages/home';
 //import About from './pages/about';
 //import Contact from './pages/contact';
@@ -16,9 +17,9 @@ import './App.css';
 
 function App() {
   return (
-    /*DESIGN TESTS*/
+    /*NAVBAR TESTS*/
     <>
-      <Navbar />
+      <NavbarMain />
         </>
       );
     }
