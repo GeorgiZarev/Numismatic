@@ -16,7 +16,7 @@ const SmallCoinCard = () => {
           backgroundColor: "hsl(0, 0%, 94%)", 
           borderRadius: 1
         }}
-        image="https://en.numista.com/catalogue/photos/bulgarie/5e2cb4fb9bf3c0.39292882-180.jpg" //TODO: replace the placeholder image; bg-color MUST be white or similar to the bg-color of the page;
+        image="https://placehold.co/135x140" //TODO: replace the placeholder image; bg-color MUST be white or similar to the bg-color of the page;
         alt="Coin Image"
       />
 
@@ -30,7 +30,7 @@ const SmallCoinCard = () => {
           backgroundColor: "hsl(0, 0%, 94%)", 
           borderRadius: 1
         }}
-        image="https://en.numista.com/catalogue/photos/bulgarie/5e2cb4facbde74.31708713-180.jpg" 
+        image="https://placehold.co/135x140" 
         //image="https://placehold.co/135x140" //TODO: replace the placeholder image
         alt="Coin Image"
       />
