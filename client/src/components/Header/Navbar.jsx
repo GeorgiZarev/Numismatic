@@ -1,39 +1,21 @@
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
+import { assets } from '../../Assets/ObjFile';
+import { NavLink } from 'react-router-dom';
+//import { FaShoppingCart } from 'react-icons/fa';
 import '../../styles/Navbar.css';
-import { Link } from 'react-router-dom';
-import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  const handleToggle = () => {
-    setIsMobile(!isMobile);
-  };
-
   return (
-    <header className="header">
-      <Link to="/" className="logo">
-        Logo Here
-      </Link>
-
-      <nav className={isMobile ? "navbar-mobile" : "navbar"}>
-        <Link to="/" onClick={() => setIsMobile(false)}>Home</Link>
-        <Link to="/about" onClick={() => setIsMobile(false)}>About</Link>
-        <Link to="/products" onClick={() => setIsMobile(false)}>Products</Link>
-        <Link to="/contact" onClick={() => setIsMobile(false)}>Contact</Link>
-      </nav>
-
-
-      <div className="header-right">
-        <Link to="/orders" className="cart-icon">
-          <FaShoppingCart />
-        </Link>
-        <button className="mobile-menu-icon" onClick={handleToggle}>
-          {isMobile ? '✖' : '☰'}
-        </button>
-      </div>
-    </header>
+    <div className='flex items-center justify-between py-5 front-medium'>
+      <img src={assets.logo} className='w-36' alt="" />
+      <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
+        <NavLink className='flex flex-col items-center gap-1'>
+          <p>Home</p>
+          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700' />
+        </NavLink>
+      </ul>
+    </div>
   );
-};
+};  
 
 export default Navbar;
