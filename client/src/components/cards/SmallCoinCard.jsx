@@ -22,7 +22,7 @@ const SmallCoinCard = () => {
 
       <CardMedia
         component="img"
-        sx={{
+        sx={{ 
           width: 135, 
           height: 140, 
           margin: "0 1em 0 0",
@@ -54,7 +54,7 @@ const SmallCoinCard = () => {
 
           }}>
           in circulation or not <br />
-          composition (metal . Weight (in g) . diameter <br />
+          composition (metal) . Weight (in g) . diameter <br />
           product number (e.g. N#1021)
         </Typography>
 
