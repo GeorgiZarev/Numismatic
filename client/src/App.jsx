@@ -11,6 +11,7 @@ import Product from './pages/product.jsx';
 import Cart from './pages/cart.jsx';
 import PlaceOrder from './pages/placeOrder.jsx';
 import Orders from './pages/orders.jsx';
+import Header from './components/Header/Header.jsx'
 //import SmallCoinCard from './components/cards/SmallCoinCard';
 //import LargeCoinCard from './components/cards/LargeCoinCard';
 //import ReactDOM from 'react-dom';
