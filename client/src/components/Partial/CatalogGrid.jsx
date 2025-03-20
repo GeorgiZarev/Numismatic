@@ -1,7 +1,7 @@
 import React, { useContext} from "react";
 import { createShopContext } from "../../Contexts/createContex";
 import GridForHeader from '../Partial/GridForHeader.jsx'
-import Title from "./TitleGrid";
+import Title from "./Title.jsx";
 
 const CatalogGrid = () => {
 
