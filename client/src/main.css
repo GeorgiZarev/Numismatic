@@ -70,3 +70,11 @@ a {
   font-weight: 700;
   font-style: italic;
 }
+
+
+@media (max-width:640px) {
+  a.active{
+    background-color: black;
+    color : white;
+  }
+}
