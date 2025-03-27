@@ -1,7 +1,10 @@
-const jwt = require("jsonwebtoken");
+import { verifyToken } from "../utils/jwtUtils.js";
 
-const verifyToken = (req, res, next) => {
-  const token = req.headers("Authorization");
+/**
+ * * Middleware to verify JWT token before accessing protected routes.
+ */
+export const authenticateUser = (req, res, next) => {
+  const token = req.cookies.auth_token;
 
   if (!token) {
     return res
@@ -10,22 +13,14 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(
-      token.replace("Bearer ", ""),
-      process.env.JWT_SECRET
-    );
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return res.status(403).json({ message: "Invalid or expired token." });
+    }
+
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch (err) {
     res.status(403).json({ message: "Invalid token." });
   }
 };
-
-const isAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== "admin") {
-    return res.status(403).json({ message: "Unauthorized. Admins only." });
-  }
-  next();
-};
-
-module.exports = { verifyToken, isAdmin };
