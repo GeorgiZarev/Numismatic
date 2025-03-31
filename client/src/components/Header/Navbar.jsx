@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoIosSearch } from "react-icons/io"
+import { IoSearch } from "react-icons/io5";
 import { assets } from '../../Assets/ObjFile';
 import { Link, NavLink } from 'react-router-dom';
 //import { FaShoppingCart } from 'react-icons/fa';
@@ -17,7 +17,7 @@ const Navbar = () => {
           <p>HOME</p>
           <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
-        <NavLink to='/product' className='flex flex-col items-center gap-1'>
+        <NavLink to='/all-products' className='flex flex-col items-center gap-1'>
           <p>PRODUCTS</p>
           <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
@@ -31,10 +31,14 @@ const Navbar = () => {
         </NavLink>
       </ul>
 
-      <div className='flex item-center gap-6'>
+      <div className='flex item-center gap-2'>
+        <IoSearch  className='w-5 h-6 cursor-pointer 
+          transition-transform 
+          duration-200
+          ease-in-out
+          hover:scale-110'/>
         {/* <img src={assets} className='w-5 cursor-pointer' alt="search icon" /> */}
         <div className='group relative'>
-        <img src={assets.search_icon} className='w-5 cursor-pointer' alt="profile icon" />
          {/* <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
             <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
               <p className='cursor-pointer hover:text-black'>My profile</p>

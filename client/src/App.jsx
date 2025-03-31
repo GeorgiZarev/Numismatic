@@ -7,6 +7,7 @@ import Navbar from './components/Header/Navbar.jsx';
 import Home from './pages/home.jsx';
 import About from './pages/about.jsx';
 import Contact from './pages/contact.jsx';
+import AllProducts from './pages/allProducts.jsx';
 import Product from './pages/product.jsx';
 import Cart from './pages/cart.jsx';
 import PlaceOrder from './pages/placeOrder.jsx';
@@ -30,7 +31,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/product/:productId" element={<Product />} />
+        <Route path="/all-products" element={<AllProducts />} /> {/* /:productId" */}
         <Route path="/cart" element={<Cart />} />
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/orders" element={<Orders />} />
