@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { createShopContext } from '../Contexts/createContext'
 import { assets } from '../Assets/ObjFile.js'
-import Title from '../components/Partial/TitleGrid.jsx'
+import Title from '../components/Partial/Title.jsx'
 import ProductItem from '../components/Partial/ProductItem'
 import BannerProducts from '../components/cards/BannerProducts.jsx'
 import SmallCoinCard from '../components/cards/SmallCoinCard.jsx'

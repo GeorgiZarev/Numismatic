@@ -5,7 +5,7 @@ import { createShopContext } from "../../Contexts/createContext.jsx";
 //import ProductItem from "./ProductItem.jsx";
 import ProductGrid from '../Partial/ProductGrid.jsx'
 import CategoryGrid from './CategoryGrid.jsx'
-import Title from "./TitleGrid";
+import Title from "./Title.jsx";
 
 import SmallCoinCard from "../cards/SmallCoinCard.jsx";
 import { Content } from "antd/es/layout/layout.js";
