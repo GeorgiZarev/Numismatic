@@ -7,6 +7,17 @@ import BannerProducts from '../components/cards/BannerProducts.jsx'
 import SmallCoinCard from '../components/cards/SmallCoinCard.jsx'
 import SmallCoinCard2 from '../components/cards/SmallCoinCard2.jsx'
 
+/* Extension: Colorful Comments
+  TODO hello
+  !Red (!)
+  ?Blue (?)
+  *Green (*)
+  ^Yellow (^)
+  &Pink (&)
+  ~Purple (~)
+*/
+
+
 const AllProducts = () => {
   const { products } = useContext(createShopContext)
   const [filterActive, setFilterActive] = useState(false)
@@ -86,22 +97,9 @@ const AllProducts = () => {
             price={item.price}
             image={item.image}
             description={item.description} 
-            flagImage={item.flagImage} 
-          /> <br /> </>
+            flagImage={item.flagImage} /> <br 
+          /> </>
         ))} 
-        
-        {/*
-        {filterProducts.map((item, index) => (
-          <ProductItem
-            key={index}
-            name={item.name}
-            id={item._id}
-            price={item.price}
-            image={item.image}
-          />
-        ))}  
-          */}
-
         <br /> <br />
         </div>
       </div>

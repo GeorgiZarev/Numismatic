@@ -15,7 +15,7 @@ import Orders from './pages/orders.jsx';
 import Header from './components/Header/Header.jsx'
 import Footer from './components/Footer/Footer.jsx'
 //import SmallCoinCard from './components/cards/SmallCoinCard';
-//import LargeCoinCard from './components/cards/LargeCoinCard';
+import LargeCoinCard from './components/cards/LargeCoinCard';
 //import ReactDOM from 'react-dom';
 //import { BrowserRouter } from 'react-router-dom';
 import './Assets/ObjFile.js';
@@ -32,6 +32,7 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/all-products" element={<AllProducts />} /> {/* /:productId" */}
+        <Route path="/product/:id" element={<LargeCoinCard />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/orders" element={<Orders />} />
@@ -40,17 +41,5 @@ const App = () => {
     </div>
   );
 };
-
-
-// function App() {
-//   return (
-//     /*NAVBAR TESTS*/
-//     <>
-//       <NavbarMain />
-//         </>
-//       );
-//     }
-
- 
 
 export default App;
