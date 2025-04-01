@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 
 import authRoutes from "../routes/authRoutes.js";
-import { sql } from "../config/db.js"; // ! Should simulate the db
+import { sql } from "../config/NeonClient.js"; // ! Should simulate the db
 import errorHandler from "../middlewares/errorHandler.js";
 
 dotenv.config();

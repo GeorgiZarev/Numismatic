@@ -1,4 +1,4 @@
-import { sql } from "./db.js";
+import { sql } from "./NeonClient.js";
 import fs from "fs";
 import path from "path";
 
@@ -8,13 +8,21 @@ import path from "path";
 */
 async function initDB() {
   try {
-    const sqlFiles = ["extensions.sql", "users.sql"];
+    const sqlFiles = ["extensions.sql", "users.sql", "coins.sql"];
 
     for (const file of sqlFiles) {
       const filePath = path.resolve("config/sql", file);
-      const query = fs.readFileSync(filePath, "utf-8");
+      const rawSQL = fs.readFileSync(filePath, "utf-8");
 
-      await sql(query);
+      const statements = rawSQL
+        .split(";")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+
+      for (const statement of statements) {
+        await sql(`${statement}`); // ✅ Works with Neon
+      }
+
       console.log(`✅ Executed ${file}`);
     }
 

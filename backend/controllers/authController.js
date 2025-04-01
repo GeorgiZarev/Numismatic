@@ -1,30 +1,27 @@
 import { validationResult } from "express-validator";
-import { sql } from "../config/db.js";
 import { hashPassword, comparePassword } from "../utils/hashPassword.js";
 import { generateToken } from "../utils/jwtUtils.js";
 import BadRequestError from "../errors/BadRequestError.js";
 
-export const registerUser = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(new BadRequestError("Validation failed", errors.array()));
-  }
+import { Users } from "../utils/db/users.js";
 
+export const registerUser = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
-    const existingUser = await sql`SELECT * FROM users WHERE email = ${email}`;
+    const existingUser = await Users.getByEmail(email);
     if (existingUser.length > 0) {
       throw new BadRequestError("User already exists.");
     }
 
     const hashedPassword = await hashPassword(password);
+    const registerUser = {
+      username,
+      email,
+      password: hashedPassword,
+    };
 
-    const [newUser] = await sql`
-      INSERT INTO users (id, username, email, password) 
-      VALUES (uuid_generate_v4(), ${username}, ${email}, ${hashedPassword}) 
-      RETURNING id, username, email, created_at
-    `;
+    const [newUser] = await Users.create(registerUser);
 
     res.status(201).json({
       message: "User registered successfully!",
@@ -36,15 +33,10 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const loginUser = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(new BadRequestError("Validation failed", errors.array()));
-  }
-
   const { username, password } = req.body;
 
   try {
-    const [user] = await sql`SELECT * FROM users WHERE username = ${username}`;
+    const [user] = await Users.getByUsername(username);
     if (!user) {
       return next(new BadRequestError("Invalid credentials"));
     }

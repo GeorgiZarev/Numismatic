@@ -1,4 +1,4 @@
-import ApiError from "./ApiError";
+import ApiError from "./ApiError.js";
 
 class UnauthorizedError extends ApiError {
   constructor(message = "Unauthorized") {

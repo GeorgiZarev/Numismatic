@@ -1,8 +1,8 @@
-import ApiError from "./ApiError";
+import ApiError from "./ApiError.js";
 
 class NotFoundError extends ApiError {
-  constructor(message = "Resource Not Found") {
-    super(404, message);
+  constructor(message = "Resource Not Found", errors = []) {
+    super(404, message, errors);
   }
 }
 
