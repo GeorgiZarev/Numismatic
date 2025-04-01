@@ -1,40 +1,48 @@
 import { useCallback, useState } from "react";
 import axios from "axios";
 
-const API_BASE_URL = "https://localhost:5000/api";
+const API_BASE_URL = "http://localhost:3001/api";
+
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
 
 export const useApiRequest = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const getAuthHeader = () => {
-    const token = localStorage.getItem("token");
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
-
   const fetchData = useCallback(
-    async (method, endpoint, body = null, requestAuth = false) => {
+    async (method, endpoint, body = null, isMultipart = false) => {
       setLoading(true);
       setError(null);
 
       try {
-        const headers = {
-          "Content-Type": "application/json",
-          ...(requestAuth ? getAuthHeader() : {}),
-        };
+        const headers = {};
 
-        const response = await axios({
+        if (isMultipart) {
+          headers["Content-Type"] = "multipart/form-data";
+        } else {
+          headers["Content-Type"] = "application/json";
+        }
+
+        const response = await axiosInstance.request({
           method,
-          url: `${API_BASE_URL}/${endpoint}`,
+          url: endpoint,
+          data: body,
           headers,
-          ...(body && { data: body }),
         });
 
         setData(response.data);
         return response.data;
-      } catch (error) {
-        setError(error.response?.data?.message || "Something went wrong!");
+      } catch (err) {
+        const errMsg =
+          err.response?.data?.error?.message ||
+          err.response?.data?.message ||
+          "Something went wrong!";
+        setError(errMsg);
+        throw err;
       } finally {
         setLoading(false);
       }
@@ -42,22 +50,26 @@ export const useApiRequest = () => {
     []
   );
 
-  const getData = async (endpoint) => await fetchData("GET", endpoint);
-  const postData = async (endpoint, body) =>
-    await fetchData("POST", endpoint, body, true);
-  const putData = async (endpoint, body) =>
-    await fetchData("PUT", endpoint, body, true);
-  const deleteData = async (endpoint) =>
-    await fetchData("DELETE", endpoint, null, true);
+  const getData = useCallback(
+    async (endpoint) => {
+      return await fetchData("GET", endpoint);
+    },
+    [fetchData]
+  );
+  const postData = async (endpoint, body, isMultipart = false) =>
+    await fetchData("POST", endpoint, body, isMultipart);
+  const putData = async (endpoint, body, isMultipart = false) =>
+    await fetchData("PUT", endpoint, body, isMultipart);
+  const deleteData = async (endpoint) => await fetchData("DELETE", endpoint);
 
   return {
     data,
     error,
     loading,
-    fetchData,
     getData,
     postData,
     putData,
     deleteData,
+    fetchData,
   };
 };

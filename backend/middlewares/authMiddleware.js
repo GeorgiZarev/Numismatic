@@ -1,31 +1,26 @@
-const jwt = require("jsonwebtoken");
+import { verifyToken } from "../utils/jwtUtils.js";
+import UnauthorizedError from "../errors/UnauthorizedError.js";
+import ForbiddenError from "../errors/ForbiddenError.js";
 
-const verifyToken = (req, res, next) => {
-  const token = req.headers("Authorization");
+/**
+ * * Middleware to verify JWT token before accessing protected routes.
+ */
+export const authenticateUser = (req, res, next) => {
+  const token = req.cookies.auth_token;
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Access denied. No token provided." });
+    return next(new UnauthorizedError("Access denied. No token provided."));
   }
 
   try {
-    const decoded = jwt.verify(
-      token.replace("Bearer ", ""),
-      process.env.JWT_SECRET
-    );
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return next(new ForbiddenError("Invalid or expired token."));
+    }
+
     req.user = decoded;
     next();
-  } catch (error) {
-    res.status(403).json({ message: "Invalid token." });
+  } catch (err) {
+    next(new ForbiddenError("Invalid token."));
   }
 };
-
-const isAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== "admin") {
-    return res.status(403).json({ message: "Unauthorized. Admins only." });
-  }
-  next();
-};
-
-module.exports = { verifyToken, isAdmin };
