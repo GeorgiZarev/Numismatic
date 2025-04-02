@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3001/api";
@@ -21,9 +21,7 @@ export const useApiRequest = () => {
       try {
         const headers = {};
 
-        if (isMultipart) {
-          headers["Content-Type"] = "multipart/form-data";
-        } else {
+        if (!isMultipart) {
           headers["Content-Type"] = "application/json";
         }
 
@@ -50,26 +48,43 @@ export const useApiRequest = () => {
     []
   );
 
-  const getData = useCallback(
-    async (endpoint) => {
-      return await fetchData("GET", endpoint);
-    },
+  const getAllCoins = useCallback(
+    () => fetchData("GET", "/coins"),
     [fetchData]
   );
-  const postData = async (endpoint, body, isMultipart = false) =>
-    await fetchData("POST", endpoint, body, isMultipart);
-  const putData = async (endpoint, body, isMultipart = false) =>
-    await fetchData("PUT", endpoint, body, isMultipart);
-  const deleteData = async (endpoint) => await fetchData("DELETE", endpoint);
+  const getCoin = useCallback(
+    (id) => fetchData("GET", `/coins/${id}`),
+    [fetchData]
+  );
+  const createCoin = useCallback(
+    (data) => fetchData("POST", "/coins", data, true),
+    [fetchData]
+  );
+  const updateCoin = useCallback(
+    (id, data) => fetchData("PUT", `/coins/${id}`, data, true),
+    [fetchData]
+  );
+  const deleteCoin = useCallback(
+    (id) => fetchData("DELETE", `/coins/${id}`),
+    [fetchData]
+  );
+
+  const coinRequests = useMemo(
+    () => ({
+      getAll: getAllCoins,
+      getOne: getCoin,
+      create: createCoin,
+      update: updateCoin,
+      delete: deleteCoin,
+    }),
+    [getAllCoins, getCoin, createCoin, updateCoin, deleteCoin]
+  );
 
   return {
     data,
     error,
     loading,
-    getData,
-    postData,
-    putData,
-    deleteData,
     fetchData,
+    coinRequests,
   };
 };
