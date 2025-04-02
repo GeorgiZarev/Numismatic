@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS coins (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY, 
   name VARCHAR(255) NOT NULL,
-  photo_url VARCHAR(255) NOT NULL,
+  photo_url VARCHAR(255),
   price DECIMAL(10,2) NOT NULL,
   monarch VARCHAR(255),
   year INTEGER NOT NULL,
