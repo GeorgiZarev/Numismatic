@@ -1,21 +1,18 @@
-// Banner.jsx
-import React from 'react'
+import React from "react";
+import { assets } from "../../Assets/ObjFile";
 
 const Banner = () => {
   return (
-    <div className="relative h-64 sm:h-80 text-white flex justify-center items-center 
-    pt-[70px] pb-[70px] bg-cover bg-center bg-no-repeat"
-      style={{ 
-        backgroundImage: 'url("https://placehold.co/1600x400")'
-      }}>
+    <div className="relative w-full h-[400px] pt-[70px] pb-[70px]">
+      <img
+        src={assets.banner}
+        alt="Banner"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       <div className="absolute inset-0 bg-black bg-opacity-30" />
-
-      <div className="relative flex flex-col items-center justify-center h-full text-white">
-        <h1 className="text-3xl sm:text-5xl font-bold">Banner</h1>
-        <p className="mt-2 text-lg sm:text-2xl">more text...</p> 
-      </div>
+      <div className="relative z-10 flex items-center justify-center h-full text-white"></div>
     </div>
-  )
-}
+  );
+};
 
-export default Banner
+export default Banner;

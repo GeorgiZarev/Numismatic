@@ -1,4 +1,3 @@
-// utils/db/users.js
 import db from "../../config/kysely.js";
 export const Users = {
   getByEmail: async (email) =>

@@ -1,111 +1,97 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { createShopContext } from '../Contexts/createContext'
-import { assets } from '../Assets/ObjFile.js'
-import Title from '../components/Partial/Title.jsx'
-import ProductItem from '../components/Partial/ProductItem'
-import BannerProducts from '../components/cards/BannerProducts.jsx'
-import SmallCoinCard from '../components/cards/SmallCoinCard.jsx'
-import SmallCoinCard2 from '../components/cards/SmallCoinCard2.jsx'
-
-/* Extension: Colorful Comments
-  TODO hello
-  !Red (!)
-  ?Blue (?)
-  *Green (*)
-  ^Yellow (^)
-  &Pink (&)
-  ~Purple (~)
-*/
-
+import React, { useEffect, useState } from "react";
+import { assets } from "../Assets/ObjFile.js";
+import Title from "../components/Partial/Title.jsx";
+import BannerProducts from "../components/cards/BannerProducts.jsx";
+import SmallCoinCard from "../components/cards/SmallCoinCard.jsx";
+import { useCoins } from "../hooks/useCoins.js";
 
 const AllProducts = () => {
-  const { products } = useContext(createShopContext)
-  const [filterActive, setFilterActive] = useState(false)
-  const [filterProducts, setFilterProducts] = useState([])
+  const { coins, loading, error, fetchCoins } = useCoins();
+
+  const [filterActive, setFilterActive] = useState(false);
 
   useEffect(() => {
-    setFilterProducts(products)
-  }, [products]) 
+    fetchCoins();
+  }, [fetchCoins]);
 
   const handleAllItems = () => {
-    console.log('Show all items')
-    // TODO Reset or show entire collection if needed
-  }
+    //setFilterCoins(coins);
+    console.log(coins);
+  };
 
   return (
-    <div> <BannerProducts /> 
-    <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 pt-10 border-t">
-      {/* Left Filters */}
-       
-      <div className="min-w-[15rem]">
-       
-        <p className="my-2 text-xl flex items-center cursor-pointer gap-2"
-          onClick={() => setFilterActive(!filterActive)}>
-          FILTER
-          <img
-            className={`h-3 sm:hidden transform ${filterActive ? 'rotate-90' : ''}`}
-            src={assets.dropdown_icon} alt="toggle"/>
-        </p>
+    <div>
+      <BannerProducts />
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 pt-10 border-t">
+        {/* Filters */}
+        <div className="min-w-[15rem]">
+          <p
+            className="my-2 text-xl flex items-center cursor-pointer gap-2"
+            onClick={() => setFilterActive(!filterActive)}
+          >
+            FILTER
+            <img
+              className={`h-3 sm:hidden transform ${
+                filterActive ? "rotate-90" : ""
+              }`}
+              src={assets.dropdown_icon}
+              alt="toggle"
+            />
+          </p>
 
-        <div
-          className={`border border-gray-300 sm:border-2 pl-3 py-2 mt-4 sm:pl-5 sm:py-3 sm:mt-6 
-            ${filterActive ? 'block' : 'hidden sm:block'}`}>
-          <p className="mb-3 text-sm font-medium">CATEGORIES</p>
-          <div className="flex flex-col gap-2 text-base font-light text-gray-700">
-            <p className="cursor-pointer" onClick={handleAllItems}>
-              All Items
-            </p>
-            <p className="cursor-pointer">Bulgarian</p>
-            <p className="cursor-pointer">Country2</p>
-            <p className="cursor-pointer">Country3</p>
-            <p className="cursor-pointer">Other</p>
+          <div
+            className={`border border-gray-300 sm:border-2 pl-3 py-2 mt-4 sm:pl-5 sm:py-3 sm:mt-6 
+            ${filterActive ? "block" : "hidden sm:block"}`}
+          >
+            <p className="mb-3 text-sm font-medium">CATEGORIES</p>
+            <div className="flex flex-col gap-2 text-base font-light text-gray-700">
+              <p className="cursor-pointer" onClick={handleAllItems}>
+                All Items
+              </p>
+              <p className="cursor-pointer">Bulgarian</p>
+              <p className="cursor-pointer">Country2</p>
+              <p className="cursor-pointer">Country3</p>
+              <p className="cursor-pointer">Other</p>
+            </div>
           </div>
         </div>
 
-        <div
-          className={`border border-gray-300 sm:border-2 pl-3 py-2 my-3 sm:pl-5 sm:py-3 sm:my-5 ${
-            filterActive ? 'block' : 'hidden sm:block'}`}>
-          <p className="mb-3 text-sm font-medium">TYPE</p>
-          <div className="flex flex-col gap-2 text-base font-light text-gray-700">
-            <p className="cursor-pointer">something1</p>
-            <p className="cursor-pointer">something2</p>
-            <p className="cursor-pointer">something3</p>
+        {/* Coin Items */}
+        <div className="flex-1">
+          <div className="flex justify-between items-center text-base sm:text-xl mb-4">
+            <Title text1="ALL" text2="ITEMS" />
+            {/*<select className="border-2 border-gray-300 text-sm px-2">
+              <option value="low-high-price">
+                Sort by: Price (Low to High)
+              </option>
+              <option value="high-low-price">
+                Sort by: Price (High to Low)
+              </option>
+              <option value="low-high-year">Sort by: Year (Low to High)</option>
+              <option value="high-low-year">Sort by: Year (High to Low)</option>
+            </select>*/}
+          </div>
+
+          {loading && <p>Loading...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+
+          <div>
+            {coins?.map((coin) => (
+              <SmallCoinCard
+                key={coin.id}
+                id={coin.id}
+                name={coin.name}
+                price={coin.price}
+                image={coin.photo_url}
+                description={coin.denomination}
+                flagImage={coin.country}
+              />
+            ))}
           </div>
         </div>
-        
-      </div>
-
-      {/* Right Content */}
-      <div className="flex-1">
-        <div className="flex justify-between items-center text-base sm:text-xl mb-4">
-          <Title text1="ALL" text2="ITEMS" />
-          <select className="border-2 border-gray-300 text-sm px-2">
-            <option value="low-high-price">Sort by: Price (Low to High)</option>
-            <option value="high-low-price">Sort by: Price (High to Low)</option>
-            <option value="low-high-year">Sort by: Year (Low to High)</option>
-            <option value="high-low-year">Sort by: Year (High to Low)</option>
-          </select>
-        </div>
-
-        <div >
-        {filterProducts.map((item, index) => (
-          <>
-          <SmallCoinCard
-            key={index}
-            id={item._id}
-            name={item.name}
-            price={item.price}
-            image={item.image}
-            description={item.description} 
-            flagImage={item.flagImage} /> <br 
-          /> </>
-        ))} 
-        <br /> <br />
-        </div>
       </div>
     </div>
-    </div>
-  )
-}
+  );
+};
 
-export default AllProducts
+export default AllProducts;
