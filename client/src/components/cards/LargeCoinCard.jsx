@@ -53,7 +53,7 @@ const LargeCoinCard = () => {
           <div className="p-6 border rounded-lg shadow-sm mb-8">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-orange-500 font-semibold">Country</div>
-              <div className="font-medium">Bulgaria</div>
+              <div className="font-medium">Bulgaria</div> 
               <div className="text-orange-500 font-semibold">Year</div>
               <div className="font-medium">1985</div>
               <div className="text-orange-500 font-semibold">Material</div>

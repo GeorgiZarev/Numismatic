@@ -11,7 +11,11 @@ const Navbar = () => {
 
   return (
     <div className="flex items-center justify-between py-5 font-medium">
-      <img src={assets} className='w-36' alt="Logo here" />
+
+      <div className="flex items-center h-16">
+        <img src={assets.logo2} className='h-12 w-auto object-contain' alt="Logo here" />
+      </div>
+
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
         <NavLink to='/' className='flex flex-col items-center gap-1'>
           <p>HOME</p>
@@ -49,7 +53,7 @@ const Navbar = () => {
         </div>
         <Link to='/cart' className='relative'> 
           <img src={assets.cart_icon} className='w-5 min-w-5' alt="cart icon"/>
-          <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'></p>
+          <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>0</p>
         </Link>
         <img onClick={()=>setShowMenu(true)} src={assets.menu_icon} className='w-5 cursor-pointer sm:hidden' alt="" />
       </div>
