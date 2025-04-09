@@ -16,7 +16,7 @@ const Banner = () => {
         <p className="mt-2 text-lg sm:text-2xl"></p> 
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Banner
+export default Banner;

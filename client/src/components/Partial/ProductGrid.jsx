@@ -1,75 +1,28 @@
-// ProductGrid.jsx
-import React from 'react';
-import { Row, Col } from 'antd';
-import ProductItem from './ProductItem';
-
-const CoinProducts = [
-  {
-    id: "aaaaa",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin One",
-    price: "10.00",
-  },
-  {
-    id: "aaaba",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin Two",
-    price: "15.00",
-  }, 
-  {
-    id: "aabba",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin One",
-    price: "10.00",
-  },
-  {
-    id: "abbba",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin Two",
-    price: "15.00",
-  },
-  {
-    id: "bbbba",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin One",
-    price: "10.00",
-  },
-  {
-    id: "bbbca",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin Two",
-    price: "15.00",
-  }, 
-  {
-    id: "bbcca",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin One",
-    price: "10.00",
-  },
-  {
-    id: "bccca",
-    image: ["https://placehold.co/300x200"],
-    name: "Coin Two",
-    price: "15.00",
-  },
-];
+import React, { useEffect } from "react";
+import { Row, Col } from "antd";
+import ProductItem from "./ProductItem";
+import { useCoins } from "../../hooks/useCoins";
 
 const ProductGrid = () => {
+  const { coins, loading, error, fetchCoins } = useCoins();
+
+  useEffect(() => {
+    fetchCoins();
+  }, [fetchCoins]);
+
+  if (loading) return <p>Loading coins...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!coins || coins.length === 0) return <p>No coins found.</p>;
+
   return (
     <Row gutter={[24, 24]}>
-      {CoinProducts.map((product) => (
-        <Col
-          key={product.id}
-          xs={24}      // 1 column 
-          sm={12}      // 2 columns 
-          md={8}       // 3 columns 
-          lg={6}       // 4 columns 
-        >
+      {coins.slice(0, 8).map((coin) => (
+        <Col key={coin.id} xs={24} sm={12} md={8} lg={6}>
           <ProductItem
-            id={product.id}
-            image={product.image}
-            name={product.name}
-            price={product.price}
+            id={coin.id}
+            image={coin.photo_url}
+            name={coin.name}
+            price={coin.price}
           />
         </Col>
       ))}

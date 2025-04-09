@@ -1,6 +1,6 @@
-import React from 'react';
-import CatalogGrid from '../Partial/CatalogGrid.jsx';
-import { assets } from '../../Assets/ObjFile';
+import React from "react";
+// import CatalogGrid from "../Partial/CatalogGrid.jsx";
+import { assets } from "../../Assets/ObjFile";
 
 const Header = () => {
     return (
@@ -23,17 +23,18 @@ const Header = () => {
             </div>
             <img className='w-full sm:w-1/2' src={assets.hero_img} alt="coins img"/> 
         </div>
-        <br />
-        {/*w-full sm:w-1/2 flex text-2xl justify-center items-center py 10 sm:py-0*/}
-        {/*
+        <img className="w-36" src={assets.company_logo} alt="coins img" />
+      </div>
+      <br />
+      {/*w-full sm:w-1/2 flex text-2xl justify-center items-center py 10 sm:py-0*/}
+      {/*
         <div className='flex item-center justify-center'>
             <h1 className='pt-serif-regular-italic text-2xl items-center py-5  sm:py-5'>...</h1>
             
         </div>
         */}
-        
-        </>
-    );
+    </>
+  );
 };
 
 export default Header;
