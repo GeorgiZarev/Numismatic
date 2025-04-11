@@ -11,7 +11,7 @@ const Contact = () => {
         <div className="flex flex-col justify-center md:flex-row gap-10">
           <img
             className="w-full md:max-w-[480px] rounded-lg object-cover shadow-sm"
-            src={assets.contact_us}
+            src={assets.contact}
             alt="contact img"
           />
 

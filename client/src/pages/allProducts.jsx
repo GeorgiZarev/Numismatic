@@ -83,7 +83,7 @@ const AllProducts = () => {
                 name={coin.name}
                 price={coin.price}
                 image={coin.photo_url}
-                description={coin.denomination}
+                description={`${coin.denomination}. ${coin.year} . ${coin.country} . ${coin.material}`}
                 flagImage={coin.country}
               />
             ))}

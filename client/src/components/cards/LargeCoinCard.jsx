@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCoins } from "../../hooks/useCoins";
+import { useAuth } from "../../Contexts/authContext";
 
 const LargeCoinCard = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams();
-  const { getCoin, loading, error } = useCoins();
+  const { getCoin, deleteCoin, updateCoin, loading, error } = useCoins();
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+
   const [coin, setCoin] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     const fetchCoin = async () => {
       try {
         const data = await getCoin(id);
         setCoin(data);
+        setFormData(data);
       } catch (err) {
         console.error("Failed to fetch coin:", err);
       }
@@ -20,15 +31,72 @@ const LargeCoinCard = () => {
     fetchCoin();
   }, [id, getCoin]);
 
-  if (loading) return <p>Loading coin...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  const handleDelete = async () => {
+    try {
+      await deleteCoin(id);
+      navigate("/");
+    } catch (err) {
+      console.error("Failed to delete coin:", err);
+    }
+  };
+
+  const handleEditToggle = () => {
+    setEditMode((prev) => !prev);
+  };
+
+  const handleSave = async () => {
+    setErrorMessage("");
+    setSaving(true); // 🔥 start spinner
+
+    const data = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        if (key !== "photo_url") {
+          if (["year", "price", "mintage"].includes(key)) {
+            data.append(key, Number(value));
+          } else {
+            data.append(key, value);
+          }
+        }
+      }
+    });
+
+    if (file) {
+      data.append("photo", file);
+    }
+
+    try {
+      const updated = await updateCoin(id, data); // 🔥 Lazy update
+      setCoin(updated.coin); // 🔥 Use returned updated coin
+      setEditMode(false);
+    } catch (err) {
+      console.error("Failed to update coin:", err);
+      setErrorMessage(
+        err.response?.data?.error?.message ||
+          err.response?.data?.message ||
+          "Failed to update coin"
+      );
+    } finally {
+      setSaving(false); // 🔥 stop spinner
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   if (!coin) return null;
 
   return (
-    <div className="max-w-[1200px] mx-auto p-6 sm:p-6 bg-gray-100 rounded-xl shadow-lg">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900 text-center relative">
+    <div className="max-w-[1200px] mx-auto p-6 bg-gray-100 rounded-xl shadow-lg">
+      <h1 className="mb-8 text-3xl font-bold text-gray-900 text-center">
         Product Details
-        <div className="mt-4 mx-auto w-20 h-1 bg-orange-500 rounded"></div>
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -37,14 +105,14 @@ const LargeCoinCard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
               <img
-                src={coin.photo_url}
+                src={coin.photo_url || "https://placehold.co/200x200"}
                 alt="Front View"
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
               />
             </div>
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
               <img
-                src={coin.photo_url}
+                src={coin.photo_url || "https://placehold.co/200x200"}
                 alt="Back View"
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
               />
@@ -88,36 +156,95 @@ const LargeCoinCard = () => {
               </span>
             </div>
           </div>
+
           <div className="p-6 border rounded-lg shadow-sm mb-8">
             <div className="grid grid-cols-2 gap-1">
-              <div className="text-orange-500 font-semibold">Name</div>
-              <div className="font-medium">{coin.name}</div>
-              <div className="text-orange-500 font-semibold">Country</div>
-              <div className="font-medium">{coin.country}</div>
-              <div className="text-orange-500 font-semibold">Year</div>
-              <div className="font-medium">{coin.year}</div>
-              <div className="text-orange-500 font-semibold">Material</div>
-              <div className="font-medium">{coin.composition_metal}</div>
-              <div className="text-orange-500 font-semibold">Monarch</div>
-              <div className="font-medium">{coin.monarch}</div>
-              <div className="text-orange-500 font-semibold">Weight</div>
-              <div className="font-medium">{coin.weight}</div>
-              <div className="text-orange-500 font-semibold">Shape</div>
-              <div className="font-medium">{coin.shape}</div>
-              <div className="text-orange-500 font-semibold">Denomination</div>
-              <div className="font-medium">{coin.denomination}</div>
-              <div className="text-orange-500 font-semibold">Script</div>
-              <div className="font-medium">{coin.script}</div>
-              <div className="text-orange-500 font-semibold">Lettering</div>
-              <div className="font-medium">{coin.lettering}</div>
-              <div className="text-orange-500 font-semibold">Mintage</div>
-              <div className="font-medium">{coin.mintage}</div>
-              <div className="text-orange-500 font-semibold">Mint Place</div>
-              <div className="font-medium">{coin.mint_place}</div>
-              <div className="text-orange-500 font-semibold">Coin Grading</div>
-              <div className="font-medium">{coin.coin_grading}</div>
+              {[
+                { label: "Name", key: "name" },
+                { label: "Country", key: "country" },
+                { label: "Year", key: "year" },
+                { label: "Material", key: "composition_metal" },
+                { label: "Monarch", key: "monarch" },
+                { label: "Weight", key: "weight" },
+                { label: "Shape", key: "shape" },
+                { label: "Denomination", key: "denomination" },
+                { label: "Script", key: "script" },
+                { label: "Lettering", key: "lettering" },
+                { label: "Mintage", key: "mintage" },
+                { label: "Mint Place", key: "mint_place" },
+                { label: "Coin Grading", key: "coin_grading" },
+              ].map(({ label, key }) => (
+                <React.Fragment key={key}>
+                  <div className="text-orange-500 font-semibold">{label}</div>
+                  <div className="font-medium">
+                    {editMode ? (
+                      <input
+                        type="text"
+                        name={key}
+                        value={formData[key] || ""}
+                        onChange={handleChange}
+                        className="border rounded p-1 w-full"
+                      />
+                    ) : (
+                      coin[key]
+                    )}
+                  </div>
+                </React.Fragment>
+              ))}
+
+              {/* File input */}
+              {editMode && (
+                <>
+                  <div className="text-orange-500 font-semibold">Photo</div>
+                  <div className="font-medium">
+                    <input
+                      type="file"
+                      name="photo"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="border rounded p-1 w-full"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
+
+          {/* Buttons */}
+          {user && (
+            <div className="flex flex-col gap-4 mt-4">
+              <div className="flex gap-4">
+                {editMode ? (
+                  <button
+                    onClick={handleSave}
+                    disabled={saving} // disable button while saving
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded w-full"
+                  >
+                    {saving ? "Saving..." : "Save"}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleEditToggle}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full"
+                  >
+                    Edit
+                  </button>
+                )}
+                <button
+                  onClick={handleDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded w-full"
+                >
+                  Delete
+                </button>
+              </div>
+
+              {errorMessage && (
+                <div className="bg-red-100 text-red-700 p-2 mt-2 rounded text-center border border-red-400">
+                  {errorMessage}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

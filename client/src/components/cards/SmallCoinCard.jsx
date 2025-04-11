@@ -13,9 +13,16 @@ const SmallCoinCard = ({
   const defaultImage = "https://placehold.co/135x140";
   const coinImage1 = image || defaultImage;
   const coinImage2 = image || defaultImage;
-  const defaultFlag =
-    "https://rene-crevel.com/images/country-flag-16X16/Bulgaria.png";
-  const coinFlag = flagImage || defaultFlag;
+  const flags = {
+    Bulgaria: "https://rene-crevel.com/images/country-flag-16X16/Bulgaria.png",
+    Serbia: "https://rene-crevel.com/images/country-flag-16X16/Serbia.png",
+    Albania: "https://rene-crevel.com/images/country-flag-16X16/Albania.png",
+    Montenegro:
+      "https://rene-crevel.com/images/country-flag-16X16/Montenegro.png",
+    Romania: "https://rene-crevel.com/images/country-flag-16X16/Romania.png",
+    Greece: "https://rene-crevel.com/images/country-flag-16X16/Greece.png",
+  };
+  const flag = flags[flagImage];
 
   return (
     <Link
@@ -42,7 +49,7 @@ const SmallCoinCard = ({
           </div>
           <div className="flex-1">
             <div className="flex items-center mb-3">
-              <img src={defaultFlag} alt="Flag" width="20" className="mr-2" />
+              <img src={flag} alt="Flag" width="20" className="mr-2" />
               <span className="font-bold text-base">{name}</span>
             </div>
             <p className="text-gray-600 mt-2 mb-6 leading-relaxed">
@@ -79,7 +86,7 @@ const SmallCoinCard = ({
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center mb-3">
-              <img src={defaultFlag} alt="Flag" width="20" className="mr-2" />
+              <img src={flag} alt="Flag" width="20" className="mr-2" />
               <span className="font-bold text-base">{name}</span>
             </div>
             <p className="text-gray-600 mt-2 mb-6 leading-relaxed">
@@ -107,7 +114,7 @@ const SmallCoinCard = ({
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center mb-3">
-              <img src={defaultFlag} alt="Flag" width="20" className="mr-2" />
+              <img src={flag} alt="Flag" width="20" className="mr-2" />
               <span className="font-bold text-base">{name}</span>
             </div>
             <p className="text-gray-600 mt-2 mb-6 leading-relaxed">

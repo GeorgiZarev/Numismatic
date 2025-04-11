@@ -8,7 +8,13 @@ function Footer() {
       <hr />
       <div className="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-20 text-sm">
         <div>
-          <img src={assets.company_logo} className="mb-5 w-32" alt="Logo" />
+          <div className="flex items-center h-16">
+            <img
+              src={assets.logo2}
+              className="h-12 w-auto object-contain"
+              alt="Logo here"
+            />
+          </div>
           <p className="w-full md:w-2/3 text-gray-600">
             Numisora is your trusted shop for rare and collectible coins. We are
             passionate about history, craftsmanship, and connecting collectors

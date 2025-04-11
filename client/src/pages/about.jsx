@@ -16,7 +16,7 @@ function About() {
       <div className="my-10 flex flex-col md:flex-row gap-16">
         <img
           className="w-full md:max-w-[450px]"
-          src={assets.about_us}
+          src={assets.aboutus}
           alt="about us img"
         />
         <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600">
