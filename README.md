@@ -1,78 +1,113 @@
-# Numisora - Online Coin Shop
+# Numisora – Online Numismatic Coin Shop 🪙
 
-📜 Overview
-Numisora is an online shop platform where collectors and enthusiasts can explore and purchase coins with numismatic value dated after the 1700s. The application allows the owner of the store to list their coins with details and manage their inventory efficiently. The platform aims to provide a smooth and secure shopping experience.
+## 📜 Overview
 
-🛠️ Technologies Used
+**Numisora** is an innovative online platform designed for collectors and enthusiasts of coins with numismatic value. The project combines modern technologies with a passion for history, providing users the ability to explore, buy, sell, and learn detailed information about rare and valuable coins. 
 
-### Frontend
+![Homepage Preview](./client/src/Assets/images/homepageimgNumisora.png)
 
-- **React** (with Hooks for state management and lifecycle management)
-- **Redux** (for centralized state management)
-- **Axios** (for handling API requests)
+## 🚀 Features
 
-### Backend
+- **Responsive User Interface 📱💻**: Design optimized for desktop, tablet, and mobile devices.
+- **Comprehensive Coin Catalog 🔍**: Search and filter coins by country, year, metal, denomination, and price.
+- **Detailed Coin Pages 📖**: Complete coin information and high-quality images for each item.
+- **Authentication and Security 🔐**: Secure user registration and login with JWT and password encryption.
+- **Inventory Management 📦**: Full CRUD operations for managing coin listings.
+- **Interactive UI/UX 🌟**: Modern and appealing design built with React, Tailwind CSS, and Ant Design.
+- **Coin Listings 📄**: Display detailed information about coins with numismatic value.
+- **CRUD Operations ❌**: Add, edit, and delete coin listings.
 
-- **Node.js** (JavaScript runtime environment)
-- **Express.js** (Web framework for Node.js)
+## 🛠️ Technologies Used
+
+### 🖥️ Frontend
+
+- **React** – JavaScript library for building dynamic user interfaces using components.
+- **Tailwind CSS** – Utility-first CSS framework for responsive and consistent styling.
+- **Ant Design** – UI library with ready-made, professional components for React.
+- **React Router DOM** – Enables navigation between views without reloading the page.
+- **Vite** – Fast build tool and development server for modern frontend frameworks.
+- **Jest** – JavaScript testing framework for writing and running unit tests.
+- **Axios** – HTTP client for making asynchronous API requests.
+- **React Context API** – Built-in state management solution for sharing data across components.
+
+### 🛠️ Backend
+
+- **Node.js** – Runtime environment for executing JavaScript code server-side.
+- **Express.js** – Minimal and flexible Node.js web application framework.
 
 ### Database
-
 - **PostgreSQL** (Relational database for storing coins and user information)
 
 ### Additional Tools
+- **Cloudinary** (SaaS company providing cloud media management services)
+- **React Router** (For client-side routing)
+- **Git & GitHub** (Commits, push, Fetch, Merge, Pull operations)
+- **Local Storage** (Not hosted yet; 🔜Hosting comming soon)
 
-- **React Router** (for client-side routing)
-- **JWT (JSON Web Tokens)** (for secure user authentication)
-- **Local Storage** (for persisting authentication tokens)
-
----
-
-💂️ Project Structure
+## 💻 Project Structure
 
 ```
-📁 public/
-📁 src/
-  ┓ 📁 components/         # Reusable components
-  ┓ 📁 hooks/              # Custom hooks (e.g., useApiRequest)
-  ┓ 📁 pages/              # Page-level components
-  ┓ 📁 services/           # API service functions
-  ┓ 📁 styles/             # CSS styles for the whole webapp
-  ┓ 💜 App.js              # Main React component
-  ┓ 💜 App.css             # Global styles
-  ┓ 💜 index.js            # ReactDOM render entry point
-  ┓ 💜 index.css           # Global CSS
+/📁public
+  └── index.html
+
+/📁src 
+  ├── 📁 Assets/             # Images, icons, and static assets used in the app
+  ├── 📁 Contexts/           # React Context API for managing global state across components
+  ├── 📁 components/         # Reusable UI components (e.g., Navbar, Footer, buttons)
+  ├── 📁 hooks/              # Custom React hooks (e.g., useApiRequest for handling API calls)
+  ├── 📁 pages/              # Main page components corresponding to routes (e.g., Home, Products, Cart)
+  ├── 📁 styles/             # Global CSS stylesheets and Tailwind configurations
+  ├── 💜App.jsx              # Main application component
+  ├── 💜App.css              # Styles for the App component
+  ├── 💜main.css             # Main styles file for the project frontend 
+  └── 💜index.jsx            # Entry point of the app
 ```
 
----
+## ⚙️ Installation
 
-🚀 Features
+### Frontend
 
-- **Coin Listings:** Display detailed information about coins with numismatic value.
-- **Search and Filter:** Find specific coins based on year, origin, or value.
-- **Authentication:** Secure user login and registration using JWT.
-- **CRUD Operations:** Add, edit, and delete coin listings.
-- **Responsive Design:** Optimized for both desktop and mobile views.
+```bash
+cd client
+npm install
+npm run dev
+```
 
----
+### Backend
 
-🌟 Contribution Guide
+```bash
+cd backend
+npm install
+npm run start
+```
 
-- Fork the repository.
-- Create a new branch for your feature (`git checkout -b feature/your-feature`).
-- Commit your changes (`git commit -m "Added a new feature"`).
-- Push to your fork (`git push origin feature/your-feature`).
-- Create a pull request to the `main` branch.
+## 🚦 Usage
 
----
+Open your browser and navigate to [http://localhost:3000](http://localhost:3000). Explore the coin catalog, use filters to find desired items, and enjoy secure authentication and profile management.
 
-📜 License
+## 🌟 Contributing
+
+1. Fork the repository.
+2. Create a new branch:
+```bash
+git checkout -b feature/your-feature
+```
+3. Commit your changes:
+```bash
+git commit -m "Your description"
+```
+4. Push your branch:
+```bash
+git push origin feature/your-feature
+```
+5. Create a pull request.
+
+## 📜 License
+
 This project is licensed under the [MIT License](LICENSE).
 
----
+## 📞 Contact
 
-💬 Contact
-
-- Project Maintainer: [Your Name](https://github.com/your-username)
-- Email: your-email@example.com
-- GitHub Repository: [Numismatic](https://github.com/your-username/numismatic)
+- **Project Maintainers:** [Georgie Zarev](https://github.com/GeorgiZarev), [Dilyan Yanev](https://github.com/Dilyannn)
+- **Email: ✉️** [georgi.zarev0304@gmail.com](mailto:georgi.zarev0304@gmail.com), [dilyanyanev365@gmail.com](mailto:dilyanyanev365@gmail.com)
+- **GitHub Repository:** [Numisora](https://github.com/GeorgiZarev/Numismatic)
