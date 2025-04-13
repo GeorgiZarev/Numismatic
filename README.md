@@ -109,5 +109,6 @@ This project is licensed under the [MIT License](LICENSE).
 ## 📞 Contact
 
 - **Project Maintainers:** [Georgie Zarev](https://github.com/GeorgiZarev), [Dilyan Yanev](https://github.com/Dilyannn)
+- **Contributors:** Valentin Atanasov, Veronika Atanasova, Svetlana Sashova, Beatrice Kostadinova 
 - **Email: ✉️** [georgi.zarev0304@gmail.com](mailto:georgi.zarev0304@gmail.com), [dilyanyanev365@gmail.com](mailto:dilyanyanev365@gmail.com)
 - **GitHub Repository:** [Numisora](https://github.com/GeorgiZarev/Numismatic)
