@@ -29,7 +29,6 @@
 - **Jest** – JavaScript testing framework for writing and running unit tests.
 - **Axios** – HTTP client for making asynchronous API requests.
 - **React Context API** – Built-in state management solution for sharing data across components.
-- **React Hook Form & Zod** – Lightweight form management and schema-based validation system.
 
 ### 🛠️ Backend
 
