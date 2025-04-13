@@ -57,7 +57,7 @@ export const coinCreationSchema = Joi.object({
   denomination: Joi.string().optional(),
   lettering: Joi.string().optional(),
   script: Joi.string().optional(),
-  mintage: Joi.number().optional(),
+  mintage: Joi.number().integer().empty("").optional(),
   mint_place: Joi.string().optional(),
   coin_grading: Joi.string().optional(),
   number: Joi.string().optional(),
