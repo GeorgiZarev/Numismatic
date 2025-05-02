@@ -2,9 +2,17 @@ import cloudinary from "../config/cloudinary.js";
 import { Coins } from "../utils/db/coins.js";
 import NotFoundError from "../errors/NotFoundError.js";
 
+// controllers/coinController.js
 export const getCoins = async (req, res, next) => {
   try {
-    const coins = await Coins.getAll();
+    const { country } = req.query;
+    console.log("🧪 Filtering by country:", country); // helpful in dev
+
+    const coins =
+      country && country !== "All"
+        ? await Coins.getByCountry(country)
+        : await Coins.getAll();
+
     res.status(200).json(coins);
   } catch (err) {
     next(err);

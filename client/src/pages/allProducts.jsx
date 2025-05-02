@@ -9,14 +9,29 @@ const AllProducts = () => {
   const { coins, loading, error, fetchCoins } = useCoins();
 
   const [filterActive, setFilterActive] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("All");
+
+  const countryOptions = [
+    "All",
+    "Bulgaria",
+    "Serbia",
+    "Romania",
+    "Greece",
+    "Montenegro",
+    "Ottoman Empire",
+  ];
 
   useEffect(() => {
-    fetchCoins();
+    fetchCoins(); // Initial fetch with no filters
   }, [fetchCoins]);
 
-  const handleAllItems = () => {
-    //setFilterCoins(coins);
-    console.log(coins);
+  const handleFilterByCountry = (country) => {
+    setSelectedCountry(country);
+    if (country === "All") {
+      fetchCoins(); // no filter
+    } else {
+      fetchCoins({ country });
+    }
   };
 
   return (
@@ -45,13 +60,19 @@ const AllProducts = () => {
           >
             <p className="mb-3 text-sm font-medium">CATEGORIES</p>
             <div className="flex flex-col gap-2 text-base font-light text-gray-700">
-              <p className="cursor-pointer" onClick={handleAllItems}>
-                All Items
-              </p>
-              <p className="cursor-pointer">Bulgarian</p>
-              <p className="cursor-pointer">Country2</p>
-              <p className="cursor-pointer">Country3</p>
-              <p className="cursor-pointer">Other</p>
+              {countryOptions.map((country) => (
+                <p
+                  key={country}
+                  className={`cursor-pointer ${
+                    selectedCountry === country
+                      ? "text-black font-medium"
+                      : "text-gray-700"
+                  }`}
+                  onClick={() => handleFilterByCountry(country)}
+                >
+                  {country}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -59,8 +80,9 @@ const AllProducts = () => {
         {/* Coin Items */}
         <div className="flex-1">
           <div className="flex justify-between items-center text-base sm:text-xl mb-4">
-            <Title text1="ALL" text2="ITEMS" />
-            {/*<select className="border-2 border-gray-300 text-sm px-2">
+            <Title text1={selectedCountry.toUpperCase()} text2="ITEMS" />
+            {/* Future: Sorting */}
+            {/* <select className="border-2 border-gray-300 text-sm px-2">
               <option value="low-high-price">
                 Sort by: Price (Low to High)
               </option>
@@ -69,7 +91,7 @@ const AllProducts = () => {
               </option>
               <option value="low-high-year">Sort by: Year (Low to High)</option>
               <option value="high-low-year">Sort by: Year (High to Low)</option>
-            </select>*/}
+            </select> */}
           </div>
 
           {loading && <p>Loading...</p>}

@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { buildQueryString } from "../utils/queryHelpers.js";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3001/api";
@@ -13,18 +14,16 @@ export const useCoins = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchCoins = useCallback(async () => {
+  const fetchCoins = useCallback(async (filterParams = {}) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.get("/coins");
+      const queryString = buildQueryString(filterParams);
+      const response = await axiosInstance.get(`/coins?${queryString}`);
       setCoins(response.data);
     } catch (err) {
-      setError(
-        err.response?.data?.error?.message ||
-          err.response?.data?.message ||
-          "Failed to fetch coins"
-      );
+      console.log(err);
+      setError("Failed to fetch coins");
     } finally {
       setLoading(false);
     }

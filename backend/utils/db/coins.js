@@ -20,6 +20,14 @@ export const Coins = {
       .execute();
   },
 
+  getByCountry: async (country) => {
+    return await db
+      .selectFrom("coins")
+      .selectAll()
+      .where("country", "=", country)
+      .execute();
+  },
+
   create: async (coinData) => {
     return await db
       .insertInto("coins")

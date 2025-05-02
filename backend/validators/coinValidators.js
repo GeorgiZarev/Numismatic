@@ -112,6 +112,16 @@ export const updateCoinSchema = Joi.object({
     "object.min": "At least one field must be provided for update",
   });
 
+// validators/coinValidators.js (append)
+export const coinQuerySchema = Joi.object({
+  country: Joi.string()
+    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "All")
+    .optional()
+    .messages({
+      "any.only": "Invalid country filter",
+    }),
+});
+
 export const validateCoinCreation = [
   validateWithJoi(coinCreationSchema, "body"),
 ];
@@ -121,3 +131,5 @@ export const validateCoinUpdate = [
 ];
 export const validateCoinDelete = [validateWithJoi(coinIdSchema, "params")];
 export const validateCoinIdParam = [validateWithJoi(coinIdSchema, "params")];
+
+export const validateCoinQuery = [validateWithJoi(coinQuerySchema, "query")];

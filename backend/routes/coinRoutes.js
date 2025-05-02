@@ -15,6 +15,7 @@ import {
   validateCoinUpdate,
   validateCoinDelete,
   validateCoinIdParam,
+  validateCoinQuery,
 } from "../validators/coinValidators.js";
 
 const router = express.Router();
@@ -22,7 +23,7 @@ const router = express.Router();
 /**
  * * Public Routes
  */
-router.get("/", getCoins);
+router.get("/", validateCoinQuery, getCoins);
 router.get("/:id", validateCoinIdParam, getCoin);
 
 /**
