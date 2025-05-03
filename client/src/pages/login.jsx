@@ -15,7 +15,7 @@ const Login = () => {
     try {
       //const response = await postData("/auth/login", credentials);
       await login(credentials);
-      navigate("/create-coin"); // ✅ redirect after login
+      navigate("/create-coin");
     } catch (error) {
       console.error("Login failed", error);
     }

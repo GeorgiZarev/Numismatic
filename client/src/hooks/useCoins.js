@@ -83,7 +83,7 @@ export const useCoins = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        await fetchCoins(); // Refresh list after update
+        await fetchCoins();
         return response.data;
       } catch (err) {
         setError(
@@ -105,7 +105,7 @@ export const useCoins = () => {
       setError(null);
       try {
         await axiosInstance.delete(`/coins/${id}`);
-        await fetchCoins(); // Refresh list after delete
+        await fetchCoins();
       } catch (err) {
         setError(
           err.response?.data?.error?.message ||
