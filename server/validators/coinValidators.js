@@ -125,6 +125,7 @@ export const coinQuerySchema = Joi.object({
 
   composition_metal: Joi.string().optional(),
   coin_grading: Joi.string().optional(),
+  search: Joi.string().optional(),
 
   minPrice: Joi.number().min(0).optional(),
   maxPrice: Joi.number().min(0).optional(),

@@ -17,6 +17,7 @@ const parseParamsToFilters = (params) => ({
   maxPrice: params.get("maxPrice") || "",
   sort: params.get("sort") || "",
   order: params.get("order") || "",
+  search: params.get("search") || "",
 });
 
 const ITEMS_PER_PAGE = 12;
@@ -26,21 +27,18 @@ const AllProducts = () => {
   const [filters, setFilters] = useState(() =>
     parseParamsToFilters(searchParams)
   );
-  const { t } = useTranslation();
-
+  const [liveSearch, setLiveSearch] = useState(filters.search || "");
   const [page, setPage] = useState(1);
   const [visibleCoins, setVisibleCoins] = useState([]);
+  const { t } = useTranslation();
 
+  // 🔁 Sync filters and input from URL when searchParams change
   useEffect(() => {
-    const clean = { ...filters };
-    Object.keys(clean).forEach((key) => {
-      if (clean[key] === "" || clean[key] === "All") {
-        delete clean[key];
-      }
-    });
-    setSearchParams(clean);
-    setPage(1);
-  }, [filters, setSearchParams]);
+    const newFilters = parseParamsToFilters(searchParams);
+    setFilters(newFilters);
+    setLiveSearch(newFilters.search);
+    setPage(1); // reset pagination on filter change
+  }, [searchParams]);
 
   const {
     data: coins,
@@ -75,10 +73,15 @@ const AllProducts = () => {
       ...prev,
       [field]: value,
     }));
+    setSearchParams((prev) => {
+      const updated = { ...parseParamsToFilters(prev), [field]: value };
+      if (updated.country === "All") delete updated.country;
+      return updated;
+    });
   };
 
   const resetFilters = () => {
-    setFilters({
+    const defaultFilters = {
       country: "All",
       material: "",
       coin_grading: "",
@@ -86,7 +89,10 @@ const AllProducts = () => {
       maxPrice: "",
       sort: "",
       order: "",
-    });
+      search: "",
+    };
+    setFilters(defaultFilters);
+    setSearchParams({});
   };
 
   return (
@@ -101,7 +107,6 @@ const AllProducts = () => {
           />
         </div>
 
-        {/* Product Grid */}
         <div className="flex-1">
           <div className="flex justify-between items-center text-base sm:text-xl mb-4">
             <Title
@@ -112,6 +117,21 @@ const AllProducts = () => {
               text2={t("products.Items").toUpperCase()}
             />
           </div>
+
+          <input
+            type="text"
+            placeholder="Search coins..."
+            className="border px-3 py-2 rounded w-full sm:w-1/2 mb-6"
+            value={liveSearch}
+            onChange={(e) => setLiveSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const newFilters = { ...filters, search: liveSearch };
+                if (newFilters.country === "All") delete newFilters.country;
+                setSearchParams(newFilters);
+              }
+            }}
+          />
 
           {isLoading && <p>Loading...</p>}
           {isError && <p className="text-red-500">{error.message}</p>}

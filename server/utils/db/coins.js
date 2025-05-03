@@ -1,4 +1,5 @@
 import db from "../../config/kysely.js";
+import { sql } from "kysely";
 
 /**
  * * Coin-related DB queries using Kysely
@@ -57,13 +58,20 @@ export const Coins = {
     let query = db.selectFrom("coins").selectAll();
 
     if (filters.country) {
-      console.log("1");
-
       query = query.where("country", "=", filters.country);
     }
 
+    if (filters.search?.trim()) {
+      const searchTerm = `%${filters.search.trim().toLowerCase()}%`;
+
+      query = query.where((eb) =>
+        eb.or([
+          sql`LOWER(name) LIKE ${searchTerm}`,
+          sql`LOWER(monarch) LIKE ${searchTerm}`,
+        ])
+      );
+    }
     if (filters.composition_metal) {
-      console.log("dasdasdasd");
       query = query.where("composition_metal", "=", filters.composition_metal);
     }
 
