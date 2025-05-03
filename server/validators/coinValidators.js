@@ -46,7 +46,6 @@ export const coinCreationSchema = Joi.object({
       "any.required": "Country is required",
     }),
 
-  // Optional fields
   monarch: Joi.string().optional(),
   price_value: Joi.string().optional(),
   composition_metal: Joi.string().optional(),
@@ -112,14 +111,26 @@ export const updateCoinSchema = Joi.object({
     "object.min": "At least one field must be provided for update",
   });
 
-// validators/coinValidators.js (append)
 export const coinQuerySchema = Joi.object({
   country: Joi.string()
-    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "All")
-    .optional()
-    .messages({
-      "any.only": "Invalid country filter",
-    }),
+    .valid(
+      "Montenegro",
+      "Bulgaria",
+      "Serbia",
+      "Romania",
+      "Greece",
+      "Ottoman Empire"
+    )
+    .optional(),
+
+  composition_metal: Joi.string().optional(),
+  coin_grading: Joi.string().optional(),
+
+  minPrice: Joi.number().min(0).optional(),
+  maxPrice: Joi.number().min(0).optional(),
+
+  sort: Joi.string().valid("price", "year").optional(),
+  order: Joi.string().valid("asc", "desc").optional(),
 });
 
 export const validateCoinCreation = [

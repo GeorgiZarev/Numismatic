@@ -52,4 +52,39 @@ export const Coins = {
       .returning(["id"])
       .execute();
   },
+
+  getFiltered: async (filters) => {
+    let query = db.selectFrom("coins").selectAll();
+
+    if (filters.country) {
+      console.log("1");
+
+      query = query.where("country", "=", filters.country);
+    }
+
+    if (filters.composition_metal) {
+      console.log("dasdasdasd");
+      query = query.where("composition_metal", "=", filters.composition_metal);
+    }
+
+    if (filters.coin_grading) {
+      query = query.where("coin_grading", "=", filters.coin_grading);
+    }
+
+    if (filters.minPrice) {
+      query = query.where("price", ">=", Number(filters.minPrice));
+    }
+
+    if (filters.maxPrice) {
+      query = query.where("price", "<=", Number(filters.maxPrice));
+    }
+
+    if (filters.sort && filters.order) {
+      const sortField = filters.sort;
+      const sortOrder = filters.order === "desc" ? "desc" : "asc";
+      query = query.orderBy(sortField, sortOrder);
+    }
+
+    return await query.execute();
+  },
 };
