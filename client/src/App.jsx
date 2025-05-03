@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import "./i18n";
 
 import Navbar from "./components/Header/Navbar.jsx";
 //import NavbarMain from './components/Header/NavbarMain';
@@ -17,6 +18,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 //import SmallCoinCard from './components/cards/SmallCoinCard';
 import LargeCoinCard from "./components/cards/LargeCoinCard";
+import ScrollToTop from "./components/ScrollToTop";
+
 //import ReactDOM from 'react-dom';
 //import { BrowserRouter } from 'react-router-dom';
 import "./Assets/ObjFile.js";
@@ -27,6 +30,8 @@ import CoinCreate from "./pages/CoinCreate.jsx";
 const App = () => {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+      <ScrollToTop />
+
       <Navbar />
 
       <Routes>

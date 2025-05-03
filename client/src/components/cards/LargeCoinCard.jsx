@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCoins } from "../../hooks/useCoins";
 import { useAuth } from "../../Contexts/authContext";
+import { useTranslation } from "react-i18next";
 
 const LargeCoinCard = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -40,16 +42,13 @@ const LargeCoinCard = () => {
     }
   };
 
-  const handleEditToggle = () => {
-    setEditMode((prev) => !prev);
-  };
+  const handleEditToggle = () => setEditMode((prev) => !prev);
 
   const handleSave = async () => {
     setErrorMessage("");
-    setSaving(true); // 🔥 start spinner
+    setSaving(true);
 
     const data = new FormData();
-
     Object.entries(formData).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         if (key !== "photo_url") {
@@ -62,23 +61,20 @@ const LargeCoinCard = () => {
       }
     });
 
-    if (file) {
-      data.append("photo", file);
-    }
+    if (file) data.append("photo", file);
 
     try {
-      const updated = await updateCoin(id, data); // 🔥 Lazy update
-      setCoin(updated.coin); // 🔥 Use returned updated coin
+      const updated = await updateCoin(id, data);
+      setCoin(updated.coin);
       setEditMode(false);
     } catch (err) {
-      console.error("Failed to update coin:", err);
       setErrorMessage(
         err.response?.data?.error?.message ||
           err.response?.data?.message ||
-          "Failed to update coin"
+          t("coinDetails.update_failed")
       );
     } finally {
-      setSaving(false); // 🔥 stop spinner
+      setSaving(false);
     }
   };
 
@@ -87,59 +83,55 @@ const LargeCoinCard = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
   if (!coin) return null;
 
   return (
     <div className="max-w-[1200px] mx-auto p-6 bg-gray-100 rounded-xl shadow-lg">
       <h1 className="mb-8 text-3xl font-bold text-gray-900 text-center">
-        Product Details
+        {t("coinDetails.title")}
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column */}
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
-              <img
-                src={coin.photo_url || "https://placehold.co/200x200"}
-                alt="Front View"
-                className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-              />
-            </div>
-            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
-              <img
-                src={coin.photo_url || "https://placehold.co/200x200"}
-                alt="Back View"
-                className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-              />
-            </div>
+            {[1, 2].map((i) => (
+              <div
+                key={i}
+                className="bg-gray-100 rounded-lg overflow-hidden aspect-square"
+              >
+                <img
+                  src={coin.photo_url || "https://placehold.co/200x200"}
+                  alt={`Coin View ${i}`}
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+            ))}
           </div>
 
           <div className="p-7 border border-gray-200 rounded-lg shadow-sm mb-8">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <span className="text-orange-500">•</span> Front Features
+              <span className="text-orange-500">•</span>{" "}
+              {t("coinDetails.front_features")}
             </h2>
             <p className="mb-6 leading-relaxed text-gray-600">
-              Detailed description of front features with premium craftsmanship
-              and attention to detail.
+              {t("coinDetails.front_desc")}
             </p>
             <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <span className="text-orange-500">•</span> Back Features
+              <span className="text-orange-500">•</span>{" "}
+              {t("coinDetails.back_features")}
             </h2>
             <p className="mb-6 leading-relaxed text-gray-600">
-              Detailed description of back features showcasing the intricate
-              design elements.
+              {t("coinDetails.back_desc")}
             </p>
             <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <span className="text-orange-500">•</span> Mint Condition
+              <span className="text-orange-500">•</span>{" "}
+              {t("coinDetails.mint_condition")}
             </h2>
             <p className="leading-relaxed text-gray-600">
-              Pristine condition with certification of authenticity and
-              protective casing included.
+              {t("coinDetails.mint_desc")}
             </p>
           </div>
         </div>
@@ -148,7 +140,7 @@ const LargeCoinCard = () => {
         <div>
           <div className="text-left pb-6 border-b-2 border-orange-500 mb-8">
             <h1 className="text-2xl font-bold text-gray-900 leading-snug">
-              Coin Info
+              {t("coinDetails.info")}
             </h1>
             <div className="flex items-center gap-3 mt-4">
               <span className="text-2xl font-bold text-orange-600">
@@ -160,19 +152,19 @@ const LargeCoinCard = () => {
           <div className="p-6 border rounded-lg shadow-sm mb-8">
             <div className="grid grid-cols-2 gap-1">
               {[
-                { label: "Name", key: "name" },
-                { label: "Country", key: "country" },
-                { label: "Year", key: "year" },
-                { label: "Material", key: "composition_metal" },
-                { label: "Monarch", key: "monarch" },
-                { label: "Weight", key: "weight" },
-                { label: "Shape", key: "shape" },
-                { label: "Denomination", key: "denomination" },
-                { label: "Script", key: "script" },
-                { label: "Lettering", key: "lettering" },
-                { label: "Mintage", key: "mintage" },
-                { label: "Mint Place", key: "mint_place" },
-                { label: "Coin Grading", key: "coin_grading" },
+                { label: t("coinDetails.name"), key: "name" },
+                { label: t("coinDetails.country"), key: "country" },
+                { label: t("coinDetails.year"), key: "year" },
+                { label: t("coinDetails.material"), key: "composition_metal" },
+                { label: t("coinDetails.monarch"), key: "monarch" },
+                { label: t("coinDetails.weight"), key: "weight" },
+                { label: t("coinDetails.shape"), key: "shape" },
+                { label: t("coinDetails.denomination"), key: "denomination" },
+                { label: t("coinDetails.script"), key: "script" },
+                { label: t("coinDetails.lettering"), key: "lettering" },
+                { label: t("coinDetails.mintage"), key: "mintage" },
+                { label: t("coinDetails.mint_place"), key: "mint_place" },
+                { label: t("coinDetails.coin_grading"), key: "coin_grading" },
               ].map(({ label, key }) => (
                 <React.Fragment key={key}>
                   <div className="text-orange-500 font-semibold">{label}</div>
@@ -192,7 +184,6 @@ const LargeCoinCard = () => {
                 </React.Fragment>
               ))}
 
-              {/* File input */}
               {editMode && (
                 <>
                   <div className="text-orange-500 font-semibold">Photo</div>
@@ -210,31 +201,30 @@ const LargeCoinCard = () => {
             </div>
           </div>
 
-          {/* Buttons */}
           {user && (
             <div className="flex flex-col gap-4 mt-4">
               <div className="flex gap-4">
                 {editMode ? (
                   <button
                     onClick={handleSave}
-                    disabled={saving} // disable button while saving
+                    disabled={saving}
                     className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded w-full"
                   >
-                    {saving ? "Saving..." : "Save"}
+                    {saving ? t("coinDetails.saving") : t("coinDetails.save")}
                   </button>
                 ) : (
                   <button
                     onClick={handleEditToggle}
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full"
                   >
-                    Edit
+                    {t("coinDetails.edit")}
                   </button>
                 )}
                 <button
                   onClick={handleDelete}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded w-full"
                 >
-                  Delete
+                  {t("coinDetails.delete")}
                 </button>
               </div>
 

@@ -1,0 +1,99 @@
+{
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We’d love to hear from you!",
+    "email_label": "Write Us an Email at:",
+    "email": "mail@mail.com",
+    "phone_label": "Give Us a Phone Call:",
+    "phone1": "+123456789",
+    "phone2": "+359 88888"
+  },
+  "about": {
+    "title": "About Numisora – Your Trusted Online Coin Shop",
+    "heading": "Preserving History, One Coin at a Time",
+    "intro": "Welcome to Numisora, your premier destination for rare and collectible coins with numismatic value. Whether you're a passionate collector, an investor, or someone looking to explore the fascinating world of historic currency, our carefully curated selection offers something special for every enthusiast.",
+    "experience": "With a keen focus on authenticity, quality, and historical significance, we provide a seamless shopping experience where every coin tells a story.",
+    "business_heading": "Our business",
+    "business_info": "We specialize in coins dating back to the 1700s and beyond, offering historical and investment-grade pieces that have stood the test of time. Each coin in our collection is professionally authenticated and graded, ensuring that you receive only genuine, high-quality pieces."
+  },
+  "why_choose_us": {
+    "title": "Why Choose Us",
+    "authenticity_title": "Authenticity Guaranteed:",
+    "authenticity_desc": "Every coin in our collection is verified for authenticity, ensuring you receive genuine, high-quality pieces.",
+    "exclusive_title": "Exclusive Selection:",
+    "exclusive_desc": "We specialize in coins minted after the 1700s, offering rare finds that hold both historical and investment value.",
+    "guidance_title": "Expert Guidance:",
+    "guidance_desc": "Our team of coin specialists is here to help you build or expand your collection with confidence."
+  },
+  "footer": {
+    "description": "Numisora is your trusted shop for rare and collectible coins. We are passionate about history, craftsmanship, and connecting collectors with timeless treasures from around the world.",
+    "nav_title": "Numisora",
+    "nav_links": {
+      "home": "Home",
+      "about": "About us",
+      "products": "Products",
+      "contact": "Contact"
+    },
+    "contact_title": "Get in touch",
+    "phone1": "+123456789",
+    "phone2": "+359 88888",
+    "email": "mail@mail.com"
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login"
+  },
+  "products": {
+    "All": "All",
+    "Items": "products",
+    "noResults": "No products found in this category",
+    "noMore": "You have reached the end."
+  },
+  "filters": {
+    "title": "Filter Coins",
+    "country": "Country",
+    "price_range": "Price Range",
+    "min": "Min",
+    "max": "Max",
+    "material": "Material",
+    "grading": "Grading",
+    "sort": "Sort By",
+    "sort_placeholder": "Sort by",
+    "reset": "Reset Filters"
+  },
+  "coinDetails": {
+    "title": "Product Details",
+    "info": "Coin Info",
+    "name": "Name",
+    "country": "Country",
+    "year": "Year",
+    "material": "Material",
+    "monarch": "Monarch",
+    "weight": "Weight",
+    "shape": "Shape",
+    "denomination": "Denomination",
+    "script": "Script",
+    "lettering": "Lettering",
+    "mintage": "Mintage",
+    "mint_place": "Mint Place",
+    "coin_grading": "Coin Grading",
+    "front_features": "Front Features",
+    "back_features": "Back Features",
+    "mint_condition": "Mint Condition",
+    "front_desc": "Detailed description of front features with premium craftsmanship and attention to detail.",
+    "back_desc": "Detailed description of back features showcasing the intricate design elements.",
+    "mint_desc": "Pristine condition with certification of authenticity and protective casing included."
+  },
+  "home": {
+    "our": "OUR",
+    "coins": "COINS"
+  },
+  "header": {
+    "coins_with": "Coins with",
+    "numismatic_value": "Numismatic Value",
+    "coins": "Coins"
+  }
+}

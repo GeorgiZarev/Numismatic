@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../../Assets/ObjFile.js";
+import { useTranslation } from "react-i18next";
 
 function Footer() {
+  const { t } = useTranslation();
+
   return (
     <div>
       <hr />
@@ -16,28 +19,28 @@ function Footer() {
             />
           </div>
           <p className="w-full md:w-2/3 text-gray-600">
-            Numisora is your trusted shop for rare and collectible coins. We are
-            passionate about history, craftsmanship, and connecting collectors
-            with timeless treasures from around the world.
+            {t("footer.description")}
           </p>
         </div>
 
         <div>
-          <p className="text-xl font-medium mb-5">Numisora</p>
+          <p className="text-xl font-medium mb-5">{t("footer.nav_title")}</p>
           <ul className="flex flex-col cursor-pointer gap-1 text-gray-600">
-            <Link to="/">Home</Link>
-            <Link to="/about">About us</Link>
-            {/* TODO add delivery and policy pages */}
-            <Link to="/all-products">Products</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/">{t("footer.nav_links.home")}</Link>
+            <Link to="/about">{t("footer.nav_links.about")}</Link>
+            <Link to="/all-products">{t("footer.nav_links.products")}</Link>
+            <Link to="/contact">{t("footer.nav_links.contact")}</Link>
           </ul>
         </div>
+
         <div>
-          <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
+          <p className="text-xl font-medium mb-5">
+            {t("footer.contact_title")}
+          </p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>+123456789</li>
-            <li>+359 888888</li>
-            <li>mail@mail.com</li>
+            <li>{t("footer.phone1")}</li>
+            <li>{t("footer.phone2")}</li>
+            <li>{t("footer.email")}</li>
           </ul>
         </div>
       </div>
@@ -46,7 +49,7 @@ function Footer() {
         <hr />
         <br />
         <p className="text-xs sm:text-sm text-gray-500">
-          © 2025 Numisora - All rights reserved.
+          © 2025 Numisora - {t("footer.copyright")}
         </p>
       </div>
     </div>

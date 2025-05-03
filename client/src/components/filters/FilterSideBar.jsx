@@ -1,7 +1,9 @@
-import React from "react";
-import { Select, InputNumber, Button, Divider } from "antd";
+import React, { useState } from "react";
+import { Select, InputNumber, Button, Divider, Drawer, Grid } from "antd";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
+const { useBreakpoint } = Grid;
 
 const countryOptions = [
   "All",
@@ -22,23 +24,26 @@ const sortFields = [
 ];
 
 const FilterSideBar = ({ filters, onChange, onReset }) => {
+  const screens = useBreakpoint();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { t } = useTranslation();
+
   const handleSortChange = (value) => {
     if (!value) {
       onChange("sort", "");
       onChange("order", "");
       return;
     }
-
     const [sort, order] = value.split("-");
     onChange("sort", sort);
     onChange("order", order);
   };
 
-  return (
-    <div className="w-full sm:min-w-[15rem] bg-white p-4 border rounded-md shadow-sm">
-      <h3 className="text-lg font-semibold mb-4">Filter Coins</h3>
+  const FilterForm = () => (
+    <div className="w-full sm:min-w-[15rem] bg-white p-4">
+      <h3 className="text-lg font-semibold mb-4">{t("filters.title")}</h3>
 
-      <Divider plain>Country</Divider>
+      <Divider plain>{t("filters.country")}</Divider>
       <Select
         className="w-full mb-4"
         value={filters.country}
@@ -51,25 +56,25 @@ const FilterSideBar = ({ filters, onChange, onReset }) => {
         ))}
       </Select>
 
-      <Divider plain>Price Range</Divider>
+      <Divider plain>{t("filters.price_range")}</Divider>
       <div className="flex gap-2 mb-4">
         <InputNumber
           min={0}
-          placeholder="Min"
+          placeholder={t("filters.min")}
           className="w-full"
           value={filters.minPrice}
           onChange={(val) => onChange("minPrice", val)}
         />
         <InputNumber
           min={0}
-          placeholder="Max"
+          placeholder={t("filters.max")}
           className="w-full"
           value={filters.maxPrice}
           onChange={(val) => onChange("maxPrice", val)}
         />
       </div>
 
-      <Divider plain>Material</Divider>
+      <Divider plain>{t("filters.material")}</Divider>
       <Select
         className="w-full mb-4"
         value={filters.composition_metal}
@@ -83,7 +88,7 @@ const FilterSideBar = ({ filters, onChange, onReset }) => {
         ))}
       </Select>
 
-      <Divider plain>Grading</Divider>
+      <Divider plain>{t("filters.grading")}</Divider>
       <Select
         className="w-full mb-4"
         value={filters.coin_grading}
@@ -97,10 +102,10 @@ const FilterSideBar = ({ filters, onChange, onReset }) => {
         ))}
       </Select>
 
-      <Divider plain>Sort By</Divider>
+      <Divider plain>{t("filters.sort")}</Divider>
       <Select
         className="w-full mb-4"
-        placeholder="Sort by"
+        placeholder={t("filters.sort_placeholder")}
         value={
           filters.sort && filters.order
             ? `${filters.sort}-${filters.order}`
@@ -111,15 +116,44 @@ const FilterSideBar = ({ filters, onChange, onReset }) => {
       >
         {sortFields.map((s) => (
           <Option key={s.value} value={s.value}>
-            {s.label}
+            {s.value || s.label}
           </Option>
         ))}
       </Select>
 
       <Button onClick={onReset} block danger type="primary">
-        Reset Filters
+        {t("filters.reset")}
       </Button>
     </div>
+  );
+
+  return (
+    <>
+      {!screens.sm ? (
+        <>
+          <Button
+            type="primary"
+            onClick={() => setDrawerOpen(true)}
+            className="mb-4"
+            block
+          >
+            {t("filters.title")}
+          </Button>
+          <Drawer
+            title={t("filters.title")}
+            placement="left"
+            onClose={() => setDrawerOpen(false)}
+            open={drawerOpen}
+          >
+            {FilterForm()}
+          </Drawer>
+        </>
+      ) : (
+        <div className="sticky top-[7rem] self-start h-fit border rounded-md shadow-sm">
+          {FilterForm()}
+        </div>
+      )}
+    </>
   );
 };
 

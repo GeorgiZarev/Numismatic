@@ -3,10 +3,13 @@ import Title from "../components/Partial/Title";
 import { assets } from "../Assets/ObjFile";
 import { FaSquarePhone } from "react-icons/fa6";
 import { IoMail } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 const Contact = () => {
+  const { t } = useTranslation();
+
   return (
-    <div className=" min-h-screen py-16">
+    <div className="min-h-screen py-16">
       <div className="max-w-4xl mx-auto bg-gradient-to-r from-gray-50 to-white p-10 rounded shadow-lg">
         <div className="flex flex-col justify-center md:flex-row gap-10">
           <img
@@ -17,44 +20,41 @@ const Contact = () => {
 
           <div className="flex flex-col justify-center items-start gap-6">
             <div className="text-center text-2xl mb-8">
-              <Title text1={"CONTACT"} text2={"US"} />
-              <p className="text-gray-500 mt-2">We’d love to hear from you!</p>
+              <Title text1={t("contact.title")} text2="" />
+              <p className="text-gray-500 mt-2">{t("contact.subtitle")}</p>
             </div>
 
             <p className="font-semibold text-xl text-gray-700">
-              {" "}
-              Write Us an Email at:
+              {t("contact.email_label")}
             </p>
 
             <p className="text-gray-500 hover:text-gray-700 cursor-pointer break-normal">
-              {/* Write us an email at: <br /> */}
               <a
-                href="mailto:mail@mail.com"
+                href={`mailto:${t("contact.email")}`}
                 className="inline-flex items-center gap-2 hover:text-gray-700 no-underline"
               >
-                <IoMail /> mail@mail.com
+                <IoMail /> {t("contact.email")}
               </a>
             </p>
 
             <p className="font-semibold text-xl text-gray-700">
-              {" "}
-              Give Us a Phone Call:
+              {t("contact.phone_label")}
             </p>
 
             <p className="text-gray-500 hover:text-gray-700 cursor-pointer">
               <a
-                href="tel:+123456789"
+                href={`tel:${t("contact.phone1")}`}
                 className="inline-flex items-center gap-2 hover:text-gray-800 no-underline"
               >
-                <FaSquarePhone /> +123456789
+                <FaSquarePhone /> {t("contact.phone1")}
               </a>
             </p>
             <p className="text-gray-500 hover:text-gray-700 cursor-pointer">
               <a
-                href="tel:+123456789"
+                href={`tel:${t("contact.phone2")}`}
                 className="inline-flex items-center gap-2 hover:text-gray-800 no-underline"
               >
-                <FaSquarePhone /> +359 88888
+                <FaSquarePhone /> {t("contact.phone2")}
               </a>
             </p>
           </div>

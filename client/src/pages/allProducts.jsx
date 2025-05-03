@@ -6,6 +6,8 @@ import FilterSideBar from "../components/filters/FilterSideBar";
 import BannerProducts from "../components/cards/BannerProducts";
 import SmallCoinCard from "../components/cards/SmallCoinCard";
 import Title from "../components/Partial/Title";
+import { useTranslation } from "react-i18next";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const parseParamsToFilters = (params) => ({
   country: params.get("country") || "All",
@@ -17,11 +19,17 @@ const parseParamsToFilters = (params) => ({
   order: params.get("order") || "",
 });
 
+const ITEMS_PER_PAGE = 12;
+
 const AllProducts = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState(() =>
     parseParamsToFilters(searchParams)
   );
+  const { t } = useTranslation();
+
+  const [page, setPage] = useState(1);
+  const [visibleCoins, setVisibleCoins] = useState([]);
 
   useEffect(() => {
     const clean = { ...filters };
@@ -31,6 +39,7 @@ const AllProducts = () => {
       }
     });
     setSearchParams(clean);
+    setPage(1);
   }, [filters, setSearchParams]);
 
   const {
@@ -47,6 +56,19 @@ const AllProducts = () => {
     },
     staleTime: 1000 * 60 * 5,
   });
+
+  useEffect(() => {
+    if (coins) {
+      setVisibleCoins(coins.slice(0, ITEMS_PER_PAGE));
+    }
+  }, [coins]);
+
+  const fetchMoreData = () => {
+    const nextPage = page + 1;
+    const nextSlice = coins.slice(0, nextPage * ITEMS_PER_PAGE);
+    setVisibleCoins(nextSlice);
+    setPage(nextPage);
+  };
 
   const updateFilter = (field, value) => {
     setFilters((prev) => ({
@@ -83,30 +105,47 @@ const AllProducts = () => {
         <div className="flex-1">
           <div className="flex justify-between items-center text-base sm:text-xl mb-4">
             <Title
-              text1={(filters.country || "All").toUpperCase()}
-              text2="ITEMS"
+              text1={(filters.country === "All"
+                ? t("products.All")
+                : filters.country
+              ).toUpperCase()}
+              text2={t("products.Items").toUpperCase()}
             />
           </div>
 
           {isLoading && <p>Loading...</p>}
           {isError && <p className="text-red-500">{error.message}</p>}
-          {!isLoading && coins?.length === 0 && (
+          {!isLoading && visibleCoins.length === 0 && (
             <p className="text-red-500 text-lg font-medium">
-              No products found in this category
+              {t("products.noResults")}
             </p>
           )}
 
-          {coins?.map((coin) => (
-            <SmallCoinCard
-              key={coin.id}
-              id={coin.id}
-              name={coin.name}
-              price={coin.price}
-              image={coin.photo_url}
-              description={`${coin.denomination}. ${coin.year} . ${coin.country} . ${coin.material}`}
-              flagImage={coin.country}
-            />
-          ))}
+          <InfiniteScroll
+            dataLength={visibleCoins.length}
+            next={fetchMoreData}
+            hasMore={visibleCoins.length < (coins?.length || 0)}
+            loader={<p className="text-center py-4">Loading more...</p>}
+            endMessage={
+              visibleCoins.length > 0 ? (
+                <p className="text-center text-gray-500 py-4">
+                  {t("products.noMore")}
+                </p>
+              ) : null
+            }
+          >
+            {visibleCoins.map((coin) => (
+              <SmallCoinCard
+                key={coin.id}
+                id={coin.id}
+                name={coin.name}
+                price={coin.price}
+                image={coin.photo_url}
+                description={`${coin.denomination}. ${coin.year} . ${coin.country} . ${coin.material}`}
+                flagImage={coin.country}
+              />
+            ))}
+          </InfiniteScroll>
         </div>
       </div>
     </div>

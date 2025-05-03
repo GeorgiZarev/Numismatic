@@ -1,8 +1,10 @@
 import React from "react";
 // import CatalogGrid from "../Partial/CatalogGrid.jsx";
 import { assets } from "../../Assets/ObjFile";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
+  const { t } = useTranslation();
   return (
     <>
       <div
@@ -17,14 +19,16 @@ const Header = () => {
           <div className="text-[#edce8a]">
             <div className="flex items-center gap-2">
               <p className="w-8 md:w-11 h-[2px] bg-[#edce8a]"></p>
-              <p className="font-medium text-sm md:text-base">Coins with</p>
+              <p className="font-medium text-sm md:text-base">
+                {t("header.coins_with")}
+              </p>
             </div>
             <h1 className="monoton-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed">
-              COINS
+              {t("header.coins")}
             </h1>
             <div className="flex items-center gap-2">
               <p className="font-semibold text-sm md:text-base">
-                Numismatic value
+                {t("header.numismatic_value")}
               </p>
               <p className="w-8 md:w-11 h-[1px] bg-[#edce8a]"></p>
             </div>

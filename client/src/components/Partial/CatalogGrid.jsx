@@ -6,6 +6,7 @@ import { createShopContext } from "../../Contexts/createContext.jsx";
 import ProductGrid from "../Partial/ProductGrid.jsx";
 // import CategoryGrid from "./CategoryGrid.jsx";
 import Title from "./Title.jsx";
+import { useTranslation } from "react-i18next";
 
 // import SmallCoinCard from "../cards/SmallCoinCard.jsx";
 import { Content } from "antd/es/layout/layout.js";
@@ -13,6 +14,7 @@ import { Content } from "antd/es/layout/layout.js";
 const CatalogGrid = () => {
   const { products } = useContext(createShopContext);
   const [catalogProducts, setCatalogProducts] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setCatalogProducts(products.slice(0, 10));
@@ -21,7 +23,7 @@ const CatalogGrid = () => {
   return (
     <div className="my-10">
       <div className="text-center pb-[1rem] pt-[2rem] text-3xl">
-        <Title text1={"OUR"} text2={"COINS"} />
+        <Title text1={t("home.our")} text2={t("home.coins")} />
         <p className="pt-serif-regular w-3/4 m-auto pb-[3rem] text-xs sm:text-sm md:text-base text-gray-500">
           {/*TODO put some text here */}
         </p>
