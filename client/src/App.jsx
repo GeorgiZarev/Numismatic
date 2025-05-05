@@ -26,6 +26,7 @@ import "./Assets/ObjFile.js";
 import "./App.css";
 import Login from "./pages/login.jsx";
 import CoinCreate from "./pages/CoinCreate.jsx";
+import Consumables from "./pages/Consumables.jsx";
 
 const App = () => {
   return (
@@ -38,7 +39,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/all-products" element={<AllProducts />} />{" "}
+        <Route path="/all-products" element={<AllProducts />} />
+        <Route path="/consumables" element={<Consumables />} />
         {/* /:productId" */}
         <Route path="/product/:id" element={<LargeCoinCard />} />
         <Route path="/place-order" element={<PlaceOrder />} />

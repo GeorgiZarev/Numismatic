@@ -44,7 +44,10 @@
     "products": "Products",
     "about": "About",
     "contact": "Contact",
-    "login": "Login"
+    "login": "Login",
+    "logout": "Logout",
+    "create_coin": "Create Coin",
+    "consumables": "Consumables"
   },
   "products": {
     "All": "All",

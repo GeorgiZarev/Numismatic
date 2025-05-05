@@ -32,12 +32,11 @@ const AllProducts = () => {
   const [visibleCoins, setVisibleCoins] = useState([]);
   const { t } = useTranslation();
 
-  // 🔁 Sync filters and input from URL when searchParams change
   useEffect(() => {
     const newFilters = parseParamsToFilters(searchParams);
     setFilters(newFilters);
     setLiveSearch(newFilters.search);
-    setPage(1); // reset pagination on filter change
+    setPage(1);
   }, [searchParams]);
 
   const {
@@ -123,7 +122,16 @@ const AllProducts = () => {
             placeholder="Search coins..."
             className="border px-3 py-2 rounded w-full sm:w-1/2 mb-6"
             value={liveSearch}
-            onChange={(e) => setLiveSearch(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setLiveSearch(value);
+
+              if (value.trim() === "") {
+                const newFilters = { ...filters, search: "" };
+                if (newFilters.country === "All") delete newFilters.country;
+                setSearchParams(newFilters);
+              }
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 const newFilters = { ...filters, search: liveSearch };

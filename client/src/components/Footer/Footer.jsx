@@ -49,7 +49,7 @@ function Footer() {
         <hr />
         <br />
         <p className="text-xs sm:text-sm text-gray-500">
-          © 2025 Numisora - {t("footer.copyright")}
+          © 2025 Numisora - copyright
         </p>
       </div>
     </div>

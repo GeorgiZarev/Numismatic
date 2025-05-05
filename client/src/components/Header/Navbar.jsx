@@ -1,12 +1,23 @@
 import React from "react";
-import { IoSearch } from "react-icons/io5";
 import { assets } from "../../Assets/ObjFile";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../Contexts/authContext";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = React.useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
   const { t, i18n } = useTranslation();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -35,6 +46,10 @@ const Navbar = () => {
           <p>{t("nav.products")}</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
+        <NavLink to="/consumables" className="flex flex-col items-center gap-1">
+          <p>{t("nav.consumables")}</p>
+          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
+        </NavLink>
         <NavLink to="/about" className="flex flex-col items-center gap-1">
           <p>{t("nav.about")}</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
@@ -47,8 +62,6 @@ const Navbar = () => {
 
       {/* Right Side Icons */}
       <div className="flex items-center gap-3">
-        <IoSearch className="w-5 h-6 cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110" />
-
         {/* Language Switcher */}
         <div className="flex gap-1">
           <button
@@ -68,27 +81,41 @@ const Navbar = () => {
             🇧🇬
           </button>
         </div>
-
         <Link to="/cart" className="relative">
           <img src={assets.cart_icon} className="w-5 min-w-5" alt="cart icon" />
           <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
             0
           </p>
         </Link>
-
         <img
           onClick={() => setShowMenu(true)}
           src={assets.menu_icon}
           className="w-5 cursor-pointer sm:hidden"
           alt="menu"
         />
-
         <Link
           to="/login"
           className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
         >
           {t("nav.login")}
         </Link>
+        {user ? (
+          <Link
+            onClick={handleLogout}
+            to="/"
+            className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
+          >
+            {t("nav.logout")}
+          </Link>
+        ) : null}
+        {user ? (
+          <Link
+            to="/create-coin"
+            className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
+          >
+            {t("nav.create_coin")}
+          </Link>
+        ) : null}
       </div>
 
       {/* Mobile Menu */}

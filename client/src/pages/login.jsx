@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Contexts/authContext"; // <- your auth context
+import { useAuth } from "../Contexts/authContext";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -13,9 +13,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //const response = await postData("/auth/login", credentials);
       await login(credentials);
-      navigate("/create-coin");
+      navigate("/");
     } catch (error) {
       console.error("Login failed", error);
     }

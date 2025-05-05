@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useAuth } from "../Contexts/authContext";
 import { useCoins } from "../hooks/useCoins";
 import { useNavigate } from "react-router-dom";
 
 const CoinCreate = () => {
   const { createCoin } = useCoins();
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -78,26 +76,9 @@ const CoinCreate = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
-
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       {/* 🔴 Logout */}
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-        >
-          Logout
-        </button>
-      </div>
 
       <h1 className="text-2xl font-bold mb-6 text-center">Create New Coin</h1>
 
@@ -285,7 +266,7 @@ const CoinCreate = () => {
         <button
           type="submit"
           disabled={loading}
-          className="col-span-1 sm:col-span-2 bg-orange-500 text-white p-2 rounded hover:bg-orange-600"
+          className="col-span-1 sm:col-span-2 bg-green-500 text-white p-2 rounded hover:bg-orange-600"
         >
           {loading ? "Creating..." : "Create Coin"}
         </button>
