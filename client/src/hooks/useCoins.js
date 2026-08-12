@@ -1,13 +1,6 @@
 import { useState, useCallback } from "react";
 import { buildQueryString } from "../utils/queryHelpers.js";
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:3001/api";
-
-const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
-});
+import { axiosInstance } from "../utils/axios.js";
 
 export const useCoins = () => {
   const [coins, setCoins] = useState([]);

@@ -16,7 +16,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      process.env.CLIENT_URL,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    ].filter(Boolean),
     credentials: true,
   })
 );
@@ -32,7 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/coins", coinRoutes);
 
 initDB().then(() => {
-  const PORT = process.env.DEV_PORT;
+  const PORT = process.env.PORT || process.env.DEV_PORT || 3001;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
 
