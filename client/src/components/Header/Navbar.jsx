@@ -120,7 +120,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${
+        className={`fixed inset-y-0 right-0 z-[100] overflow-y-auto bg-white transition-all sm:hidden ${
           showMenu ? "w-full" : "w-0"
         }`}
       >
