@@ -1,234 +1,74 @@
-import React from "react";
-import { assets } from "../../Assets/ObjFile";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useCallback, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiMenu, FiShoppingBag } from "react-icons/fi";
+import { assets } from "../../Assets/ObjFile";
 import { useAuth } from "../../Contexts/authContext";
 import { useCart } from "../../Contexts/cartContext";
+import LanguageSwitch from "./LanguageSwitch";
+import MobileMenu from "./MobileMenu";
+import NavLinks from "./NavLinks";
+import AccountMenu from "./AccountMenu";
 
 const Navbar = () => {
-  const [showMenu, setShowMenu] = React.useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const adminEmails = (process.env.REACT_APP_ADMIN_EMAILS || "admin@gmail.com")
     .split(",")
     .map((email) => email.trim().toLowerCase());
   const isAdmin = adminEmails.includes(user?.email?.toLowerCase());
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  const { t, i18n } = useTranslation();
   const handleLogout = async () => {
     try {
       await logout();
       navigate("/");
-    } catch (err) {
-      console.error("Logout failed", err);
+    } catch (error) {
+      console.error("Logout failed", error);
     }
   };
 
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-  };
-
   return (
-    <div className="sticky top-0 z-50 bg-white flex items-center justify-between py-5 font-medium shadow-sm">
-      <div className="flex items-center h-16">
-        <img
-          src={assets.logo2}
-          className="h-12 w-auto object-contain"
-          alt="Logo here"
-        />
-      </div>
-
-      {/* Desktop Nav */}
-      <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
-        <NavLink to="/" className="flex flex-col items-center gap-1">
-          <p>{t("nav.home")}</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
-        <NavLink
-          to="/all-products"
-          className="flex flex-col items-center gap-1"
-        >
-          <p>{t("nav.products")}</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
-        <NavLink to="/about" className="flex flex-col items-center gap-1">
-          <p>{t("nav.about")}</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
-        <NavLink to="/contact" className="flex flex-col items-center gap-1">
-          <p>{t("nav.contact")}</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
-      </ul>
-
-      {/* Right Side Icons */}
-      <div className="flex items-center gap-3">
-        {/* Language Switcher */}
-        <div className="flex gap-1">
-          <button
-            onClick={() => changeLanguage("en")}
-            className={`text-xs px-2 py-1 rounded ${
-              i18n.language === "en" ? "bg-gray-200 font-bold" : ""
-            }`}
-          >
-            🇬🇧
-          </button>
-          <button
-            onClick={() => changeLanguage("bg")}
-            className={`text-xs px-2 py-1 rounded ${
-              i18n.language === "bg" ? "bg-gray-200 font-bold" : ""
-            }`}
-          >
-            🇧🇬
-          </button>
-        </div>
-        <Link to="/cart" className="relative">
-          <img src={assets.cart_icon} className="w-5 min-w-5" alt="cart icon" />
-          <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
-            {itemCount}
-          </p>
+    <header className="sticky top-0 z-50 -mx-4 border-b border-[#e7eae8] bg-white px-4 sm:-mx-[5vw] sm:px-[5vw] md:-mx-[7vw] md:px-[7vw] lg:-mx-[9vw] lg:px-[9vw]">
+      <div className="flex h-[76px] items-center justify-between gap-5">
+        <Link to="/" aria-label="Numisora home" className="shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]">
+          <img src={assets.logo2} alt="Numisora" className="h-10 w-auto object-contain sm:h-11" />
         </Link>
-        <img
-          onClick={() => setShowMenu(true)}
-          src={assets.menu_icon}
-          className="w-5 cursor-pointer sm:hidden"
-          alt="menu"
-        />
-        {user ? (
-          <Link
-            to="/profile"
-            className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
-          >
-            Profile
-          </Link>
-        ) : (
-          <Link
-            to="/login"
-            className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
-          >
-            {t("nav.login")}
-          </Link>
-        )}
-        {user ? (
-          <Link
-            onClick={handleLogout}
-            to="/"
-            className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
-          >
-            {t("nav.logout")}
-          </Link>
-        ) : null}
-        {isAdmin ? (
-          <Link
-            to="/admin"
-            className="bg-gray-700 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
-          >
-            Admin
-          </Link>
-        ) : null}
-      </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`fixed inset-y-0 right-0 z-[100] overflow-y-auto bg-white transition-all sm:hidden ${
-          showMenu ? "w-full" : "w-0"
-        }`}
-      >
-        <div className={`flex flex-col text-gray-600`}>
-          <div
-            onClick={() => setShowMenu(false)}
-            className="flex items-center gap-4 p-3 cursor-pointer"
-          >
-            <img
-              src={assets.dropdown_icon}
-              className="h-4 rotate-180"
-              alt="dropdown icon"
-            />
-            <p>Back</p>
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
+          <NavLinks t={t} isAdmin={isAdmin} />
+        </nav>
+
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="hidden lg:block">
+            <LanguageSwitch language={i18n.language} onChange={i18n.changeLanguage.bind(i18n)} />
           </div>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/"
-          >
-            {t("nav.home")}
-          </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/all-products"
-          >
-            {t("nav.products")}
-          </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/about"
-          >
-            {t("nav.about")}
-          </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/contact"
-          >
-            {t("nav.contact")}
-          </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/cart"
-          >
-            Cart ({itemCount})
-          </NavLink>
-          {user ? (
-            <NavLink
-              onClick={() => setShowMenu(false)}
-              className="py-2 pl-6 border"
-              to="/profile"
-            >
-              Profile
-            </NavLink>
-          ) : (
-            <NavLink
-              onClick={() => setShowMenu(false)}
-              className="py-2 pl-6 border"
-              to="/login"
-            >
-              {t("nav.login")}
-            </NavLink>
-          )}
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/orders"
-          >
-            My orders
-          </NavLink>
-          {isAdmin ? (
-            <NavLink
-              onClick={() => setShowMenu(false)}
-              className="py-2 pl-6 border"
-              to="/admin"
-            >
-              Admin
-            </NavLink>
-          ) : null}
-          {user ? (
-            <button
-              onClick={() => {
-                setShowMenu(false);
-                handleLogout();
-              }}
-              className="text-left py-2 pl-6 border"
-            >
-              {t("nav.logout")}
-            </button>
-          ) : null}
+          <Link to="/cart" aria-label={`Cart, ${itemCount} items`} title="Cart" className="relative grid h-11 w-11 place-items-center rounded-md text-[#273b35] transition-colors hover:bg-[#f1f3f2]">
+            <FiShoppingBag size={21} strokeWidth={1.8} />
+            {itemCount > 0 && <span className="absolute right-0 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-[#c3683e] px-1 text-[11px] font-semibold text-white">{itemCount}</span>}
+          </Link>
+          <AccountMenu user={user} isAdmin={isAdmin} onLogout={handleLogout} t={t} />
+          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} className="grid h-11 w-11 place-items-center rounded-md text-[#273b35] hover:bg-[#f1f3f2] lg:hidden">
+            <FiMenu size={23} strokeWidth={1.8} />
+          </button>
         </div>
       </div>
-    </div>
+
+      <MobileMenu
+        open={menuOpen}
+        onClose={closeMenu}
+        user={user}
+        isAdmin={isAdmin}
+        itemCount={itemCount}
+        language={i18n.language}
+        onLanguageChange={i18n.changeLanguage.bind(i18n)}
+        onLogout={handleLogout}
+        t={t}
+      />
+    </header>
   );
 };
 

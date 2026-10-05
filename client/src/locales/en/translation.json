@@ -46,6 +46,11 @@
     "contact": "Contact",
     "login": "Login",
     "logout": "Logout",
+    "cart": "Cart",
+    "profile": "My profile",
+    "orders": "My orders",
+    "admin": "Admin",
+    "menu": "Menu",
     "create_coin": "Create Coin",
     "consumables": "Consumables"
   },
