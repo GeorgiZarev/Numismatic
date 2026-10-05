@@ -1,3 +1,5 @@
+import { formatMoney } from "../../utils/money";
+
 const AdminProductList = ({ coins, onDelete, onEdit }) => {
   if (coins.length === 0) {
     return <p className="text-gray-600">No products found.</p>;
@@ -29,12 +31,12 @@ const AdminProductList = ({ coins, onDelete, onEdit }) => {
                   <div>
                     <p className="font-semibold">{coin.name}</p>
                     <p className="text-gray-500">
-                      {coin.country} {coin.year}
+                      {coin.product_type === "consumable" ? "Consumable" : `${coin.country || ""} ${coin.year || ""}`}
                     </p>
                   </div>
                 </div>
               </td>
-              <td className="p-3">{Number(coin.price).toFixed(2)} BGN</td>
+              <td className="p-3">{formatMoney(coin.price)}</td>
               <td className="p-3">
                 <span className="rounded bg-gray-100 px-3 py-1">
                   {coin.status || "active"}

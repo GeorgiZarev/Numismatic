@@ -29,7 +29,7 @@ const CoinCreate = () => {
 
     try {
       await createCoin(buildCoinFormData(formData));
-      navigate("/");
+      navigate("/admin/products");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         const backendError = err.response.data.error;
@@ -50,7 +50,7 @@ const CoinCreate = () => {
 
   return (
     <div className="max-w-3xl mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-6 text-center">Create New Coin</h1>
+      <h2 className="text-2xl font-bold mb-6 text-center">Create product</h2>
       <CoinAdminForm
         formData={formData}
         loading={loading}

@@ -33,7 +33,7 @@ export const CartProvider = ({ children }) => {
           id: coin.id,
           name: coin.name,
           price: Number(coin.price),
-          currency: coin.currency || "BGN",
+          currency: "EUR",
           photo_url: coin.photo_url,
           country: coin.country,
           year: coin.year,

@@ -5,7 +5,7 @@ export const createShopContext = createContext();
 
 const CreateShopContextProvider = (props) => {
     
-    const currency = 'лв.';
+    const currency = '€';
     //const delivery_fee = 0;
 
     const value = {
@@ -21,4 +21,3 @@ const CreateShopContextProvider = (props) => {
 };
 
 export default CreateShopContextProvider;
-

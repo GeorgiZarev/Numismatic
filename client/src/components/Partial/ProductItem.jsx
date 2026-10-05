@@ -1,25 +1,17 @@
-import React, { useContext } from "react";
-import { createShopContext } from "../../Contexts/createContext";
+import React from "react";
 import { Link } from "react-router-dom";
+import { formatMoney } from "../../utils/money";
 
-const ProductItem = ({ id, image, name, price }) => {
-  const { currency } = useContext(createShopContext);
-
-  return (
-    <Link className="text-gray-600 cursor-pointer" to={`/product/${id}`}>
-      <div className="overflow-hidden">
-        <img
-          className="hover:scale-110 transition ease-in-out"
-          src={image || "https://placehold.co/300x300"}
-          alt={name}
-        />
-      </div>
-      <p className="pt-3 pv-1 text-sm">{name}</p>
-      <p className="text-sm font-medium">
-        {price} {currency}
-      </p>
-    </Link>
-  );
-};
+const ProductItem = ({ id, image, name, price, type }) => (
+  <Link to={`/product/${id}`} className="group min-w-0 border border-gray-200 bg-white rounded-md overflow-hidden hover:shadow-md transition-shadow">
+    <div className="aspect-square w-full bg-gray-50 flex items-center justify-center p-5 overflow-hidden">
+      {image ? <img src={image} alt={name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" /> : <span className="text-sm text-gray-500">Photo coming soon</span>}
+    </div>
+    <div className="p-4 min-h-24 flex flex-col justify-between gap-2">
+      <div><p className="text-xs uppercase text-gray-500">{type === "consumable" ? "Consumable" : "Coin"}</p><h3 className="text-base font-semibold text-gray-900 line-clamp-2">{name}</h3></div>
+      <p className="font-semibold text-gray-900">{formatMoney(price)}</p>
+    </div>
+  </Link>
+);
 
 export default ProductItem;

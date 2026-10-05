@@ -15,6 +15,7 @@ export const coinCreationSchema = Joi.object({
     "string.empty": "Coin name is required",
     "any.required": "Coin name is required",
   }),
+  description: Joi.string().allow("").max(5000).optional(),
   photo_url: Joi.string().uri().optional().messages({
     "string.uri": "A valid photo URL is required",
     "any.required": "Photo URL is required",
@@ -27,20 +28,20 @@ export const coinCreationSchema = Joi.object({
     .integer()
     .min(1700)
     .max(new Date().getFullYear())
-    .required()
+    .when("product_type", { is: "consumable", then: Joi.optional(), otherwise: Joi.required() })
     .messages({
       "number.base": "Year must be a number",
       "number.min": "Year must be after 1700",
       "number.max": "Year must not be in the future",
       "any.required": "Year is required",
     }),
-  currency: Joi.string().required().messages({
+  currency: Joi.string().valid("EUR").default("EUR").messages({
     "string.empty": "Currency is required",
     "any.required": "Currency is required",
   }),
   country: Joi.string()
     .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece")
-    .required()
+    .when("product_type", { is: "consumable", then: Joi.optional(), otherwise: Joi.required() })
     .messages({
       "any.only": "Country must be a valid Balkan country",
       "any.required": "Country is required",
@@ -61,12 +62,14 @@ export const coinCreationSchema = Joi.object({
   coin_grading: Joi.string().optional(),
   number: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
+  product_type: Joi.string().valid("coin", "consumable").default("coin"),
 });
 
 export const updateCoinSchema = Joi.object({
   name: Joi.string().messages({
     "string.base": "Coin name must be a string",
   }),
+  description: Joi.string().allow("").max(5000),
   photo_url: Joi.string().uri().messages({
     "string.uri": "A valid photo URL is required",
   }),
@@ -82,7 +85,7 @@ export const updateCoinSchema = Joi.object({
       "number.min": "Year must be after 1700",
       "number.max": "Year must not be in the future",
     }),
-  currency: Joi.string().messages({
+  currency: Joi.string().valid("EUR").messages({
     "string.base": "Currency must be a string",
   }),
   country: Joi.string()
@@ -107,6 +110,7 @@ export const updateCoinSchema = Joi.object({
   coin_grading: Joi.string(),
   number: Joi.string(),
   status: Joi.string().valid("active", "draft", "sold", "hidden"),
+  product_type: Joi.string().valid("coin", "consumable"),
 })
   .min(1)
   .messages({
@@ -129,6 +133,7 @@ export const coinQuerySchema = Joi.object({
   coin_grading: Joi.string().optional(),
   search: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
+  product_type: Joi.string().valid("coin", "consumable").optional(),
   includeUnavailable: Joi.string().valid("true", "false").optional(),
 
   minPrice: Joi.number().min(0).optional(),

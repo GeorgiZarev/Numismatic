@@ -9,6 +9,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
 import coinRoutes from "./routes/coinRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
 import cookieParser from "cookie-parser";
 
 loadEnvConfig();
@@ -53,6 +54,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/coins", coinRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/addresses", addressRoutes);
 
 initDB().then(() => {
   const PORT = process.env.PORT || process.env.DEV_PORT || 3001;

@@ -4,10 +4,13 @@ import { useCoins } from "../../hooks/useCoins";
 import { useAuth } from "../../Contexts/authContext";
 import { useTranslation } from "react-i18next";
 import { useCart } from "../../Contexts/cartContext";
+import { formatMoney } from "../../utils/money";
 
 const LargeCoinCard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const adminEmails = (process.env.REACT_APP_ADMIN_EMAILS || "admin@gmail.com").split(",").map((email) => email.trim().toLowerCase());
+  const isAdmin = adminEmails.includes(user?.email?.toLowerCase());
   const navigate = useNavigate();
   const { id } = useParams();
   const { getCoin, deleteCoin, updateCoin } = useCoins();
@@ -91,15 +94,13 @@ const LargeCoinCard = () => {
 
   return (
     <div className="max-w-[1200px] mx-auto p-6 bg-gray-100 rounded-xl shadow-lg">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900 text-center">
-        {t("coinDetails.title")}
-      </h1>
+      <h1 className="mb-8 text-3xl font-bold text-gray-900 text-center">{coin.name}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column */}
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-            {[1, 2].map((i) => (
+          <div className="grid grid-cols-1 gap-5 mb-8">
+            {[1].map((i) => (
               <div
                 key={i}
                 className="bg-gray-100 rounded-lg overflow-hidden aspect-square"
@@ -113,7 +114,7 @@ const LargeCoinCard = () => {
             ))}
           </div>
 
-          <div className="p-7 border border-gray-200 rounded-lg shadow-sm mb-8">
+          {coin.product_type !== "consumable" && <div className="p-7 border border-gray-200 rounded-lg shadow-sm mb-8">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
               <span className="text-orange-500">•</span>{" "}
               {t("coinDetails.front_features")}
@@ -135,27 +136,29 @@ const LargeCoinCard = () => {
             <p className="leading-relaxed text-gray-600">
               {t("coinDetails.mint_desc")}
             </p>
-          </div>
+          </div>}
         </div>
 
         {/* Right Column */}
         <div>
           <div className="text-left pb-6 border-b-2 border-orange-500 mb-8">
             <h1 className="text-2xl font-bold text-gray-900 leading-snug">
-              {t("coinDetails.info")}
+              {coin.product_type === "consumable" ? "Product details" : t("coinDetails.info")}
             </h1>
             <div className="flex items-center gap-3 mt-4">
               <span className="text-2xl font-bold text-orange-600">
-                {coin.price} {coin.currency}
+                {formatMoney(coin.price)}
               </span>
             </div>
           </div>
+
+          {coin.description && <p className="text-gray-700 leading-relaxed mb-6 whitespace-pre-line">{coin.description}</p>}
 
           <div className="p-6 border rounded-lg shadow-sm mb-8">
             <div className="grid grid-cols-2 gap-1">
               {[
                 { label: t("coinDetails.name"), key: "name" },
-                { label: t("coinDetails.country"), key: "country" },
+                ...(coin.product_type === "consumable" ? [] : [{ label: t("coinDetails.country"), key: "country" },
                 { label: t("coinDetails.year"), key: "year" },
                 { label: t("coinDetails.material"), key: "composition_metal" },
                 { label: t("coinDetails.monarch"), key: "monarch" },
@@ -166,7 +169,7 @@ const LargeCoinCard = () => {
                 { label: t("coinDetails.lettering"), key: "lettering" },
                 { label: t("coinDetails.mintage"), key: "mintage" },
                 { label: t("coinDetails.mint_place"), key: "mint_place" },
-                { label: t("coinDetails.coin_grading"), key: "coin_grading" },
+                { label: t("coinDetails.coin_grading"), key: "coin_grading" }]),
               ].map(({ label, key }) => (
                 <React.Fragment key={key}>
                   <div className="text-orange-500 font-semibold">{label}</div>
@@ -204,16 +207,17 @@ const LargeCoinCard = () => {
           </div>
 
           <button
+            disabled={coin.status && coin.status !== "active"}
             onClick={() => {
               addToCart(coin);
               navigate("/cart");
             }}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded w-full mb-4"
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded w-full mb-4 disabled:bg-gray-500"
           >
-            Add to cart
+            {coin.status && coin.status !== "active" ? "Unavailable" : "Add to cart"}
           </button>
 
-          {user && (
+          {isAdmin && (
             <div className="flex flex-col gap-4 mt-4">
               <div className="flex gap-4">
                 {editMode ? (

@@ -1,3 +1,5 @@
+import { formatMoney } from "../../utils/money";
+
 const AdminOrderDetail = ({ order, onClose }) => {
   if (!order) return null;
 
@@ -44,7 +46,7 @@ const AdminOrderDetail = ({ order, onClose }) => {
                 <div className="flex-1">
                   <p className="font-medium">{item.coin_name}</p>
                   <p className="text-sm text-gray-600">
-                    {item.quantity} x {Number(item.price).toFixed(2)} BGN
+                    {item.quantity} x {formatMoney(item.price)}
                   </p>
                 </div>
               </div>
@@ -52,7 +54,7 @@ const AdminOrderDetail = ({ order, onClose }) => {
           </div>
           <div className="border-t mt-4 pt-4 flex justify-between font-bold">
             <span>Total</span>
-            <span>{Number(order.total).toFixed(2)} BGN</span>
+            <span>{formatMoney(order.total)}</span>
           </div>
         </section>
       </div>

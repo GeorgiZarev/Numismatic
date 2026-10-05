@@ -1,13 +1,15 @@
 CREATE TABLE IF NOT EXISTS coins (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY, 
   name VARCHAR(255) NOT NULL,
+  description TEXT,
   photo_url VARCHAR(255),
   price DECIMAL(10,2) NOT NULL,
   monarch VARCHAR(255),
-  year INTEGER NOT NULL,
+  year INTEGER,
   country VARCHAR DEFAULT 'Montenegro' CHECK (country IN ('Montenegro', 'Bulgaria', 'Serbia', 'Romania', 'Greece')),
   price_value VARCHAR,
   currency VARCHAR NOT NULL,
+  product_type VARCHAR(30) NOT NULL DEFAULT 'coin' CHECK (product_type IN ('coin', 'consumable')),
   composition_metal VARCHAR,
   weight VARCHAR,
   diameter VARCHAR,
@@ -25,5 +27,11 @@ CREATE TABLE IF NOT EXISTS coins (
 );
 
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS status VARCHAR(30) NOT NULL DEFAULT 'active';
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS product_type VARCHAR(30) NOT NULL DEFAULT 'coin';
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_product_type_check;
+ALTER TABLE coins ADD CONSTRAINT coins_product_type_check CHECK (product_type IN ('coin', 'consumable'));
+ALTER TABLE coins ALTER COLUMN year DROP NOT NULL;
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_status_check;
 ALTER TABLE coins ADD CONSTRAINT coins_status_check CHECK (status IN ('active', 'draft', 'sold', 'hidden'));
+UPDATE coins SET currency = 'EUR' WHERE currency IS DISTINCT FROM 'EUR';

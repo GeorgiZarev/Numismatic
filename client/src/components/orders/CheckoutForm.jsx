@@ -4,10 +4,12 @@ const CheckoutForm = ({
   loading,
   onChange,
   onSubmit,
+  addressSelector,
 }) => {
   return (
     <form onSubmit={onSubmit} className="bg-white border rounded-lg p-6 shadow-sm">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+      {addressSelector}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <input

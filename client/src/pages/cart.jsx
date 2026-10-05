@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../Contexts/cartContext";
+import { formatMoney } from "../utils/money";
 
 function Cart() {
   const { items, removeFromCart, total, updateQuantity } = useCart();
@@ -11,10 +12,10 @@ function Cart() {
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
         <h1 className="text-2xl font-semibold mb-3">Your cart is empty</h1>
         <p className="text-gray-600 mb-6">
-          Add a coin from the catalog before placing an order.
+          Add a product from the catalog before placing an order.
         </p>
         <Link to="/all-products" className="bg-orange-500 text-white px-5 py-3 rounded">
-          Browse coins
+          Browse products
         </Link>
       </div>
     );
@@ -40,7 +41,7 @@ function Cart() {
                 {item.country} {item.year ? `- ${item.year}` : ""}
               </p>
               <p className="text-orange-600 font-semibold mt-2">
-                {item.price.toFixed(2)} {item.currency}
+                {formatMoney(item.price)}
               </p>
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3">
@@ -66,7 +67,7 @@ function Cart() {
         <div>
           <p className="text-gray-600">Total</p>
           <p className="text-3xl font-bold text-gray-900">
-            {total.toFixed(2)} BGN
+            {formatMoney(total)}
           </p>
         </div>
         <button

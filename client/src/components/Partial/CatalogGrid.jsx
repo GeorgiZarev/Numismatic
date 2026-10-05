@@ -8,37 +8,19 @@ import Title from "./Title.jsx";
 import { useTranslation } from "react-i18next";
 
 // import SmallCoinCard from "../cards/SmallCoinCard.jsx";
-import { Content } from "antd/es/layout/layout.js";
+import { Link } from "react-router-dom";
 
 const CatalogGrid = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="my-10">
-      <div className="text-center pb-[1rem] pt-[2rem] text-3xl">
+    <section className="my-12">
+      <div className="text-center pb-7 text-2xl sm:text-3xl">
         <Title text1={t("home.our")} text2={t("home.coins")} />
-        <p className="pt-serif-regular w-3/4 m-auto pb-[3rem] text-xs sm:text-sm md:text-base text-gray-500">
-          {/*TODO put some text here */}
-        </p>
-
-        {/* <GridForHeader /> */}
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
-        {/* 
-                    {
-                    catalogProducts.map((item, index)=>(
-                        <ProductGrid key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
-                    ))
-                    }
-                */}
-      </div>
-      <Content className="flex flex-col items-center justify-center pb-[100px]">
-        <ProductGrid />
-      </Content>
-      <br />
-      {/*<CategoryGrid /> <br />*/}
-      {/* <SmallCoinCard /> */}
-    </div>
+      <ProductGrid />
+      <div className="text-center mt-8"><Link to="/all-products" className="inline-block border border-gray-900 px-6 py-3 text-gray-900 hover:bg-gray-900 hover:text-white">View all products</Link></div>
+    </section>
   );
 };
 

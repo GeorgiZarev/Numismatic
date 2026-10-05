@@ -52,10 +52,6 @@ const Navbar = () => {
           <p>{t("nav.products")}</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
         </NavLink>
-        <NavLink to="/consumables" className="flex flex-col items-center gap-1">
-          <p>{t("nav.consumables")}</p>
-          <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-        </NavLink>
         <NavLink to="/about" className="flex flex-col items-center gap-1">
           <p>{t("nav.about")}</p>
           <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
@@ -123,28 +119,12 @@ const Navbar = () => {
             {t("nav.logout")}
           </Link>
         ) : null}
-        {user ? (
-          <Link
-            to="/create-coin"
-            className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
-          >
-            {t("nav.create_coin")}
-          </Link>
-        ) : null}
         {isAdmin ? (
           <Link
-            to="/admin/orders"
-            className="bg-gray-900 hover:bg-black text-white text-xs px-3 py-1 rounded transition hidden sm:block"
-          >
-            Orders
-          </Link>
-        ) : null}
-        {isAdmin ? (
-          <Link
-            to="/admin/products"
+            to="/admin"
             className="bg-gray-700 hover:bg-gray-800 text-white text-xs px-3 py-1 rounded transition hidden sm:block"
           >
-            Products
+            Admin
           </Link>
         ) : null}
       </div>
@@ -180,13 +160,6 @@ const Navbar = () => {
             to="/all-products"
           >
             {t("nav.products")}
-          </NavLink>
-          <NavLink
-            onClick={() => setShowMenu(false)}
-            className="py-2 pl-6 border"
-            to="/consumables"
-          >
-            {t("nav.consumables")}
           </NavLink>
           <NavLink
             onClick={() => setShowMenu(false)}
@@ -237,18 +210,9 @@ const Navbar = () => {
             <NavLink
               onClick={() => setShowMenu(false)}
               className="py-2 pl-6 border"
-              to="/admin/orders"
+              to="/admin"
             >
-              Admin orders
-            </NavLink>
-          ) : null}
-          {isAdmin ? (
-            <NavLink
-              onClick={() => setShowMenu(false)}
-              className="py-2 pl-6 border"
-              to="/admin/products"
-            >
-              Admin products
+              Admin
             </NavLink>
           ) : null}
           {user ? (

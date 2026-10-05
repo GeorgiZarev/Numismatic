@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api/coins";
 import FilterSideBar from "../components/filters/FilterSideBar";
 import BannerProducts from "../components/cards/BannerProducts";
-import SmallCoinCard from "../components/cards/SmallCoinCard";
+import ProductItem from "../components/Partial/ProductItem";
 import Title from "../components/Partial/Title";
 import { useTranslation } from "react-i18next";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useCart } from "../Contexts/cartContext";
 
 const parseParamsToFilters = (params) => ({
   country: params.get("country") || "All",
-  material: params.get("material") || "",
+  composition_metal: params.get("composition_metal") || "",
   coin_grading: params.get("coin_grading") || "",
   minPrice: params.get("minPrice") || "",
   maxPrice: params.get("maxPrice") || "",
   sort: params.get("sort") || "",
   order: params.get("order") || "",
   search: params.get("search") || "",
+  product_type: params.get("product_type") === "consumable" ? "consumable" : "coin",
 });
 
 const ITEMS_PER_PAGE = 12;
@@ -32,8 +32,6 @@ const AllProducts = () => {
   const [page, setPage] = useState(1);
   const [visibleCoins, setVisibleCoins] = useState([]);
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
 
   useEffect(() => {
     const newFilters = parseParamsToFilters(searchParams);
@@ -85,34 +83,38 @@ const AllProducts = () => {
   const resetFilters = () => {
     const defaultFilters = {
       country: "All",
-      material: "",
+      composition_metal: "",
       coin_grading: "",
       minPrice: "",
       maxPrice: "",
       sort: "",
       order: "",
       search: "",
+      product_type: filters.product_type,
     };
     setFilters(defaultFilters);
-    setSearchParams({});
+    setSearchParams({ product_type: filters.product_type });
   };
 
   return (
     <div>
       <BannerProducts />
+      <div className="flex gap-2 border-b mt-8" role="tablist" aria-label="Product categories">
+        {[["coin", "Coins"], ["consumable", "Consumables"]].map(([type, label]) => <button key={type} type="button" role="tab" aria-selected={filters.product_type === type} onClick={() => setSearchParams({ product_type: type })} className={`px-5 py-3 border-b-2 text-base font-medium ${filters.product_type === type ? "border-orange-600 text-gray-900" : "border-transparent text-gray-600"}`}>{label}</button>)}
+      </div>
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 pt-10 border-t">
-        <div className="min-w-[15rem] sticky top-[7rem] self-start h-fit">
+        {filters.product_type === "coin" && <div className="min-w-[15rem] sticky top-[7rem] self-start h-fit">
           <FilterSideBar
             filters={filters}
             onChange={updateFilter}
             onReset={resetFilters}
           />
-        </div>
+        </div>}
 
         <div className="flex-1">
           <div className="flex justify-between items-center text-base sm:text-xl mb-4">
             <Title
-              text1={(filters.country === "All"
+              text1={(filters.product_type === "consumable" ? "All" : filters.country === "All"
                 ? t("products.All")
                 : filters.country
               ).toUpperCase()}
@@ -122,7 +124,7 @@ const AllProducts = () => {
 
           <input
             type="text"
-            placeholder="Search coins..."
+            placeholder={`Search ${filters.product_type === "coin" ? "coins" : "consumables"}...`}
             className="border px-3 py-2 rounded w-full sm:w-1/2 mb-6"
             value={liveSearch}
             onChange={(e) => {
@@ -146,13 +148,13 @@ const AllProducts = () => {
 
           {isLoading && <p>Loading...</p>}
           {isError && <p className="text-red-500">{error.message}</p>}
-          {!isLoading && visibleCoins.length === 0 && (
-            <p className="text-red-500 text-lg font-medium">
+          {!isLoading && !isError && visibleCoins.length === 0 && (
+            <p className="text-gray-600 text-base mb-8">
               {t("products.noResults")}
             </p>
           )}
 
-          <InfiniteScroll
+          {!isLoading && !isError && <InfiniteScroll
             dataLength={visibleCoins.length}
             next={fetchMoreData}
             hasMore={visibleCoins.length < (coins?.length || 0)}
@@ -165,23 +167,10 @@ const AllProducts = () => {
               ) : null
             }
           >
-            {visibleCoins.map((coin) => (
-              <SmallCoinCard
-                key={coin.id}
-                id={coin.id}
-                name={coin.name}
-                price={coin.price}
-                image={coin.photo_url}
-                description={`${coin.denomination}. ${coin.year} . ${coin.country} . ${coin.material}`}
-                flagImage={coin.country}
-                actionLabel="Add to cart"
-                onAction={() => {
-                  addToCart(coin);
-                  navigate("/cart");
-                }}
-              />
-            ))}
-          </InfiniteScroll>
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">{visibleCoins.map((coin) => (
+              <ProductItem key={coin.id} id={coin.id} image={coin.photo_url} name={coin.name} price={coin.price} type={coin.product_type} />
+            ))}</div>
+          </InfiniteScroll>}
         </div>
       </div>
     </div>

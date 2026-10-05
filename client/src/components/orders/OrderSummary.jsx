@@ -1,3 +1,5 @@
+import { formatMoney } from "../../utils/money";
+
 const OrderSummary = ({ items, total }) => {
   return (
     <aside className="bg-gray-50 border rounded-lg p-6 h-fit">
@@ -8,13 +10,13 @@ const OrderSummary = ({ items, total }) => {
             <span>
               {item.quantity} x {item.name}
             </span>
-            <span>{(item.price * item.quantity).toFixed(2)} BGN</span>
+            <span>{formatMoney(item.price * item.quantity)}</span>
           </div>
         ))}
       </div>
       <div className="border-t mt-4 pt-4 flex justify-between font-bold text-lg">
         <span>Total</span>
-        <span>{total.toFixed(2)} BGN</span>
+        <span>{formatMoney(total)}</span>
       </div>
     </aside>
   );

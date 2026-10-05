@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 const emptyProfile = {
   full_name: "",
   phone: "",
-  city: "",
-  address: "",
 };
 
 const ProfileForm = ({ user, onSave }) => {
@@ -17,8 +15,6 @@ const ProfileForm = ({ user, onSave }) => {
     setFormData({
       full_name: user?.full_name || "",
       phone: user?.phone || "",
-      city: user?.city || "",
-      address: user?.address || "",
     });
   }, [user]);
 
@@ -49,7 +45,7 @@ const ProfileForm = ({ user, onSave }) => {
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 border-t pt-6">
-      <h2 className="text-xl font-semibold mb-4">Delivery details</h2>
+      <h2 className="text-xl font-semibold mb-4">Contact details</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <input
           name="full_name"
@@ -63,20 +59,6 @@ const ProfileForm = ({ user, onSave }) => {
           value={formData.phone}
           onChange={handleChange}
           placeholder="Phone number"
-          className="border p-3 rounded"
-        />
-        <input
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          placeholder="City"
-          className="border p-3 rounded"
-        />
-        <input
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          placeholder="Address or courier office"
           className="border p-3 rounded"
         />
       </div>

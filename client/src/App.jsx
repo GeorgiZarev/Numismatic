@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "./i18n";
 
 import Navbar from "./components/Header/Navbar.jsx";
@@ -26,7 +26,7 @@ import "./Assets/ObjFile.js";
 import "./App.css";
 import Login from "./pages/login.jsx";
 import CoinCreate from "./pages/CoinCreate.jsx";
-import Consumables from "./pages/Consumables.jsx";
+import AdminLayout from "./components/admin/AdminLayout.jsx";
 import AdminOrders from "./pages/adminOrders.jsx";
 import Profile from "./pages/profile.jsx";
 import AdminProducts from "./pages/adminProducts.jsx";
@@ -43,7 +43,7 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/all-products" element={<AllProducts />} />
-        <Route path="/consumables" element={<Consumables />} />
+        <Route path="/consumables" element={<Navigate to="/all-products?product_type=consumable" replace />} />
         {/* /:productId" */}
         <Route path="/product/:id" element={<LargeCoinCard />} />
         <Route path="/cart" element={<Cart />} />
@@ -63,22 +63,12 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/admin/orders"
-          element={
-            <ProtectedRoute>
-              <AdminOrders />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/products"
-          element={
-            <ProtectedRoute>
-              <AdminProducts />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="orders" replace />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/new" element={<CoinCreate />} />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route
           path="/profile"
@@ -88,14 +78,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/create-coin"
-          element={
-            <ProtectedRoute>
-              <CoinCreate />
-            </ProtectedRoute>
-          }
-        />{" "}
+        <Route path="/create-coin" element={<Navigate to="/admin/products/new" replace />} />
       </Routes>
       <Footer />
     </div>

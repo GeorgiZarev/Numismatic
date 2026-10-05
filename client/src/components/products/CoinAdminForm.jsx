@@ -14,25 +14,29 @@ const CoinAdminForm = ({
       onSubmit={onSubmit}
       className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white border rounded-lg p-5"
     >
+      <label className="block"><span className="block text-sm mb-1">Product type</span><select name="product_type" value={formData.product_type || "coin"} onChange={onChange} className="border p-3 rounded w-full"><option value="coin">Coin</option><option value="consumable">Consumable</option></select></label>
       <input
         type="text"
         name="name"
-        placeholder="Coin Name *"
+        placeholder="Product name *"
         value={formData.name}
         onChange={onChange}
         required
         className="border p-3 rounded"
       />
+      <textarea name="description" value={formData.description || ""} onChange={onChange} placeholder="Description" className="border p-3 rounded sm:col-span-2 min-h-24" />
       <input
         type="number"
         name="price"
-        placeholder="Price *"
+        min="0"
+        step="0.01"
+        placeholder="Price in € *"
         value={formData.price}
         onChange={onChange}
         required
         className="border p-3 rounded"
       />
-      <input
+      {formData.product_type !== "consumable" && <input
         type="number"
         name="year"
         placeholder="Year *"
@@ -40,8 +44,8 @@ const CoinAdminForm = ({
         onChange={onChange}
         required
         className="border p-3 rounded"
-      />
-      <select
+      />}
+      {formData.product_type !== "consumable" && <select
         name="country"
         value={formData.country}
         onChange={onChange}
@@ -53,16 +57,7 @@ const CoinAdminForm = ({
             {country}
           </option>
         ))}
-      </select>
-      <input
-        type="text"
-        name="currency"
-        placeholder="Currency *"
-        value={formData.currency}
-        onChange={onChange}
-        required
-        className="border p-3 rounded"
-      />
+      </select>}
       <select
         name="status"
         value={formData.status}
@@ -75,7 +70,7 @@ const CoinAdminForm = ({
           </option>
         ))}
       </select>
-      {[
+      {formData.product_type !== "consumable" && [
         ["monarch", "Monarch"],
         ["price_value", "Price Value"],
         ["composition_metal", "Composition Metal"],
@@ -112,7 +107,7 @@ const CoinAdminForm = ({
         disabled={loading}
         className="col-span-1 sm:col-span-2 bg-green-600 text-white p-3 rounded hover:bg-green-700 disabled:opacity-70"
       >
-        {loading ? "Saving..." : mode === "edit" ? "Save coin" : "Create coin"}
+        {loading ? "Saving..." : mode === "edit" ? "Save product" : "Create product"}
       </button>
     </form>
   );

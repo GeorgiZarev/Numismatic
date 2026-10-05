@@ -5,6 +5,7 @@ import { fetchMyOrders } from "../api/orders";
 import { useAuth } from "../Contexts/authContext";
 import OrderList from "../components/orders/OrderList";
 import ProfileForm from "../components/profile/ProfileForm";
+import AddressManager from "../components/profile/AddressManager";
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
@@ -28,6 +29,7 @@ const Profile = () => {
           </div>
         </div>
         <ProfileForm user={user} onSave={updateProfile} />
+        <AddressManager />
         <div className="flex flex-wrap gap-3 mt-6">
           <Link to="/all-products" className="bg-orange-500 text-white px-5 py-3 rounded">
             Continue shopping

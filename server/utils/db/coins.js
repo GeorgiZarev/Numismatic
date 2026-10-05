@@ -64,6 +64,10 @@ export const Coins = {
       query = query.where("status", "=", filters.status);
     }
 
+    if (filters.product_type) {
+      query = query.where("product_type", "=", filters.product_type);
+    }
+
     if (filters.country) {
       query = query.where("country", "=", filters.country);
     }

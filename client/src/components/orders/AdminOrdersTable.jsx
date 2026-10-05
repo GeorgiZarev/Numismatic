@@ -1,3 +1,5 @@
+import { formatMoney } from "../../utils/money";
+
 const statuses = ["new", "confirmed", "packed", "sent", "completed", "cancelled"];
 
 const getStatusOptions = (currentStatus) => {
@@ -48,7 +50,8 @@ const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {
               </td>
               <td className="p-3">
                 {order.items.map((item) => (
-                  <p key={item.id}>
+                  <p key={item.id} className="flex items-center gap-2 mb-2">
+                    {item.photo_url ? <img src={item.photo_url} alt="" className="w-10 h-10 object-contain border rounded bg-gray-50" /> : <span className="w-10 h-10 border rounded bg-gray-50" />}
                     {item.quantity} x {item.coin_name}
                   </p>
                 ))}
@@ -61,7 +64,7 @@ const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {
                 )}
               </td>
               <td className="p-3 font-semibold">
-                {Number(order.total).toFixed(2)} BGN
+                {formatMoney(order.total)}
               </td>
               <td className="p-3">
                 <select

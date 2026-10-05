@@ -5,6 +5,7 @@ import { useAuth } from "../Contexts/authContext";
 import { useCart } from "../Contexts/cartContext";
 import CheckoutForm from "../components/orders/CheckoutForm";
 import OrderSummary from "../components/orders/OrderSummary";
+import AddressSelector from "../components/orders/AddressSelector";
 
 const PlaceOrder = () => {
   const { items, total, clearCart } = useCart();
@@ -12,6 +13,7 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState(undefined);
   const [formData, setFormData] = useState({
     customer_name: user?.full_name || user?.username || "",
     phone: user?.phone || "",
@@ -25,6 +27,12 @@ const PlaceOrder = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddressSelect = (address) => {
+    setSelectedAddressId(address?.id || "manual");
+    if (address) setFormData((prev) => ({ ...prev, customer_name: address.full_name, phone: address.phone, city: address.city, address: address.address, delivery_notes: address.notes || "" }));
+    else setFormData((prev) => ({ ...prev, customer_name: user?.full_name || user?.username || "", phone: user?.phone || "", city: "", address: "", delivery_notes: "" }));
   };
 
   const handleSubmit = async (event) => {
@@ -74,6 +82,7 @@ const PlaceOrder = () => {
         loading={loading}
         onChange={handleChange}
         onSubmit={handleSubmit}
+        addressSelector={<AddressSelector selectedId={selectedAddressId} onSelect={handleAddressSelect} />}
       />
       <OrderSummary items={items} total={total} />
     </div>

@@ -61,7 +61,7 @@ const AdminProducts = () => {
           <h1 className="text-3xl font-bold">Admin products</h1>
           <p className="text-gray-600 mt-2">Create, edit, hide, or mark coins as sold.</p>
         </div>
-        <Link to="/create-coin" className="bg-green-600 text-white px-5 py-3 rounded">
+        <Link to="/admin/products/new" className="bg-green-600 text-white px-5 py-3 rounded">
           Add product
         </Link>
       </div>

@@ -1,9 +1,11 @@
 export const emptyCoinForm = {
   name: "",
+  description: "",
   price: "",
   year: "",
   country: "Montenegro",
-  currency: "",
+  currency: "EUR",
+  product_type: "coin",
   monarch: "",
   price_value: "",
   composition_metal: "",
@@ -29,12 +31,14 @@ export const coinToForm = (coin) => ({
   year: coin?.year ?? "",
   mintage: coin?.mintage ?? "",
   photo: null,
+  currency: "EUR",
 });
 
 export const buildCoinFormData = (formData) => {
   const data = new FormData();
 
   Object.entries(formData).forEach(([key, value]) => {
+    if (formData.product_type === "consumable" && ["year", "country", "monarch", "denomination", "coin_grading", "mintage", "mint_place", "lettering", "script", "price_value"].includes(key)) return;
     if (key === "photo" && value) {
       data.append("photo", value);
     } else if (key !== "photo" && value !== "" && value !== null) {

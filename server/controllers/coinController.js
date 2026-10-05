@@ -30,6 +30,8 @@ export const createCoin = async (req, res, next) => {
     const coinData = {
       ...req.body,
       status: req.body.status || "active",
+      currency: "EUR",
+      ...(req.body.product_type === "consumable" && { year: null, country: null }),
       ...(photo_url && { photo_url }),
     };
 
@@ -53,7 +55,7 @@ export const updateCoin = async (req, res, next) => {
       throw new NotFoundError("Coin not found");
     }
 
-    const updates = { ...req.body };
+    const updates = { ...req.body, currency: "EUR", ...(req.body.product_type === "consumable" && { year: null, country: null }) };
 
     // 🖼 If a new image was uploaded
     if (req.file) {
