@@ -68,6 +68,11 @@ export const Coins = {
       query = query.where("product_type", "=", filters.product_type);
     }
 
+    if (filters.consumable_category) {
+      query = query.where("product_type", "=", "consumable")
+        .where("consumable_category", "=", filters.consumable_category);
+    }
+
     if (filters.country) {
       query = query.where("country", "=", filters.country);
     }

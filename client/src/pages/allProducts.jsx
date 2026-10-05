@@ -8,6 +8,7 @@ import ProductItem from "../components/Partial/ProductItem";
 import Title from "../components/Partial/Title";
 import { useTranslation } from "react-i18next";
 import InfiniteScroll from "react-infinite-scroll-component";
+import ConsumableCategoryFilter from "../components/products/ConsumableCategoryFilter";
 
 const parseParamsToFilters = (params) => ({
   country: params.get("country") || "All",
@@ -19,6 +20,7 @@ const parseParamsToFilters = (params) => ({
   order: params.get("order") || "",
   search: params.get("search") || "",
   product_type: params.get("product_type") === "consumable" ? "consumable" : "coin",
+  consumable_category: params.get("consumable_category") || "",
 });
 
 const ITEMS_PER_PAGE = 12;
@@ -50,6 +52,7 @@ const AllProducts = () => {
     queryFn: () => {
       const query = { ...filters };
       if (query.country === "All") delete query.country;
+      if (query.product_type !== "consumable") delete query.consumable_category;
       return fetchCoins(query);
     },
     staleTime: 1000 * 60 * 5,
@@ -91,6 +94,7 @@ const AllProducts = () => {
       order: "",
       search: "",
       product_type: filters.product_type,
+      consumable_category: "",
     };
     setFilters(defaultFilters);
     setSearchParams({ product_type: filters.product_type });
@@ -112,6 +116,15 @@ const AllProducts = () => {
         </div>}
 
         <div className="flex-1">
+          {filters.product_type === "consumable" && <ConsumableCategoryFilter
+            value={filters.consumable_category}
+            onChange={(value) => setSearchParams((previous) => {
+              const next = new URLSearchParams(previous);
+              if (value) next.set("consumable_category", value);
+              else next.delete("consumable_category");
+              return next;
+            })}
+          />}
           <div className="flex justify-between items-center text-base sm:text-xl mb-4">
             <Title
               text1={(filters.product_type === "consumable" ? "All" : filters.country === "All"
@@ -168,7 +181,7 @@ const AllProducts = () => {
             }
           >
             <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">{visibleCoins.map((coin) => (
-              <ProductItem key={coin.id} id={coin.id} image={coin.photo_url} name={coin.name} price={coin.price} type={coin.product_type} />
+              <ProductItem key={coin.id} id={coin.id} image={coin.photo_url} name={coin.name} price={coin.price} type={coin.product_type} category={coin.consumable_category} />
             ))}</div>
           </InfiniteScroll>}
         </div>

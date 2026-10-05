@@ -63,6 +63,9 @@ export const coinCreationSchema = Joi.object({
   number: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
   product_type: Joi.string().valid("coin", "consumable").default("coin"),
+  consumable_category: Joi.string()
+    .valid("capsules", "cleaning_solutions", "cardboard_holders")
+    .when("product_type", { is: "consumable", then: Joi.required(), otherwise: Joi.optional() }),
 });
 
 export const updateCoinSchema = Joi.object({
@@ -111,6 +114,7 @@ export const updateCoinSchema = Joi.object({
   number: Joi.string(),
   status: Joi.string().valid("active", "draft", "sold", "hidden"),
   product_type: Joi.string().valid("coin", "consumable"),
+  consumable_category: Joi.string().valid("capsules", "cleaning_solutions", "cardboard_holders"),
 })
   .min(1)
   .messages({
@@ -134,6 +138,7 @@ export const coinQuerySchema = Joi.object({
   search: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
   product_type: Joi.string().valid("coin", "consumable").optional(),
+  consumable_category: Joi.string().valid("capsules", "cleaning_solutions", "cardboard_holders").optional(),
   includeUnavailable: Joi.string().valid("true", "false").optional(),
 
   minPrice: Joi.number().min(0).optional(),

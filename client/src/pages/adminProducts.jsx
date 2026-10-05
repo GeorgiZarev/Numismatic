@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FiPlus, FiX } from "react-icons/fi";
 import AdminProductList from "../components/products/AdminProductList";
 import CoinAdminForm from "../components/products/CoinAdminForm";
 import { useCoins } from "../hooks/useCoins";
@@ -55,14 +56,14 @@ const AdminProducts = () => {
   };
 
   return (
-    <div className="py-10">
+    <div className="py-8 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Admin products</h1>
-          <p className="text-gray-600 mt-2">Create, edit, hide, or mark coins as sold.</p>
+          <h2 className="text-2xl font-semibold text-[#203730]">Products</h2>
+          <p className="mt-1 text-sm text-[#63716a]">Create, edit, hide, or mark products as sold.</p>
         </div>
-        <Link to="/admin/products/new" className="bg-green-600 text-white px-5 py-3 rounded">
-          Add product
+        <Link to="/admin/products/new" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[#235b50] px-5 text-sm font-semibold text-white hover:bg-[#19473e]">
+          <FiPlus size={18} /> Add product
         </Link>
       </div>
 
@@ -76,15 +77,15 @@ const AdminProducts = () => {
       />
 
       {editingCoin && formData && (
-        <div className="fixed inset-0 z-[120] bg-black/40 overflow-y-auto p-4">
-          <div className="max-w-4xl mx-auto bg-white rounded-lg p-5">
-            <div className="flex items-center justify-between gap-4 mb-5">
-              <h2 className="text-2xl font-bold">Edit {editingCoin.name}</h2>
-              <button
+        <div className="fixed inset-0 z-[120] overflow-y-auto bg-[#142521]/45 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={`Edit ${editingCoin.name}`}>
+          <div className="mx-auto max-w-5xl overflow-hidden rounded-md bg-white shadow-xl">
+            <div className="flex items-center justify-between gap-4 border-b border-[#e7ece8] px-5 py-4 sm:px-8">
+              <h2 className="truncate text-xl font-semibold text-[#203730]">Edit {editingCoin.name}</h2>
+              <button type="button" aria-label="Close editor" title="Close editor"
                 onClick={() => setEditingCoin(null)}
-                className="border px-4 py-2 rounded"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-md text-[#53655b] hover:bg-[#f1f4f1]"
               >
-                Close
+                <FiX size={21} />
               </button>
             </div>
             <CoinAdminForm
@@ -95,7 +96,7 @@ const AdminProducts = () => {
               onFileChange={handleFileChange}
               onSubmit={handleSubmit}
             />
-            {saveError && <p className="text-red-600 mt-4">{saveError}</p>}
+            {saveError && <p role="alert" className="m-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 sm:mx-8">{saveError}</p>}
           </div>
         </div>
       )}

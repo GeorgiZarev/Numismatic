@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS coins (
   price_value VARCHAR,
   currency VARCHAR NOT NULL,
   product_type VARCHAR(30) NOT NULL DEFAULT 'coin' CHECK (product_type IN ('coin', 'consumable')),
+  consumable_category VARCHAR(30) CHECK (consumable_category IN ('capsules', 'cleaning_solutions', 'cardboard_holders')),
   composition_metal VARCHAR,
   weight VARCHAR,
   diameter VARCHAR,
@@ -28,6 +29,9 @@ CREATE TABLE IF NOT EXISTS coins (
 
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS status VARCHAR(30) NOT NULL DEFAULT 'active';
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS product_type VARCHAR(30) NOT NULL DEFAULT 'coin';
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS consumable_category VARCHAR(30);
+ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_consumable_category_check;
+ALTER TABLE coins ADD CONSTRAINT coins_consumable_category_check CHECK (consumable_category IN ('capsules', 'cleaning_solutions', 'cardboard_holders'));
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_product_type_check;
 ALTER TABLE coins ADD CONSTRAINT coins_product_type_check CHECK (product_type IN ('coin', 'consumable'));

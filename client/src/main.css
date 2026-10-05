@@ -30,6 +30,10 @@ a.active hr{
     font-family: Outfit;
 }
 
+.admin-workspace, .admin-workspace * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
 .monoton-regular {
     font-family: "Monoton", sans-serif;
     font-weight: 400;

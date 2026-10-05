@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCoins } from "../hooks/useCoins";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FiArrowLeft } from "react-icons/fi";
 import CoinAdminForm from "../components/products/CoinAdminForm";
 import { buildCoinFormData, emptyCoinForm } from "../utils/coinForm";
 
@@ -38,10 +39,10 @@ const CoinCreate = () => {
           const messages = backendError.details.map((d) => d.msg).join(", ");
           setError(messages);
         } else {
-          setError(backendError.message || "Failed to create coin.");
+          setError(backendError.message || "Failed to create product.");
         }
       } else {
-        setError("Failed to create coin. Try again.");
+        setError("Failed to create product. Try again.");
       }
     } finally {
       setLoading(false);
@@ -49,8 +50,9 @@ const CoinCreate = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create product</h2>
+    <div className="mx-auto max-w-5xl py-8 font-sans">
+      <Link to="/admin/products" className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-[#53655b] hover:text-[#235b50]"><FiArrowLeft size={16} /> Back to products</Link>
+      <h2 className="mb-6 text-2xl font-semibold text-[#203730]">New product</h2>
       <CoinAdminForm
         formData={formData}
         loading={loading}
@@ -58,7 +60,7 @@ const CoinCreate = () => {
         onFileChange={handleFileChange}
         onSubmit={handleSubmit}
       />
-      {error && <p className="text-center text-red-500 mt-4">{error}</p>}
+      {error && <p role="alert" className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
     </div>
   );
 };

@@ -32,6 +32,7 @@ export const createCoin = async (req, res, next) => {
       status: req.body.status || "active",
       currency: "EUR",
       ...(req.body.product_type === "consumable" && { year: null, country: null }),
+      ...(req.body.product_type !== "consumable" && { consumable_category: null }),
       ...(photo_url && { photo_url }),
     };
 
@@ -55,7 +56,12 @@ export const updateCoin = async (req, res, next) => {
       throw new NotFoundError("Coin not found");
     }
 
-    const updates = { ...req.body, currency: "EUR", ...(req.body.product_type === "consumable" && { year: null, country: null }) };
+    const updates = {
+      ...req.body,
+      currency: "EUR",
+      ...(req.body.product_type === "consumable" && { year: null, country: null }),
+      ...(req.body.product_type === "coin" && { consumable_category: null }),
+    };
 
     // 🖼 If a new image was uploaded
     if (req.file) {

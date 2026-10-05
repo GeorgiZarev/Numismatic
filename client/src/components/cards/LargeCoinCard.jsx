@@ -5,6 +5,7 @@ import { useAuth } from "../../Contexts/authContext";
 import { useTranslation } from "react-i18next";
 import { useCart } from "../../Contexts/cartContext";
 import { formatMoney } from "../../utils/money";
+import { getConsumableCategoryLabel } from "../../utils/consumableCategories";
 
 const LargeCoinCard = () => {
   const { t } = useTranslation();
@@ -142,6 +143,7 @@ const LargeCoinCard = () => {
         {/* Right Column */}
         <div>
           <div className="text-left pb-6 border-b-2 border-orange-500 mb-8">
+            {coin.product_type === "consumable" && <p className="mb-2 text-sm font-semibold text-gray-600">{getConsumableCategoryLabel(coin.consumable_category)}</p>}
             <h1 className="text-2xl font-bold text-gray-900 leading-snug">
               {coin.product_type === "consumable" ? "Product details" : t("coinDetails.info")}
             </h1>
