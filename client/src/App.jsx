@@ -9,7 +9,7 @@ import About from "./pages/about.jsx";
 import Contact from "./pages/contact.jsx";
 import AllProducts from "./pages/allProducts.jsx";
 // import Product from "./pages/product.jsx";
-// import Cart from "./pages/cart.jsx";
+import Cart from "./pages/cart.jsx";
 import PlaceOrder from "./pages/placeOrder.jsx";
 import Orders from "./pages/orders.jsx";
 // import Header from "./components/Header/Header.jsx";
@@ -27,6 +27,9 @@ import "./App.css";
 import Login from "./pages/login.jsx";
 import CoinCreate from "./pages/CoinCreate.jsx";
 import Consumables from "./pages/Consumables.jsx";
+import AdminOrders from "./pages/adminOrders.jsx";
+import Profile from "./pages/profile.jsx";
+import AdminProducts from "./pages/adminProducts.jsx";
 
 const App = () => {
   return (
@@ -43,9 +46,48 @@ const App = () => {
         <Route path="/consumables" element={<Consumables />} />
         {/* /:productId" */}
         <Route path="/product/:id" element={<LargeCoinCard />} />
-        <Route path="/place-order" element={<PlaceOrder />} />
-        <Route path="/orders" element={<Orders />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/place-order"
+          element={
+            <ProtectedRoute>
+              <PlaceOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute>
+              <AdminOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute>
+              <AdminProducts />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/create-coin"
           element={

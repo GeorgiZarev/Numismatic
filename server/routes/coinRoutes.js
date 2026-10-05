@@ -8,6 +8,7 @@ import {
 } from "../controllers/coinController.js";
 
 import { authenticateUser } from "../middlewares/authMiddleware.js";
+import { requireAdmin } from "../middlewares/adminMiddleware.js";
 import upload from "../middlewares/upload.js";
 
 import {
@@ -32,6 +33,7 @@ router.get("/:id", validateCoinIdParam, getCoin);
 router.post(
   "/",
   authenticateUser,
+  requireAdmin,
   upload.single("photo"),
   validateCoinCreation,
   createCoin
@@ -39,10 +41,11 @@ router.post(
 router.put(
   "/:id",
   authenticateUser,
+  requireAdmin,
   upload.single("photo"),
   validateCoinUpdate,
   updateCoin
 );
-router.delete("/:id", authenticateUser, validateCoinDelete, deleteCoin);
+router.delete("/:id", authenticateUser, requireAdmin, validateCoinDelete, deleteCoin);
 
 export default router;

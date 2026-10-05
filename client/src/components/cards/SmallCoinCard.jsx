@@ -62,7 +62,7 @@ const SmallCoinCard = ({
                 onAction?.();
               }}
             >
-              {actionLabel || "Action Button"}
+              {actionLabel || "Buy Now"}
             </button>
           </div>
         </div>
@@ -99,7 +99,7 @@ const SmallCoinCard = ({
                 onAction?.();
               }}
             >
-              {actionLabel || "Action Button"}
+              {actionLabel || "Buy Now"}
             </button>
           </div>
         </div>
@@ -127,7 +127,7 @@ const SmallCoinCard = ({
                 onAction?.();
               }}
             >
-              {actionLabel || "Action Button"}
+              {actionLabel || "Buy Now"}
             </button>
           </div>
         </div>

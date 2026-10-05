@@ -8,7 +8,7 @@ import path from "path";
 */
 async function initDB() {
   try {
-    const sqlFiles = ["extensions.sql", "users.sql", "coins.sql"];
+    const sqlFiles = ["extensions.sql", "users.sql", "coins.sql", "orders.sql"];
 
     for (const file of sqlFiles) {
       const filePath = path.resolve("config/sql", file);

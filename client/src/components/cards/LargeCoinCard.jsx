@@ -3,13 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCoins } from "../../hooks/useCoins";
 import { useAuth } from "../../Contexts/authContext";
 import { useTranslation } from "react-i18next";
+import { useCart } from "../../Contexts/cartContext";
 
 const LargeCoinCard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { getCoin, deleteCoin, updateCoin, loading, error } = useCoins();
+  const { getCoin, deleteCoin, updateCoin } = useCoins();
+  const { addToCart } = useCart();
 
   const [errorMessage, setErrorMessage] = useState("");
   const [saving, setSaving] = useState(false);
@@ -200,6 +202,16 @@ const LargeCoinCard = () => {
               )}
             </div>
           </div>
+
+          <button
+            onClick={() => {
+              addToCart(coin);
+              navigate("/cart");
+            }}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded w-full mb-4"
+          >
+            Add to cart
+          </button>
 
           {user && (
             <div className="flex flex-col gap-4 mt-4">

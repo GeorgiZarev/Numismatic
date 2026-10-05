@@ -5,6 +5,13 @@ import BadRequestError from "../errors/BadRequestError.js";
 
 import { Users } from "../utils/db/users.js";
 
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 2 * 60 * 60 * 1000,
+});
+
 export const registerUser = async (req, res, next) => {
   const { username, email, password } = req.body;
 
@@ -48,12 +55,7 @@ export const loginUser = async (req, res, next) => {
 
     const token = generateToken(user);
 
-    res.cookie("auth_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    });
+    res.cookie("auth_token", token, getCookieOptions());
 
     res.status(200).json({
       message: "Login successful",
@@ -61,6 +63,10 @@ export const loginUser = async (req, res, next) => {
         username: user.username,
         email: user.email,
         id: user.id,
+        full_name: user.full_name,
+        phone: user.phone,
+        city: user.city,
+        address: user.address,
       },
     });
   } catch (error) {
@@ -73,7 +79,28 @@ export const logoutUser = async (req, res) => {
   res.clearCookie("auth_token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
   res.status(200).json({ message: "Logout successful" });
+};
+
+export const getCurrentUser = async (req, res, next) => {
+  try {
+    const [user] = await Users.getPublicProfile(req.user.id);
+    res.status(200).json({ user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateCurrentUser = async (req, res, next) => {
+  try {
+    const [user] = await Users.updateProfile(req.user.id, req.body);
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
 };

@@ -29,6 +29,7 @@ export const createCoin = async (req, res, next) => {
 
     const coinData = {
       ...req.body,
+      status: req.body.status || "active",
       ...(photo_url && { photo_url }),
     };
 

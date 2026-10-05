@@ -1,5 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { axiosInstance } from "../utils/axios";
+import {
+  fetchCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+  updateCurrentUser,
+} from "../api/auth";
 
 const AuthContext = createContext(null);
 
@@ -11,8 +17,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get("/auth/protected");
-        setUser(res.data.user);
+        const data = await fetchCurrentUser();
+        setUser(data.user);
       } catch (err) {
         setUser(null);
       } finally {
@@ -25,8 +31,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const res = await axiosInstance.post("/auth/login", credentials);
-      setUser(res.data.user);
+      const data = await loginUser(credentials);
+      setUser(data.user);
     } catch (err) {
       setError(
         err.response?.data?.error?.message ||
@@ -37,9 +43,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (payload) => {
+    try {
+      await registerUser(payload);
+      await login({
+        username: payload.username,
+        password: payload.password,
+      });
+    } catch (err) {
+      setError(
+        err.response?.data?.error?.message ||
+          err.response?.data?.message ||
+          "Registration failed"
+      );
+      throw err;
+    }
+  };
+
   const logout = async () => {
     try {
-      await axiosInstance.post("/auth/logout");
+      await logoutUser();
       setUser(null);
     } catch (err) {
       setError(
@@ -51,8 +74,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (payload) => {
+    try {
+      const data = await updateCurrentUser(payload);
+      setUser(data.user);
+      return data.user;
+    } catch (err) {
+      setError(
+        err.response?.data?.error?.message ||
+          err.response?.data?.message ||
+          "Profile update failed"
+      );
+      throw err;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, error }}>
+    <AuthContext.Provider
+      value={{ user, login, register, logout, updateProfile, loading, error }}
+    >
       {children}
     </AuthContext.Provider>
   );

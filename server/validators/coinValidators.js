@@ -60,6 +60,7 @@ export const coinCreationSchema = Joi.object({
   mint_place: Joi.string().optional(),
   coin_grading: Joi.string().optional(),
   number: Joi.string().optional(),
+  status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
 });
 
 export const updateCoinSchema = Joi.object({
@@ -105,6 +106,7 @@ export const updateCoinSchema = Joi.object({
   mint_place: Joi.string(),
   coin_grading: Joi.string(),
   number: Joi.string(),
+  status: Joi.string().valid("active", "draft", "sold", "hidden"),
 })
   .min(1)
   .messages({
@@ -126,6 +128,8 @@ export const coinQuerySchema = Joi.object({
   composition_metal: Joi.string().optional(),
   coin_grading: Joi.string().optional(),
   search: Joi.string().optional(),
+  status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
+  includeUnavailable: Joi.string().valid("true", "false").optional(),
 
   minPrice: Joi.number().min(0).optional(),
   maxPrice: Joi.number().min(0).optional(),

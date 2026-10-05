@@ -25,4 +25,42 @@ export const Users = {
       })
       .returning(["id", "username", "email", "created_at"])
       .execute(),
+
+  getPublicProfile: async (id) =>
+    await db
+      .selectFrom("users")
+      .select([
+        "id",
+        "username",
+        "email",
+        "full_name",
+        "phone",
+        "city",
+        "address",
+        "created_at",
+        "updated_at",
+      ])
+      .where("id", "=", id)
+      .execute(),
+
+  updateProfile: async (id, profileData) =>
+    await db
+      .updateTable("users")
+      .set({
+        ...profileData,
+        updated_at: new Date(),
+      })
+      .where("id", "=", id)
+      .returning([
+        "id",
+        "username",
+        "email",
+        "full_name",
+        "phone",
+        "city",
+        "address",
+        "created_at",
+        "updated_at",
+      ])
+      .execute(),
 };

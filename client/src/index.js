@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import CreateShopContextProvider from "./Contexts/createContext";
 import { AuthProvider } from "./Contexts/authContext";
+import { CartProvider } from "./Contexts/cartContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./main.css";
 import App from "./App";
@@ -16,9 +17,11 @@ root.render(
       {" "}
       {/* ✅ Wrap app */}
       <AuthProvider>
-        <CreateShopContextProvider>
-          <App />
-        </CreateShopContextProvider>
+        <CartProvider>
+          <CreateShopContextProvider>
+            <App />
+          </CreateShopContextProvider>
+        </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   </BrowserRouter>

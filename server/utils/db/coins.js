@@ -9,6 +9,7 @@ export const Coins = {
     return await db
       .selectFrom("coins")
       .selectAll()
+      .where("status", "=", "active")
       .orderBy("created_at", "desc")
       .execute();
   },
@@ -56,6 +57,12 @@ export const Coins = {
 
   getFiltered: async (filters) => {
     let query = db.selectFrom("coins").selectAll();
+
+    if (filters.includeUnavailable !== "true") {
+      query = query.where("status", "=", "active");
+    } else if (filters.status) {
+      query = query.where("status", "=", filters.status);
+    }
 
     if (filters.country) {
       query = query.where("country", "=", filters.country);

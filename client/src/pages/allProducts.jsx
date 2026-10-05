@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api/coins";
 import FilterSideBar from "../components/filters/FilterSideBar";
@@ -8,6 +8,7 @@ import SmallCoinCard from "../components/cards/SmallCoinCard";
 import Title from "../components/Partial/Title";
 import { useTranslation } from "react-i18next";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useCart } from "../Contexts/cartContext";
 
 const parseParamsToFilters = (params) => ({
   country: params.get("country") || "All",
@@ -31,6 +32,8 @@ const AllProducts = () => {
   const [page, setPage] = useState(1);
   const [visibleCoins, setVisibleCoins] = useState([]);
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const newFilters = parseParamsToFilters(searchParams);
@@ -171,6 +174,11 @@ const AllProducts = () => {
                 image={coin.photo_url}
                 description={`${coin.denomination}. ${coin.year} . ${coin.country} . ${coin.material}`}
                 flagImage={coin.country}
+                actionLabel="Add to cart"
+                onAction={() => {
+                  addToCart(coin);
+                  navigate("/cart");
+                }}
               />
             ))}
           </InfiniteScroll>

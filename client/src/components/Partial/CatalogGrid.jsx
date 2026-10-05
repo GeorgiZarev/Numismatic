@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 //import { Layout } from "antd";
-import { createShopContext } from "../../Contexts/createContext.jsx";
 //import GridForHeader from '../Partial/GridForHeader.jsx'
 //import ProductItem from "./ProductItem.jsx";
 import ProductGrid from "../Partial/ProductGrid.jsx";
@@ -12,13 +11,7 @@ import { useTranslation } from "react-i18next";
 import { Content } from "antd/es/layout/layout.js";
 
 const CatalogGrid = () => {
-  const { products } = useContext(createShopContext);
-  const [catalogProducts, setCatalogProducts] = useState([]);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    setCatalogProducts(products.slice(0, 10));
-  }, [products]);
 
   return (
     <div className="my-10">

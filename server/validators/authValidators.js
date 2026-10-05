@@ -29,5 +29,13 @@ export const loginSchema = Joi.object({
   }),
 });
 
+export const profileUpdateSchema = Joi.object({
+  full_name: Joi.string().min(2).max(255).allow("", null),
+  phone: Joi.string().min(6).max(50).allow("", null),
+  city: Joi.string().min(2).max(120).allow("", null),
+  address: Joi.string().min(5).allow("", null),
+});
+
 export const loginValidation = validateWithJoi(loginSchema);
 export const registerValidation = validateWithJoi(registerSchema);
+export const profileUpdateValidation = validateWithJoi(profileUpdateSchema);

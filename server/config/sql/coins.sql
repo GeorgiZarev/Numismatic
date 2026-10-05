@@ -20,5 +20,10 @@ CREATE TABLE IF NOT EXISTS coins (
   mint_place VARCHAR,
   coin_grading VARCHAR(5),
   number VARCHAR,
+  status VARCHAR(30) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'draft', 'sold', 'hidden')),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS status VARCHAR(30) NOT NULL DEFAULT 'active';
+ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_status_check;
+ALTER TABLE coins ADD CONSTRAINT coins_status_check CHECK (status IN ('active', 'draft', 'sold', 'hidden'));
