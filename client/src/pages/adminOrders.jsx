@@ -13,18 +13,31 @@ const AdminOrders = () => {
     fromDate: "",
   });
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const { data: orders = [], isError, isLoading } = useQuery({
+  const {
+    data: orders = [],
+    error,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: ["admin-orders", filters],
     queryFn: () => fetchAllOrders(filters),
   });
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }) => updateOrderStatus(id, status),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
   });
 
   if (isLoading) return <p className="py-10">Loading orders...</p>;
-  if (isError) return <p className="py-10 text-red-500">Could not load orders.</p>;
+  if (isError) {
+    const message =
+      error?.response?.data?.error?.message ||
+      error?.response?.data?.message ||
+      "Could not load orders. Please check the selected filters and try again.";
+
+    return <p className="py-10 text-red-500">{message}</p>;
+  }
 
   return (
     <div className="py-10">

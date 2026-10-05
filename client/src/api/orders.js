@@ -1,5 +1,10 @@
 import { axiosInstance } from "../utils/axios";
 
+const cleanParams = (params = {}) =>
+  Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value !== "" && value != null)
+  );
+
 export const createOrder = async (payload) => {
   const res = await axiosInstance.post("/orders", payload);
   return res.data;
@@ -11,7 +16,7 @@ export const fetchMyOrders = async () => {
 };
 
 export const fetchAllOrders = async (params = {}) => {
-  const res = await axiosInstance.get("/orders", { params });
+  const res = await axiosInstance.get("/orders", { params: cleanParams(params) });
   return res.data;
 };
 
