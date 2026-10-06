@@ -4,6 +4,9 @@ import { buildQueryString } from "../utils/queryHelpers";
 export const fetchCoins = async (params = {}) => {
   const queryString = buildQueryString(params);
   const res = await axiosInstance.get(`/coins?${queryString}`);
+  if (!Array.isArray(res.data)) {
+    throw new Error("The product service returned an unexpected response.");
+  }
   return res.data;
 };
 

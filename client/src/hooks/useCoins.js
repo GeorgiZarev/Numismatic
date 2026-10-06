@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { buildQueryString } from "../utils/queryHelpers.js";
 import { axiosInstance } from "../utils/axios.js";
+import { fetchCoins as fetchCoinList } from "../api/coins.js";
 
 export const useCoins = () => {
   const [coins, setCoins] = useState([]);
@@ -11,12 +11,10 @@ export const useCoins = () => {
     setLoading(true);
     setError(null);
     try {
-      const queryString = buildQueryString(filterParams);
-      const response = await axiosInstance.get(`/coins?${queryString}`);
-      setCoins(response.data);
+      setCoins(await fetchCoinList(filterParams));
     } catch (err) {
-      console.log(err);
-      setError("Failed to fetch coins");
+      setCoins([]);
+      setError(err.message || "Failed to fetch products");
     } finally {
       setLoading(false);
     }
