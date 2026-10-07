@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { assets } from "../../Assets/ObjFile.js";
+import zarevLogo from "../../Assets/images/zarev-horizontal-light.svg";
 import { useTranslation } from "react-i18next";
 import { contactEmail, contactPhones } from "../../utils/contactDetails";
 
@@ -14,9 +14,9 @@ function Footer() {
         <div>
           <div className="flex items-center h-16">
             <img
-              src={assets.logo2}
+              src={zarevLogo}
               className="h-12 w-auto object-contain"
-              alt="Logo here"
+              alt="Zarev Gold & Coins"
             />
           </div>
           <p className="w-full md:w-2/3 text-gray-600">
@@ -55,7 +55,7 @@ function Footer() {
         <hr />
         <br />
         <p className="text-xs sm:text-sm text-gray-500">
-          © 2025 Numisora - copyright
+          © 2026 Zarev Gold & Coins
         </p>
       </div>
     </div>

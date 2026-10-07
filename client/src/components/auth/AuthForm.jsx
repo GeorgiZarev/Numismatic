@@ -19,7 +19,7 @@ const AuthForm = ({
         <p className="text-gray-600 mt-2">
           {isRegistering
             ? "Create a simple profile to order and see your orders."
-            : "Login to your Numisora profile."}
+            : "Login to your Zarev Gold & Coins profile."}
         </p>
       </div>
 

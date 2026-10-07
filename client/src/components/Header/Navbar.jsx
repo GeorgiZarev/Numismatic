@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiMenu, FiShoppingBag } from "react-icons/fi";
-import { assets } from "../../Assets/ObjFile";
+import zarevLogo from "../../Assets/images/zarev-horizontal-light.svg";
 import { useAuth } from "../../Contexts/authContext";
 import { useCart } from "../../Contexts/cartContext";
 import LanguageSwitch from "./LanguageSwitch";
@@ -34,8 +34,8 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 -mx-4 border-b border-[#e7eae8] bg-white px-4 sm:-mx-[5vw] sm:px-[5vw] md:-mx-[7vw] md:px-[7vw] lg:-mx-[9vw] lg:px-[9vw]">
       <div className="flex h-[76px] items-center justify-between gap-5">
-        <Link to="/" aria-label="Numisora home" className="shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]">
-          <img src={assets.logo2} alt="Numisora" className="h-10 w-auto object-contain sm:h-11" />
+        <Link to="/" aria-label="Zarev Gold & Coins home" className="shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]">
+          <img src={zarevLogo} alt="Zarev Gold & Coins" className="h-10 w-auto object-contain sm:h-11" />
         </Link>
 
         <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
