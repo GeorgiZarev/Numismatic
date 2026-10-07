@@ -3,10 +3,7 @@
     "title": "Contact Us",
     "subtitle": "We’d love to hear from you!",
     "email_label": "Write Us an Email at:",
-    "email": "mail@mail.com",
-    "phone_label": "Give Us a Phone Call:",
-    "phone1": "+123456789",
-    "phone2": "+359 88888"
+    "phone_label": "Give Us a Phone Call:"
   },
   "about": {
     "title": "About Numisora – Your Trusted Online Coin Shop",
@@ -34,10 +31,7 @@
       "products": "Products",
       "contact": "Contact"
     },
-    "contact_title": "Get in touch",
-    "phone1": "+123456789",
-    "phone2": "+359 88888",
-    "email": "mail@mail.com"
+    "contact_title": "Get in touch"
   },
   "nav": {
     "home": "Home",

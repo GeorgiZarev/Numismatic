@@ -3,10 +3,7 @@
     "title": "Свържете се с нас",
     "subtitle": "Ще се радваме да чуем от вас!",
     "email_label": "Пишете ни на имейл:",
-    "email": "mail@mail.com",
-    "phone_label": "Обадете ни се:",
-    "phone1": "+123456789",
-    "phone2": "+359 88888"
+    "phone_label": "Обадете ни се:"
   },
   "about": {
     "title": "За Numisora – Вашият доверен онлайн магазин за монети",
@@ -34,10 +31,7 @@
       "products": "Продукти",
       "contact": "Контакт"
     },
-    "contact_title": "Свържете се с нас",
-    "phone1": "+123456789",
-    "phone2": "+359 88888",
-    "email": "mail@mail.com"
+    "contact_title": "Свържете се с нас"
   },
   "nav": {
     "home": "Начало",

@@ -4,6 +4,7 @@ import { assets } from "../Assets/ObjFile";
 import { FaSquarePhone } from "react-icons/fa6";
 import { IoMail } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
+import { contactEmail, contactPhones } from "../utils/contactDetails";
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -30,10 +31,10 @@ const Contact = () => {
 
             <p className="text-gray-500 hover:text-gray-700 cursor-pointer break-normal">
               <a
-                href={`mailto:${t("contact.email")}`}
-                className="inline-flex items-center gap-2 hover:text-gray-700 no-underline"
+                href={contactEmail.href}
+                className="inline-flex min-h-11 items-center gap-2 hover:text-gray-700 no-underline"
               >
-                <IoMail /> {t("contact.email")}
+                <IoMail /> {contactEmail.label}
               </a>
             </p>
 
@@ -41,22 +42,16 @@ const Contact = () => {
               {t("contact.phone_label")}
             </p>
 
-            <p className="text-gray-500 hover:text-gray-700 cursor-pointer">
-              <a
-                href={`tel:${t("contact.phone1")}`}
-                className="inline-flex items-center gap-2 hover:text-gray-800 no-underline"
-              >
-                <FaSquarePhone /> {t("contact.phone1")}
-              </a>
-            </p>
-            <p className="text-gray-500 hover:text-gray-700 cursor-pointer">
-              <a
-                href={`tel:${t("contact.phone2")}`}
-                className="inline-flex items-center gap-2 hover:text-gray-800 no-underline"
-              >
-                <FaSquarePhone /> {t("contact.phone2")}
-              </a>
-            </p>
+            {contactPhones.map((phone) => (
+              <p key={phone.href} className="text-gray-500 hover:text-gray-700">
+                <a
+                  href={phone.href}
+                  className="inline-flex min-h-11 items-center gap-2 hover:text-gray-800 no-underline"
+                >
+                  <FaSquarePhone /> {phone.label}
+                </a>
+              </p>
+            ))}
           </div>
         </div>
       </div>

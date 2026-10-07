@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../../Assets/ObjFile.js";
 import { useTranslation } from "react-i18next";
+import { contactEmail, contactPhones } from "../../utils/contactDetails";
 
 function Footer() {
   const { t } = useTranslation();
@@ -38,9 +39,14 @@ function Footer() {
             {t("footer.contact_title")}
           </p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>{t("footer.phone1")}</li>
-            <li>{t("footer.phone2")}</li>
-            <li>{t("footer.email")}</li>
+            {contactPhones.map((phone) => (
+              <li key={phone.href}>
+                <a className="inline-flex min-h-11 items-center hover:text-gray-900" href={phone.href}>{phone.label}</a>
+              </li>
+            ))}
+            <li>
+              <a className="inline-flex min-h-11 items-center hover:text-gray-900" href={contactEmail.href}>{contactEmail.label}</a>
+            </li>
           </ul>
         </div>
       </div>
