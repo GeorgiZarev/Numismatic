@@ -3,7 +3,7 @@ import CoinDetailFields from "./CoinDetailFields";
 import ProductPhotoField from "./ProductPhotoField";
 import { consumableCategories } from "../../utils/consumableCategories";
 
-const countries = ["Montenegro", "Bulgaria", "Serbia", "Romania", "Greece"];
+const countries = ["Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States"];
 const statuses = [
   ["active", "Active"],
   ["draft", "Draft"],

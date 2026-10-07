@@ -40,7 +40,7 @@ export const coinCreationSchema = Joi.object({
     "any.required": "Currency is required",
   }),
   country: Joi.string()
-    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece")
+    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States")
     .when("product_type", { is: "consumable", then: Joi.optional(), otherwise: Joi.required() })
     .messages({
       "any.only": "Country must be a valid Balkan country",
@@ -92,7 +92,7 @@ export const updateCoinSchema = Joi.object({
     "string.base": "Currency must be a string",
   }),
   country: Joi.string()
-    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece")
+    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States")
     .messages({
       "any.only": "Country must be a valid Balkan country",
     }),
@@ -129,7 +129,8 @@ export const coinQuerySchema = Joi.object({
       "Serbia",
       "Romania",
       "Greece",
-      "Ottoman Empire"
+      "Ottoman Empire",
+      "United States"
     )
     .optional(),
 

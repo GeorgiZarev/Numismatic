@@ -13,6 +13,7 @@ const countryOptions = [
   "Greece",
   "Montenegro",
   "Ottoman Empire",
+  "United States",
 ];
 const materialOptions = ["Silver", "Gold", "Copper", "Bronze"];
 const gradeOptions = ["MS-70", "MS-65", "XF", "VF", "Fine"];

@@ -6,7 +6,7 @@
  * @property {number} price
  * @property {string=} monarch
  * @property {number} year
- * @property {'Montenegro' | 'Bulgaria' | 'Serbia' | 'Romania' | 'Greece'} country
+ * @property {'Montenegro' | 'Bulgaria' | 'Serbia' | 'Romania' | 'Greece' | 'United States'} country
  * @property {string=} price_value
  * @property {string} currency
  * @property {'coin' | 'consumable'} product_type

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS coins (
   price DECIMAL(10,2) NOT NULL,
   monarch VARCHAR(255),
   year INTEGER,
-  country VARCHAR DEFAULT 'Montenegro' CHECK (country IN ('Montenegro', 'Bulgaria', 'Serbia', 'Romania', 'Greece')),
+  country VARCHAR DEFAULT 'Montenegro' CHECK (country IN ('Montenegro', 'Bulgaria', 'Serbia', 'Romania', 'Greece', 'United States')),
   price_value VARCHAR,
   currency VARCHAR NOT NULL,
   product_type VARCHAR(30) NOT NULL DEFAULT 'coin' CHECK (product_type IN ('coin', 'consumable')),
@@ -33,6 +33,8 @@ ALTER TABLE coins ADD COLUMN IF NOT EXISTS consumable_category VARCHAR(30);
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_consumable_category_check;
 ALTER TABLE coins ADD CONSTRAINT coins_consumable_category_check CHECK (consumable_category IN ('capsules', 'cleaning_solutions', 'cardboard_holders'));
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_country_check;
+ALTER TABLE coins ADD CONSTRAINT coins_country_check CHECK (country IN ('Montenegro', 'Bulgaria', 'Serbia', 'Romania', 'Greece', 'United States'));
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_product_type_check;
 ALTER TABLE coins ADD CONSTRAINT coins_product_type_check CHECK (product_type IN ('coin', 'consumable'));
 ALTER TABLE coins ALTER COLUMN year DROP NOT NULL;
