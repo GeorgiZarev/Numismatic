@@ -101,43 +101,14 @@ const LargeCoinCard = () => {
         {/* Left Column */}
         <div>
           <div className="grid grid-cols-1 gap-5 mb-8">
-            {[1].map((i) => (
-              <div
-                key={i}
-                className="bg-gray-100 rounded-lg overflow-hidden aspect-square"
-              >
-                <img
-                  src={coin.photo_url || "https://placehold.co/200x200"}
-                  alt={`Coin View ${i}`}
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-            ))}
+            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
+              <img
+                src={coin.photo_url || "https://placehold.co/200x200"}
+                alt={coin.name}
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
-
-          {coin.product_type !== "consumable" && <div className="p-7 border border-gray-200 rounded-lg shadow-sm mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <span className="text-orange-500">•</span>{" "}
-              {t("coinDetails.front_features")}
-            </h2>
-            <p className="mb-6 leading-relaxed text-gray-600">
-              {t("coinDetails.front_desc")}
-            </p>
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <span className="text-orange-500">•</span>{" "}
-              {t("coinDetails.back_features")}
-            </h2>
-            <p className="mb-6 leading-relaxed text-gray-600">
-              {t("coinDetails.back_desc")}
-            </p>
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 flex items-center gap-2">
-              <span className="text-orange-500">•</span>{" "}
-              {t("coinDetails.mint_condition")}
-            </h2>
-            <p className="leading-relaxed text-gray-600">
-              {t("coinDetails.mint_desc")}
-            </p>
-          </div>}
         </div>
 
         {/* Right Column */}
@@ -172,7 +143,7 @@ const LargeCoinCard = () => {
                 { label: t("coinDetails.mintage"), key: "mintage" },
                 { label: t("coinDetails.mint_place"), key: "mint_place" },
                 { label: t("coinDetails.coin_grading"), key: "coin_grading" }]),
-              ].map(({ label, key }) => (
+              ].filter(({ key }) => editMode || (coin[key] !== null && coin[key] !== undefined && coin[key] !== "")).map(({ label, key }) => (
                 <React.Fragment key={key}>
                   <div className="text-orange-500 font-semibold">{label}</div>
                   <div className="font-medium">
