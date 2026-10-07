@@ -36,6 +36,11 @@
   "nav": {
     "home": "Home",
     "products": "Products",
+    "delivery": "Delivery",
+    "coins": "Coins",
+    "investment": "Investment products",
+    "accessories": "Accessories",
+    "search": "Search products",
     "about": "About",
     "contact": "Contact",
     "login": "Login",
@@ -47,6 +52,15 @@
     "menu": "Menu",
     "create_coin": "Create Coin",
     "consumables": "Consumables"
+  },
+  "delivery": {
+    "title": "Delivery",
+    "intro": "We arrange delivery for each order and confirm the details with you before dispatch.",
+    "shippingTitle": "Shipping options",
+    "shippingText": "Enter your delivery address when placing an order. We will contact you to confirm the available courier and delivery option.",
+    "costTitle": "Delivery cost",
+    "costText": "The delivery fee depends on the destination and courier option. We will confirm the exact amount with you before shipping. No delivery charge is collected online.",
+    "questionsTitle": "Questions about delivery?"
   },
   "products": {
     "All": "All",

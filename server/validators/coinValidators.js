@@ -28,7 +28,7 @@ export const coinCreationSchema = Joi.object({
     .integer()
     .min(1700)
     .max(new Date().getFullYear())
-    .when("product_type", { is: "consumable", then: Joi.optional(), otherwise: Joi.required() })
+    .when("product_type", { is: "coin", then: Joi.required(), otherwise: Joi.optional() })
     .messages({
       "number.base": "Year must be a number",
       "number.min": "Year must be after 1700",
@@ -41,7 +41,7 @@ export const coinCreationSchema = Joi.object({
   }),
   country: Joi.string()
     .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States")
-    .when("product_type", { is: "consumable", then: Joi.optional(), otherwise: Joi.required() })
+    .when("product_type", { is: "coin", then: Joi.required(), otherwise: Joi.optional() })
     .messages({
       "any.only": "Country must be a valid Balkan country",
       "any.required": "Country is required",
@@ -62,7 +62,7 @@ export const coinCreationSchema = Joi.object({
   coin_grading: Joi.string().optional(),
   number: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
-  product_type: Joi.string().valid("coin", "consumable").default("coin"),
+  product_type: Joi.string().valid("coin", "investment", "consumable").default("coin"),
   consumable_category: Joi.string()
     .valid("capsules", "cleaning_solutions", "cardboard_holders")
     .when("product_type", { is: "consumable", then: Joi.required(), otherwise: Joi.optional() }),
@@ -113,7 +113,7 @@ export const updateCoinSchema = Joi.object({
   coin_grading: Joi.string(),
   number: Joi.string(),
   status: Joi.string().valid("active", "draft", "sold", "hidden"),
-  product_type: Joi.string().valid("coin", "consumable"),
+  product_type: Joi.string().valid("coin", "investment", "consumable"),
   consumable_category: Joi.string().valid("capsules", "cleaning_solutions", "cardboard_holders"),
 })
   .min(1)
@@ -138,7 +138,7 @@ export const coinQuerySchema = Joi.object({
   coin_grading: Joi.string().optional(),
   search: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
-  product_type: Joi.string().valid("coin", "consumable").optional(),
+  product_type: Joi.string().valid("coin", "investment", "consumable").optional(),
   consumable_category: Joi.string().valid("capsules", "cleaning_solutions", "cardboard_holders").optional(),
   includeUnavailable: Joi.string().valid("true", "false").optional(),
 

@@ -9,7 +9,7 @@
  * @property {'Montenegro' | 'Bulgaria' | 'Serbia' | 'Romania' | 'Greece' | 'United States'} country
  * @property {string=} price_value
  * @property {string} currency
- * @property {'coin' | 'consumable'} product_type
+ * @property {'coin' | 'investment' | 'consumable'} product_type
  * @property {'capsules' | 'cleaning_solutions' | 'cardboard_holders'=} consumable_category
  * @property {string=} composition_metal
  * @property {string=} weight

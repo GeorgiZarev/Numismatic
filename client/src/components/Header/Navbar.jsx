@@ -9,6 +9,7 @@ import LanguageSwitch from "./LanguageSwitch";
 import MobileMenu from "./MobileMenu";
 import NavLinks from "./NavLinks";
 import AccountMenu from "./AccountMenu";
+import CatalogSearch from "./CatalogSearch";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -38,20 +39,21 @@ const Navbar = () => {
           <img src={zarevLogo} alt="Zarev Gold & Coins" className="h-10 w-auto object-contain sm:h-11" />
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 xl:flex">
           <NavLinks t={t} isAdmin={isAdmin} />
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <div className="hidden lg:block">
+          <div className="hidden xl:block"><CatalogSearch t={t} /></div>
+          <div className="hidden xl:block">
             <LanguageSwitch language={i18n.language} onChange={i18n.changeLanguage.bind(i18n)} />
           </div>
           <Link to="/cart" aria-label={`Cart, ${itemCount} items`} title="Cart" className="relative grid h-11 w-11 place-items-center rounded-md text-[#273b35] transition-colors hover:bg-[#f1f3f2]">
             <FiShoppingBag size={21} strokeWidth={1.8} />
             {itemCount > 0 && <span className="absolute right-0 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-[#c3683e] px-1 text-[11px] font-semibold text-white">{itemCount}</span>}
           </Link>
-          <AccountMenu user={user} isAdmin={isAdmin} onLogout={handleLogout} t={t} />
-          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} className="grid h-11 w-11 place-items-center rounded-md text-[#273b35] hover:bg-[#f1f3f2] lg:hidden">
+          <div className="hidden xl:block"><AccountMenu user={user} isAdmin={isAdmin} onLogout={handleLogout} t={t} /></div>
+          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} className="grid h-11 w-11 place-items-center rounded-md text-[#273b35] hover:bg-[#f1f3f2] xl:hidden">
             <FiMenu size={23} strokeWidth={1.8} />
           </button>
         </div>

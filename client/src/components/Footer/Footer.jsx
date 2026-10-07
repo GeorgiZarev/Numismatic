@@ -28,6 +28,7 @@ function Footer() {
           <p className="text-xl font-medium mb-5">{t("footer.nav_title")}</p>
           <ul className="flex flex-col cursor-pointer gap-1 text-gray-600">
             <Link to="/">{t("footer.nav_links.home")}</Link>
+            <Link to="/delivery">{t("nav.delivery")}</Link>
             <Link to="/about">{t("footer.nav_links.about")}</Link>
             <Link to="/all-products">{t("footer.nav_links.products")}</Link>
             <Link to="/contact">{t("footer.nav_links.contact")}</Link>

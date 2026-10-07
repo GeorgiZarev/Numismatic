@@ -41,7 +41,7 @@ export const buildCoinFormData = (formData) => {
 
   Object.entries(formData).forEach(([key, value]) => {
     if (formData.product_type !== "consumable" && key === "consumable_category") return;
-    if (formData.product_type === "consumable" && ["year", "country", "monarch", "denomination", "coin_grading", "mintage", "mint_place", "lettering", "script", "price_value"].includes(key)) return;
+    if (formData.product_type !== "coin" && ["year", "country", "monarch", "denomination", "coin_grading", "mintage", "mint_place", "lettering", "script", "price_value"].includes(key)) return;
     if (key === "photo" && value) {
       data.append("photo", value);
     } else if (key !== "photo" && value !== "" && value !== null) {

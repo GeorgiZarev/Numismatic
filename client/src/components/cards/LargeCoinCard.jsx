@@ -115,8 +115,9 @@ const LargeCoinCard = () => {
         <div>
           <div className="text-left pb-6 border-b-2 border-orange-500 mb-8">
             {coin.product_type === "consumable" && <p className="mb-2 text-sm font-semibold text-gray-600">{getConsumableCategoryLabel(coin.consumable_category)}</p>}
+            {coin.product_type === "investment" && <p className="mb-2 text-sm font-semibold text-gray-600">Investment product</p>}
             <h1 className="text-2xl font-bold text-gray-900 leading-snug">
-              {coin.product_type === "consumable" ? "Product details" : t("coinDetails.info")}
+              {coin.product_type === "coin" ? t("coinDetails.info") : "Product details"}
             </h1>
             <div className="flex items-center gap-3 mt-4">
               <span className="text-2xl font-bold text-orange-600">
@@ -131,7 +132,10 @@ const LargeCoinCard = () => {
             <div className="grid grid-cols-2 gap-1">
               {[
                 { label: t("coinDetails.name"), key: "name" },
-                ...(coin.product_type === "consumable" ? [] : [{ label: t("coinDetails.country"), key: "country" },
+                ...(coin.product_type === "investment" ? [
+                  { label: t("coinDetails.material"), key: "composition_metal" },
+                  { label: t("coinDetails.weight"), key: "weight" },
+                ] : coin.product_type === "consumable" ? [] : [{ label: t("coinDetails.country"), key: "country" },
                 { label: t("coinDetails.year"), key: "year" },
                 { label: t("coinDetails.material"), key: "composition_metal" },
                 { label: t("coinDetails.monarch"), key: "monarch" },

@@ -32,7 +32,11 @@ const AdminProductList = ({ coins, onDelete, onEdit }) => {
                   <div>
                     <p className="font-semibold">{coin.name}</p>
                     <p className="text-gray-500">
-                      {coin.product_type === "consumable" ? getConsumableCategoryLabel(coin.consumable_category) : `${coin.country || ""} ${coin.year || ""}`}
+                      {coin.product_type === "consumable"
+                        ? getConsumableCategoryLabel(coin.consumable_category)
+                        : coin.product_type === "investment"
+                          ? "Investment product"
+                          : `${coin.country || ""} ${coin.year || ""}`}
                     </p>
                   </div>
                 </div>

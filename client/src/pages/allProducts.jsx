@@ -19,7 +19,8 @@ const parseParamsToFilters = (params) => ({
   sort: params.get("sort") || "",
   order: params.get("order") || "",
   search: params.get("search") || "",
-  product_type: params.get("product_type") === "consumable" ? "consumable" : "coin",
+  product_type: ["coin", "investment", "consumable"].includes(params.get("product_type"))
+    ? params.get("product_type") : "all",
   consumable_category: params.get("consumable_category") || "",
 });
 
@@ -52,6 +53,7 @@ const AllProducts = () => {
     queryFn: () => {
       const query = { ...filters };
       if (query.country === "All") delete query.country;
+      if (query.product_type === "all") delete query.product_type;
       if (query.product_type !== "consumable") delete query.consumable_category;
       return fetchCoins(query);
     },
@@ -97,14 +99,14 @@ const AllProducts = () => {
       consumable_category: "",
     };
     setFilters(defaultFilters);
-    setSearchParams({ product_type: filters.product_type });
+    setSearchParams(filters.product_type === "all" ? {} : { product_type: filters.product_type });
   };
 
   return (
     <div>
       <BannerProducts />
-      <div className="flex gap-2 border-b mt-8" role="tablist" aria-label="Product categories">
-        {[["coin", "Coins"], ["consumable", "Consumables"]].map(([type, label]) => <button key={type} type="button" role="tab" aria-selected={filters.product_type === type} onClick={() => setSearchParams({ product_type: type })} className={`px-5 py-3 border-b-2 text-base font-medium ${filters.product_type === type ? "border-orange-600 text-gray-900" : "border-transparent text-gray-600"}`}>{label}</button>)}
+      <div className="flex gap-2 overflow-x-auto border-b mt-8" role="tablist" aria-label="Product categories">
+        {[["all", t("products.All")], ["coin", t("nav.coins")], ["investment", t("nav.investment")], ["consumable", t("nav.accessories")]].map(([type, label]) => <button key={type} type="button" role="tab" aria-selected={filters.product_type === type} onClick={() => setSearchParams(type === "all" ? {} : { product_type: type })} className={`shrink-0 whitespace-nowrap px-4 py-3 border-b-2 text-sm sm:text-base font-medium ${filters.product_type === type ? "border-orange-600 text-gray-900" : "border-transparent text-gray-600"}`}>{label}</button>)}
       </div>
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 pt-10 border-t">
         {filters.product_type === "coin" && <div className="min-w-[15rem] sticky top-[7rem] self-start h-fit">
@@ -127,7 +129,7 @@ const AllProducts = () => {
           />}
           <div className="flex justify-between items-center text-base sm:text-xl mb-4">
             <Title
-              text1={(filters.product_type === "consumable" ? "All" : filters.country === "All"
+              text1={(filters.product_type !== "coin" ? "All" : filters.country === "All"
                 ? t("products.All")
                 : filters.country
               ).toUpperCase()}
@@ -137,7 +139,7 @@ const AllProducts = () => {
 
           <input
             type="text"
-            placeholder={`Search ${filters.product_type === "coin" ? "coins" : "consumables"}...`}
+            placeholder={t("nav.search")}
             className="border px-3 py-2 rounded w-full sm:w-1/2 mb-6"
             value={liveSearch}
             onChange={(e) => {

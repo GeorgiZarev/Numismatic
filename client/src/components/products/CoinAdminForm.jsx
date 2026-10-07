@@ -14,7 +14,8 @@ const statuses = [
 const inputClass = "mt-2 h-11 w-full rounded-md border border-[#dce4df] bg-white px-3.5 text-sm text-[#203730] outline-none transition-colors placeholder:text-[#96a19b] focus:border-[#4b8a70] focus:ring-2 focus:ring-[#d9e9de]";
 
 const CoinAdminForm = ({ formData, loading, mode = "create", onChange, onFileChange, onSubmit }) => {
-  const isCoin = formData.product_type !== "consumable";
+  const isCoin = formData.product_type === "coin";
+  const isConsumable = formData.product_type === "consumable";
 
   return (
     <form onSubmit={onSubmit} aria-busy={loading} className={`overflow-hidden bg-white font-sans ${mode === "edit" ? "" : "rounded-md border border-[#dfe6e1] shadow-sm"}`}>
@@ -25,7 +26,7 @@ const CoinAdminForm = ({ formData, loading, mode = "create", onChange, onFileCha
             <fieldset>
               <legend className="mb-2 text-sm font-medium text-[#354840]">Product type</legend>
               <div className="inline-flex w-full rounded-md bg-[#f1f4f1] p-1 sm:w-auto">
-                {[["coin", "Coin"], ["consumable", "Consumable"]].map(([value, label]) => (
+                {[["coin", "Coin"], ["investment", "Investment product"], ["consumable", "Accessory"]].map(([value, label]) => (
                   <label key={value} className="flex-1 cursor-pointer sm:flex-none">
                     <input className="peer sr-only" type="radio" name="product_type" value={value} checked={(formData.product_type || "coin") === value} onChange={onChange} />
                     <span className="block rounded px-5 py-2.5 text-center text-sm font-semibold text-[#66746a] transition-colors peer-checked:bg-white peer-checked:text-[#235b50] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[#6a9c80]">{label}</span>
@@ -35,7 +36,7 @@ const CoinAdminForm = ({ formData, loading, mode = "create", onChange, onFileCha
             </fieldset>
 
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {!isCoin && <label className="block min-w-0 sm:col-span-2">
+              {isConsumable && <label className="block min-w-0 sm:col-span-2">
                 <span className="text-sm font-medium text-[#354840]">Consumable category *</span>
                 <select name="consumable_category" value={formData.consumable_category || ""} onChange={onChange} required className={inputClass}>
                   <option value="" disabled>Choose a category</option>

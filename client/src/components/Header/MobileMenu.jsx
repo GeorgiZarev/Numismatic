@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiArrowRight, FiLogOut, FiX } from "react-icons/fi";
 import NavLinks from "./NavLinks";
 import LanguageSwitch from "./LanguageSwitch";
+import CatalogSearch from "./CatalogSearch";
 
 const MobileMenu = ({ open, onClose, user, isAdmin, itemCount, language, onLanguageChange, onLogout, t }) => {
   useEffect(() => {
@@ -20,7 +21,7 @@ const MobileMenu = ({ open, onClose, user, isAdmin, itemCount, language, onLangu
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] lg:hidden" role="presentation">
+    <div className="fixed inset-0 z-[100] xl:hidden" role="presentation">
       <button type="button" aria-label="Close menu" className="absolute inset-0 bg-[#142521]/35" onClick={onClose} />
       <div role="dialog" aria-modal="true" aria-label={t("nav.menu")} className="absolute inset-y-0 right-0 w-[min(22rem,90vw)] overflow-y-auto bg-white shadow-xl flex flex-col">
         <div className="flex items-center justify-between border-b border-[#e7eae8] px-5 py-5">
@@ -28,6 +29,7 @@ const MobileMenu = ({ open, onClose, user, isAdmin, itemCount, language, onLangu
           <button type="button" onClick={onClose} aria-label="Close menu" className="grid h-11 w-11 place-items-center rounded-md text-[#42504a] hover:bg-[#f1f3f2]"><FiX size={22} /></button>
         </div>
         <nav aria-label="Mobile navigation" className="grid gap-1 px-3 py-5">
+          <div className="mb-3 px-1"><CatalogSearch t={t} compact onSearch={onClose} /></div>
           <NavLinks t={t} isAdmin={isAdmin} mobile onNavigate={onClose} />
           <Link to="/cart" onClick={onClose} className="flex items-center justify-between rounded-md px-4 py-3 text-base font-medium text-[#34413e] hover:bg-[#f5f6f5]">
             {t("nav.cart")} <span className="text-sm text-[#6a7570]">{itemCount}</span>
