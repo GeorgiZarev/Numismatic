@@ -34,27 +34,27 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 -mx-4 border-b border-[#e7eae8] bg-white px-4 sm:-mx-[5vw] sm:px-[5vw] md:-mx-[7vw] md:px-[7vw] lg:-mx-[9vw] lg:px-[9vw]">
-      <div className="flex h-[76px] items-center justify-between gap-5">
+      <div className="flex h-[84px] items-center justify-between gap-4 2xl:h-[100px] 2xl:gap-5">
         <Link to="/" aria-label="Zarev Gold & Coins home" className="shrink-0 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]">
-          <img src={zarevLogo} alt="Zarev Gold & Coins" className="h-10 w-auto object-contain sm:h-11" />
+          <img src={zarevLogo} alt="Zarev Gold & Coins" className="h-12 w-auto object-contain sm:h-14 2xl:h-16" />
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-1 xl:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 2xl:flex">
           <NavLinks t={t} isAdmin={isAdmin} />
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <div className="hidden xl:block"><CatalogSearch t={t} /></div>
-          <div className="hidden xl:block">
+        <div className="flex shrink-0 items-center gap-2 2xl:gap-3">
+          <div className="hidden 2xl:block"><CatalogSearch t={t} /></div>
+          <div className="hidden 2xl:block">
             <LanguageSwitch language={i18n.language} onChange={i18n.changeLanguage.bind(i18n)} />
           </div>
-          <Link to="/cart" aria-label={`Cart, ${itemCount} items`} title="Cart" className="relative grid h-11 w-11 place-items-center rounded-md text-[#273b35] transition-colors hover:bg-[#f1f3f2]">
-            <FiShoppingBag size={21} strokeWidth={1.8} />
+          <Link to="/cart" aria-label={`Cart, ${itemCount} items`} title="Cart" className="relative grid h-12 w-12 place-items-center rounded-md text-[#273b35] transition-colors hover:bg-[#f1f3f2] 2xl:h-14 2xl:w-14">
+            <FiShoppingBag size={26} strokeWidth={1.8} />
             {itemCount > 0 && <span className="absolute right-0 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-[#c3683e] px-1 text-[11px] font-semibold text-white">{itemCount}</span>}
           </Link>
-          <div className="hidden xl:block"><AccountMenu user={user} isAdmin={isAdmin} onLogout={handleLogout} t={t} /></div>
-          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} className="grid h-11 w-11 place-items-center rounded-md text-[#273b35] hover:bg-[#f1f3f2] xl:hidden">
-            <FiMenu size={23} strokeWidth={1.8} />
+          <div className="hidden 2xl:block"><AccountMenu user={user} isAdmin={isAdmin} onLogout={handleLogout} t={t} /></div>
+          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" aria-expanded={menuOpen} className="grid h-12 w-12 place-items-center rounded-md text-[#273b35] hover:bg-[#f1f3f2] 2xl:hidden">
+            <FiMenu size={27} strokeWidth={1.8} />
           </button>
         </div>
       </div>

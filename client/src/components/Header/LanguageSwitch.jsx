@@ -8,7 +8,7 @@ const LanguageSwitch = ({ language, onChange }) => (
         aria-label={code === "en" ? "English" : "Български"}
         aria-pressed={language.startsWith(code)}
         onClick={() => onChange(code)}
-        className={`min-w-10 h-9 rounded text-xs font-semibold transition-colors ${language.startsWith(code) ? "bg-white text-[#203c35] shadow-sm" : "text-[#68736e] hover:text-[#203c35]"}`}
+        className={`min-w-11 h-10 rounded text-sm font-semibold transition-colors ${language.startsWith(code) ? "bg-white text-[#203c35] shadow-sm" : "text-[#68736e] hover:text-[#203c35]"}`}
       >
         {code.toUpperCase()}
       </button>

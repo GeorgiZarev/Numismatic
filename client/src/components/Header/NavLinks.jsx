@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import ProductMenu, { productLinks } from "./ProductMenu";
 
 const links = [
@@ -10,9 +10,10 @@ const links = [
 ];
 
 const NavLinks = ({ t, isAdmin, mobile = false, onNavigate }) => {
+  const location = useLocation();
   const items = isAdmin ? [...links, ["/admin", "nav.admin"]] : links;
   const productItems = mobile
-    ? productLinks.map(({ type, label }) => ["/all-products?product_type=" + type, label])
+    ? [["/all-products", "nav.products"], ...productLinks.map(({ type, label }) => ["/all-products?product_type=" + type, label])]
     : [];
   const orderedItems = [items[0], items[1], ...productItems, ...items.slice(2)];
 
@@ -23,10 +24,16 @@ const NavLinks = ({ t, isAdmin, mobile = false, onNavigate }) => {
         to={path}
         end={path === "/"}
         onClick={onNavigate}
-        className={({ isActive }) => mobile
-          ? `block rounded-md px-4 py-3 text-base font-medium transition-colors ${isActive ? "bg-[#edf3f0] text-[#235b50]" : "text-[#34413e] hover:bg-[#f5f6f5]"}`
-          : `rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? "bg-[#edf3f0] text-[#235b50]" : "text-[#46514e] hover:bg-[#f5f6f5] hover:text-[#172c28]"}`
-        }
+        className={({ isActive }) => {
+          const selectedType = new URL(path, window.location.origin).searchParams.get("product_type");
+          const currentType = new URLSearchParams(location.search).get("product_type");
+          const selected = path.startsWith("/all-products")
+            ? location.pathname === "/all-products" && selectedType === currentType
+            : isActive;
+          return mobile
+            ? `block rounded-md px-4 py-3 text-base font-medium transition-colors ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#34413e] hover:bg-[#f5f6f5]"}`
+            : `rounded-md px-3 py-3 text-base font-medium transition-colors ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#46514e] hover:bg-[#f5f6f5] hover:text-[#172c28]"}`;
+        }}
       >
         {t(label)}
       </NavLink>

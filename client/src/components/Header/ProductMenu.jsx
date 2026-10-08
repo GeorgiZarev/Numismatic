@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { FiChevronDown } from "react-icons/fi";
 
 export const productLinks = [
@@ -10,18 +10,20 @@ export const productLinks = [
 
 const ProductMenu = ({ t }) => {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  const highlighted = open || pathname === "/all-products";
 
   return (
-    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls="product-menu"
-        onClick={() => setOpen(true)}
-        onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}
-        className="inline-flex min-h-11 items-center gap-1 rounded-md px-3 text-sm font-medium text-[#34413e] hover:bg-[#f5f6f5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]"
+    <div className={`relative inline-flex items-center rounded-md transition-colors ${highlighted ? "bg-[#edf3f0] text-[#235b50]" : "text-[#34413e] hover:bg-[#f5f6f5]"}`} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
+      <NavLink
+        to="/all-products"
+        onClick={() => setOpen(false)}
+        className="inline-flex min-h-12 items-center rounded-l-md pl-3 pr-1 text-base font-medium text-inherit focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]"
       >
-        {t("nav.products")} <FiChevronDown size={16} aria-hidden="true" />
+        {t("nav.products")}
+      </NavLink>
+      <button type="button" aria-label={t("shop.productCategories")} aria-expanded={open} aria-controls="product-menu" onClick={() => setOpen((value) => !value)} className="grid min-h-12 min-w-8 place-items-center rounded-r-md text-inherit focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]">
+        <FiChevronDown size={19} aria-hidden="true" />
       </button>
       {open && (
         <div id="product-menu" className="absolute left-0 top-full z-50 min-w-56 rounded-md border border-[#dfe6e1] bg-white p-1.5 shadow-lg">
@@ -30,7 +32,7 @@ const ProductMenu = ({ t }) => {
               key={type}
               to={`/all-products?product_type=${type}`}
               onClick={() => setOpen(false)}
-              className="block rounded px-3 py-2.5 text-sm text-[#34413e] hover:bg-[#edf3f0] hover:text-[#235b50]"
+              className="block rounded px-3 py-3 text-base text-[#34413e] hover:bg-[#edf3f0] hover:text-[#235b50]"
             >
               {t(label)}
             </NavLink>

@@ -1,6 +1,5 @@
 import logo from "./images/logo_numisora.png";
 import logo2 from "./images/logo_numisora2.png";
-import hero_img from "./images/numisora_banner1.png";
 import cart_icon from "./images/cart_icon.png";
 import bin_icon from "./images/bin_icon.png";
 import dropdown_icon from "./images/dropdown_icon.png";
@@ -12,7 +11,6 @@ import star_dull_icon from "./images/star_dull_icon.png";
 import star_icon from "./images/star_icon.png";
 import support_img from "./images/support_img.png";
 import menu_icon from "./images/menu_icon.png";
-import banner2 from "./images/numisora_banner1.png";
 import aboutus from "./images/aboutus_icon.png";
 import contact from "./images/contact_icon.png";
 //import about_img from './images/about_img.png'
@@ -22,8 +20,6 @@ import cross_icon from "./images/cross_icon.png";
 export const assets = {
   logo,
   logo2,
-  banner2,
-  hero_img,
   cart_icon,
   dropdown_icon,
   exchange_icon,

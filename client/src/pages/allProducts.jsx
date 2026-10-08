@@ -1,194 +1,78 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchCoins } from "../api/coins";
-import FilterSideBar from "../components/filters/FilterSideBar";
-import BannerProducts from "../components/cards/BannerProducts";
-import ProductItem from "../components/Partial/ProductItem";
-import Title from "../components/Partial/Title";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import InfiniteScroll from "react-infinite-scroll-component";
-import ConsumableCategoryFilter from "../components/products/ConsumableCategoryFilter";
-
-const parseParamsToFilters = (params) => ({
-  country: params.get("country") || "All",
-  composition_metal: params.get("composition_metal") || "",
-  coin_grading: params.get("coin_grading") || "",
-  minPrice: params.get("minPrice") || "",
-  maxPrice: params.get("maxPrice") || "",
-  sort: params.get("sort") || "",
-  order: params.get("order") || "",
-  search: params.get("search") || "",
-  product_type: ["coin", "investment", "consumable"].includes(params.get("product_type"))
-    ? params.get("product_type") : "all",
-  consumable_category: params.get("consumable_category") || "",
-});
-
-const ITEMS_PER_PAGE = 12;
+import { FiChevronRight } from "react-icons/fi";
+import { useShopCatalog } from "../hooks/useShopCatalog";
+import ShopFilters from "../components/shop/ShopFilters";
+import ShopToolbar from "../components/shop/ShopToolbar";
+import ShopProductCard from "../components/shop/ShopProductCard";
+import { shopTitleKey } from "../utils/shopFilters";
 
 const AllProducts = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [filters, setFilters] = useState(() =>
-    parseParamsToFilters(searchParams)
-  );
-  const [liveSearch, setLiveSearch] = useState(filters.search || "");
-  const [page, setPage] = useState(1);
-  const [visibleCoins, setVisibleCoins] = useState([]);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const newFilters = parseParamsToFilters(searchParams);
-    setFilters(newFilters);
-    setLiveSearch(newFilters.search);
-    setPage(1);
-  }, [searchParams]);
-
-  const {
-    data: coins,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["coins", filters],
-    queryFn: () => {
-      const query = { ...filters };
-      if (query.country === "All") delete query.country;
-      if (query.product_type === "all") delete query.product_type;
-      if (query.product_type !== "consumable") delete query.consumable_category;
-      return fetchCoins(query);
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-
-  useEffect(() => {
-    if (coins) {
-      setVisibleCoins(coins.slice(0, ITEMS_PER_PAGE));
-    }
-  }, [coins]);
-
-  const fetchMoreData = () => {
-    const nextPage = page + 1;
-    const nextSlice = coins.slice(0, nextPage * ITEMS_PER_PAGE);
-    setVisibleCoins(nextSlice);
-    setPage(nextPage);
-  };
-
-  const updateFilter = (field, value) => {
-    setFilters((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    setSearchParams((prev) => {
-      const updated = { ...parseParamsToFilters(prev), [field]: value };
-      if (updated.country === "All") delete updated.country;
-      return updated;
-    });
-  };
-
-  const resetFilters = () => {
-    const defaultFilters = {
-      country: "All",
-      composition_metal: "",
-      coin_grading: "",
-      minPrice: "",
-      maxPrice: "",
-      sort: "",
-      order: "",
-      search: "",
-      product_type: filters.product_type,
-      consumable_category: "",
-    };
-    setFilters(defaultFilters);
-    setSearchParams(filters.product_type === "all" ? {} : { product_type: filters.product_type });
-  };
+  const catalog = useShopCatalog();
+  const sort = catalog.filters.sort && catalog.filters.order
+    ? `${catalog.filters.sort}-${catalog.filters.order}` : "";
+  const title = t(shopTitleKey(catalog.filters.product_type));
+  const isCategory = catalog.filters.product_type !== "all";
 
   return (
-    <div>
-      <BannerProducts />
-      <div className="flex gap-2 overflow-x-auto border-b mt-8" role="tablist" aria-label="Product categories">
-        {[["all", t("products.All")], ["coin", t("nav.coins")], ["investment", t("nav.investment")], ["consumable", t("nav.accessories")]].map(([type, label]) => <button key={type} type="button" role="tab" aria-selected={filters.product_type === type} onClick={() => setSearchParams(type === "all" ? {} : { product_type: type })} className={`shrink-0 whitespace-nowrap px-4 py-3 border-b-2 text-sm sm:text-base font-medium ${filters.product_type === type ? "border-orange-600 text-gray-900" : "border-transparent text-gray-600"}`}>{label}</button>)}
-      </div>
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-10 pt-10 border-t">
-        {filters.product_type === "coin" && <div className="min-w-[15rem] sticky top-[7rem] self-start h-fit">
-          <FilterSideBar
-            filters={filters}
-            onChange={updateFilter}
-            onReset={resetFilters}
-          />
-        </div>}
+    <main className="mx-auto max-w-[1500px] pb-20 pt-6 sm:pt-9">
+      <nav aria-label={t("shop.breadcrumb")} className="flex flex-wrap items-center gap-2 text-xs text-[#607168]">
+        <Link to="/" className="hover:text-[#173d34] hover:underline">{t("nav.home")}</Link>
+        <FiChevronRight aria-hidden="true" />
+        <Link to="/all-products" className="hover:text-[#173d34] hover:underline">{t("shop.shop")}</Link>
+        <FiChevronRight aria-hidden="true" />
+        {isCategory ? (
+          <>
+            <Link to="/all-products" className="hover:text-[#173d34] hover:underline">{t("shop.allItems")}</Link>
+            <FiChevronRight aria-hidden="true" />
+          </>
+        ) : null}
+        <span className="text-[#243b33]" aria-current="page">{title}</span>
+      </nav>
 
-        <div className="flex-1">
-          {filters.product_type === "consumable" && <ConsumableCategoryFilter
-            value={filters.consumable_category}
-            onChange={(value) => setSearchParams((previous) => {
-              const next = new URLSearchParams(previous);
-              if (value) next.set("consumable_category", value);
-              else next.delete("consumable_category");
-              return next;
-            })}
-          />}
-          <div className="flex justify-between items-center text-base sm:text-xl mb-4">
-            <Title
-              text1={(filters.product_type !== "coin" ? "All" : filters.country === "All"
-                ? t("products.All")
-                : filters.country
-              ).toUpperCase()}
-              text2={t("products.Items").toUpperCase()}
-            />
-          </div>
+      <h1 className="mb-8 mt-8 font-serif text-[32px] font-semibold leading-tight text-[#132e28] sm:mb-10 sm:mt-10 sm:text-[40px]">
+        {title}
+      </h1>
 
-          <input
-            type="text"
-            placeholder={t("nav.search")}
-            className="border px-3 py-2 rounded w-full sm:w-1/2 mb-6"
-            value={liveSearch}
-            onChange={(e) => {
-              const value = e.target.value;
-              setLiveSearch(value);
+      <div className="grid gap-6 lg:grid-cols-[250px_minmax(0,1fr)] xl:gap-10 xl:grid-cols-[270px_minmax(0,1fr)]">
+        <ShopFilters filters={catalog.filters} onChange={catalog.updateFilter} onReset={catalog.resetFilters} />
 
-              if (value.trim() === "") {
-                const newFilters = { ...filters, search: "" };
-                if (newFilters.country === "All") delete newFilters.country;
-                setSearchParams(newFilters);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                const newFilters = { ...filters, search: liveSearch };
-                if (newFilters.country === "All") delete newFilters.country;
-                setSearchParams(newFilters);
-              }
-            }}
+        <div className="min-w-0">
+          <ShopToolbar
+            search={catalog.filters.search}
+            onSearch={(value) => catalog.updateFilter("search", value)}
+            sort={sort}
+            onSort={catalog.updateSort}
+            count={catalog.products.length}
+            pageSize={catalog.pageSize}
+            onPageSize={catalog.changePageSize}
+            view={catalog.view}
+            onView={catalog.setView}
           />
 
-          {isLoading && <p>Loading...</p>}
-          {isError && <p className="text-red-500">{error.message}</p>}
-          {!isLoading && !isError && visibleCoins.length === 0 && (
-            <p className="text-gray-600 text-base mb-8">
-              {t("products.noResults")}
-            </p>
+          {catalog.isLoading && <p role="status" className="py-12 text-[#52645b]">{t("shop.loading")}</p>}
+          {catalog.isError && <p role="alert" className="py-12 text-red-700">{catalog.error?.message || t("shop.loadError")}</p>}
+          {!catalog.isLoading && !catalog.isError && catalog.products.length === 0 && (
+            <p className="py-12 text-[#52645b]">{t("shop.noResults")}</p>
           )}
 
-          {!isLoading && !isError && <InfiniteScroll
-            dataLength={visibleCoins.length}
-            next={fetchMoreData}
-            hasMore={visibleCoins.length < (coins?.length || 0)}
-            loader={<p className="text-center py-4">Loading more...</p>}
-            endMessage={
-              visibleCoins.length > 0 ? (
-                <p className="text-center text-gray-500 py-4">
-                  {t("products.noMore")}
-                </p>
-              ) : null
-            }
-          >
-            <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">{visibleCoins.map((coin) => (
-              <ProductItem key={coin.id} id={coin.id} image={coin.photo_url} name={coin.name} price={coin.price} type={coin.product_type} category={coin.consumable_category} />
-            ))}</div>
-          </InfiniteScroll>}
+          {!catalog.isLoading && !catalog.isError && catalog.pageProducts.length > 0 && (
+            <div className={`grid gap-4 sm:gap-5 ${catalog.view === "list" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3"}`}>
+              {catalog.pageProducts.map((product) => <ShopProductCard key={product.id} product={product} view={catalog.view} />)}
+            </div>
+          )}
+
+          {!catalog.isLoading && !catalog.isError && catalog.pageCount > 1 && (
+            <nav aria-label={t("shop.pages")} className="mt-9 flex items-center justify-center gap-3">
+              <button type="button" disabled={catalog.page === 1} onClick={() => { catalog.setPage((page) => page - 1); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="min-h-11 border border-[#cdd5d1] px-4 text-sm text-[#20312e] hover:bg-[#eef3f0] disabled:opacity-40">{t("shop.previous")}</button>
+              <span className="text-sm text-[#52645b]">{t("shop.pageOf", { page: catalog.page, count: catalog.pageCount })}</span>
+              <button type="button" disabled={catalog.page === catalog.pageCount} onClick={() => { catalog.setPage((page) => page + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="min-h-11 border border-[#cdd5d1] px-4 text-sm text-[#20312e] hover:bg-[#eef3f0] disabled:opacity-40">{t("shop.next")}</button>
+            </nav>
+          )}
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
