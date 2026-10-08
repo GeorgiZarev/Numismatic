@@ -24,10 +24,12 @@ CREATE TABLE IF NOT EXISTS coins (
   coin_grading VARCHAR(5),
   number VARCHAR,
   status VARCHAR(30) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'draft', 'sold', 'hidden')),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  restocked_at TIMESTAMP
 );
 
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS status VARCHAR(30) NOT NULL DEFAULT 'active';
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS restocked_at TIMESTAMP;
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS product_type VARCHAR(30) NOT NULL DEFAULT 'coin';
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS consumable_category VARCHAR(30);
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_consumable_category_check;

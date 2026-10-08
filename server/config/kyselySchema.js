@@ -25,6 +25,7 @@
  * @property {string=} number
  * @property {'active' | 'draft' | 'sold' | 'hidden'} status
  * @property {Date} created_at
+ * @property {Date | null} restocked_at
  */
 
 /**

@@ -1,6 +1,7 @@
 import cloudinary from "../config/cloudinary.js";
 import { Coins } from "../utils/db/coins.js";
 import NotFoundError from "../errors/NotFoundError.js";
+import { restockTimestamp } from "../utils/coinRestock.js";
 
 export const getCoins = async (req, res, next) => {
   try {
@@ -62,6 +63,9 @@ export const updateCoin = async (req, res, next) => {
       ...(req.body.product_type && req.body.product_type !== "coin" && { year: null, country: null }),
       ...(req.body.product_type && req.body.product_type !== "consumable" && { consumable_category: null }),
     };
+
+    const restockedAt = restockTimestamp(existingCoin[0].status, req.body.status);
+    if (restockedAt) updates.restocked_at = restockedAt;
 
     // 🖼 If a new image was uploaded
     if (req.file) {

@@ -246,7 +246,13 @@
   },
   "home": {
     "our": "OUR",
-    "coins": "COINS"
+    "coins": "Coins",
+    "newlyAdded": "Newly added",
+    "freshlyRestocked": "Freshly restocked",
+    "accessories": "Accessories",
+    "viewAll": "View all",
+    "loading": "Loading products...",
+    "noProducts": "No products available yet."
   },
   "header": {
     "coins_with": "Coins with",
