@@ -4,6 +4,7 @@ import { generateToken } from "../utils/jwtUtils.js";
 import BadRequestError from "../errors/BadRequestError.js";
 
 import { Users } from "../utils/db/users.js";
+import { Addresses } from "../utils/db/addresses.js";
 
 const getCookieOptions = () => ({
   httpOnly: true,
@@ -13,7 +14,7 @@ const getCookieOptions = () => ({
 });
 
 export const registerUser = async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { email, password, first_name, last_name, birth_date, phone, preferred_language, city, address, postal_code, address_line_2, country } = req.body;
 
   try {
     const existingUser = await Users.getByEmail(email);
@@ -23,12 +24,37 @@ export const registerUser = async (req, res, next) => {
 
     const hashedPassword = await hashPassword(password);
     const registerUser = {
-      username,
       email,
       password: hashedPassword,
+      full_name: [first_name, last_name].filter(Boolean).join(" ") || null,
+      phone: phone || null,
+      city: city || null,
+      address: address || null,
+      birth_date: birth_date ? birth_date.toISOString().slice(0, 10) : null,
+      preferred_language: preferred_language || null,
     };
 
     const [newUser] = await Users.create(registerUser);
+
+    if (city && address && phone && registerUser.full_name) {
+      try {
+        await Addresses.create(newUser.id, {
+          label: "Home",
+          full_name: registerUser.full_name,
+          phone,
+          city,
+          address,
+          postal_code,
+          address_line_2: address_line_2 || "",
+          country,
+          notes: "",
+          is_default: true,
+        });
+      } catch (error) {
+        await Users.remove(newUser.id);
+        throw error;
+      }
+    }
 
     res.status(201).json({
       message: "User registered successfully!",
@@ -40,10 +66,10 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const loginUser = async (req, res, next) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const [user] = await Users.getByUsername(username);
+    const [user] = await Users.getByEmail(email);
     if (!user) {
       return next(new BadRequestError("Invalid credentials"));
     }
@@ -60,13 +86,14 @@ export const loginUser = async (req, res, next) => {
     res.status(200).json({
       message: "Login successful",
       user: {
-        username: user.username,
         email: user.email,
         id: user.id,
         full_name: user.full_name,
         phone: user.phone,
         city: user.city,
         address: user.address,
+        birth_date: user.birth_date,
+        preferred_language: user.preferred_language,
       },
     });
   } catch (error) {
@@ -95,7 +122,9 @@ export const getCurrentUser = async (req, res, next) => {
 
 export const updateCurrentUser = async (req, res, next) => {
   try {
-    const [user] = await Users.updateProfile(req.user.id, req.body);
+    const profileData = { ...req.body };
+    if (profileData.birth_date) profileData.birth_date = profileData.birth_date.toISOString().slice(0, 10);
+    const [user] = await Users.updateProfile(req.user.id, profileData);
     res.status(200).json({
       message: "Profile updated successfully",
       user,

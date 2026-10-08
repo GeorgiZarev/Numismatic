@@ -1,51 +1,106 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createAddress, deleteAddress, fetchAddresses, updateAddress } from "../../api/addresses";
+import AddressCard from "./AddressCard";
+import AddressForm from "./AddressForm";
+import { secondaryButtonClass } from "./profileStyles";
 
-const blankAddress = { label: "", full_name: "", phone: "", city: "", address: "", notes: "", is_default: false };
-const fields = [["label", "Label (Home, Work...)"], ["full_name", "Full name"], ["phone", "Phone"], ["city", "City"], ["address", "Street address or courier office"], ["notes", "Delivery notes"]];
+const blankAddress = {
+  label: "", full_name: "", phone: "", city: "", address: "", postal_code: "",
+  address_line_2: "", country: "", notes: "", is_default: false,
+};
 
 const AddressManager = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data: addresses = [], isLoading, isError } = useQuery({ queryKey: ["addresses"], queryFn: fetchAddresses });
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(null);
   const [error, setError] = useState("");
+
+  const refreshAddresses = () => queryClient.invalidateQueries({ queryKey: ["addresses"] });
   const save = useMutation({
     mutationFn: () => editingId ? updateAddress(editingId, form) : createAddress(form),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["addresses"] }); setForm(null); setEditingId(null); setError(""); },
-    onError: (err) => setError(err.response?.data?.error?.message || "Could not save address."),
+    onSuccess: () => { refreshAddresses(); setForm(null); setEditingId(null); setError(""); },
+    onError: (err) => setError(err.response?.data?.error?.message || t("profile.saveAddressError")),
   });
   const remove = useMutation({
     mutationFn: deleteAddress,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["addresses"] }),
-    onError: () => setError("Could not delete address."),
+    onSuccess: refreshAddresses,
+    onError: () => setError(t("profile.deleteAddressError")),
+  });
+  const setDefault = useMutation({
+    mutationFn: (address) => updateAddress(address.id, {
+      label: address.label, full_name: address.full_name, phone: address.phone,
+      city: address.city, address: address.address, postal_code: address.postal_code || "",
+      address_line_2: address.address_line_2 || "", country: address.country || "",
+      notes: address.notes || "", is_default: true,
+    }),
+    onSuccess: refreshAddresses,
+    onError: () => setError(t("profile.defaultAddressError")),
   });
 
-  return <section className="border-t mt-8 pt-7">
-    <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-      <h2 className="text-xl font-semibold">Saved addresses</h2>
-      <button type="button" onClick={() => { setEditingId(null); setForm({ ...blankAddress }); setError(""); }} className="bg-gray-900 text-white px-4 py-3 rounded">Add address</button>
-    </div>
-    {isLoading && <p>Loading addresses...</p>}
-    {isError && <p className="text-red-700">Could not load addresses.</p>}
-    <div className="grid sm:grid-cols-2 gap-4">
-      {addresses.map((item) => <div key={item.id} className="border rounded p-4">
-        <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{item.label}</h3>{item.is_default && <span className="text-sm text-green-700">Default</span>}</div>
-        <p className="mt-2">{item.full_name}, {item.phone}</p><p>{item.city}, {item.address}</p>{item.notes && <p className="text-gray-600">{item.notes}</p>}
-        <div className="flex flex-wrap gap-2 mt-4"><button type="button" className="border px-3 py-2 rounded" onClick={() => { setEditingId(item.id); setForm({ label: item.label, full_name: item.full_name, phone: item.phone, city: item.city, address: item.address, notes: item.notes || "", is_default: item.is_default }); }}>Edit</button>
-          {!item.is_default && <button type="button" className="border px-3 py-2 rounded" onClick={() => updateAddress(item.id, { label: item.label, full_name: item.full_name, phone: item.phone, city: item.city, address: item.address, notes: item.notes || "", is_default: true }).then(() => queryClient.invalidateQueries({ queryKey: ["addresses"] })).catch(() => setError("Could not set default address."))}>Set default</button>}
-          <button type="button" className="text-red-700 border px-3 py-2 rounded" onClick={() => remove.mutate(item.id)}>Delete</button></div>
-      </div>)}
-    </div>
-    {form && <form className="border rounded p-5 mt-5" onSubmit={(event) => { event.preventDefault(); save.mutate(); }}>
-      <h3 className="font-semibold mb-4">{editingId ? "Edit address" : "New address"}</h3>
-      <div className="grid sm:grid-cols-2 gap-4">{fields.map(([name, label]) => <label key={name} className={name === "address" || name === "notes" ? "sm:col-span-2" : ""}><span className="block text-sm mb-1">{label}</span><input className="border p-3 rounded w-full" value={form[name]} required={name !== "notes"} onChange={(event) => setForm({ ...form, [name]: event.target.value })} /></label>)}</div>
-      <label className="flex items-center gap-2 mt-4"><input type="checkbox" checked={form.is_default} onChange={(event) => setForm({ ...form, is_default: event.target.checked })} />Use as default address</label>
-      <div className="flex gap-3 mt-5"><button disabled={save.isPending} className="bg-orange-600 text-white px-5 py-3 rounded">{save.isPending ? "Saving..." : "Save address"}</button><button type="button" className="border px-5 py-3 rounded" onClick={() => setForm(null)}>Cancel</button></div>
-    </form>}
-    {error && <p role="alert" className="text-red-700 mt-3">{error}</p>}
-  </section>;
+  const editAddress = (address) => {
+    const { label, full_name, phone, city, notes, is_default } = address;
+    setEditingId(address.id);
+    setForm({
+      label, full_name, phone, city, address: address.address,
+      postal_code: address.postal_code || "", address_line_2: address.address_line_2 || "",
+      country: address.country || "", notes: notes || "", is_default,
+    });
+    setError("");
+  };
+
+  return (
+    <section aria-labelledby="saved-addresses-title" className="border-t border-[#dce3df] py-10 sm:py-12">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 id="saved-addresses-title" className="font-serif text-2xl font-semibold text-[#142e28] sm:text-[28px]">{t("profile.savedAddresses")}</h2>
+          <p className="mt-1 text-sm text-[#62736a]">{t("profile.addressesIntro")}</p>
+        </div>
+        <button type="button" className={secondaryButtonClass} onClick={() => { setEditingId(null); setForm({ ...blankAddress }); setError(""); }}>
+          {t("profile.addAddress")}
+        </button>
+      </div>
+
+      {isLoading && <p className="text-sm text-[#62736a]">{t("profile.loadingAddresses")}</p>}
+      {isError && <p role="alert" className="text-sm text-[#963b33]">{t("profile.loadAddressesError")}</p>}
+      {!isLoading && !isError && addresses.length === 0 && (
+        <div className="border border-dashed border-[#b9c9c0] bg-[#f8faf8] px-5 py-8 text-sm text-[#53675c]">
+          {t("profile.noAddresses")}
+        </div>
+      )}
+      {addresses.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {addresses.map((address) => (
+            <AddressCard
+              key={address.id}
+              address={address}
+              onEdit={editAddress}
+              onSetDefault={(item) => { setError(""); setDefault.mutate(item); }}
+              onDelete={(id) => { setError(""); remove.mutate(id); }}
+              busy={remove.isPending || setDefault.isPending}
+            />
+          ))}
+        </div>
+      )}
+      {form && (
+        <AddressForm
+          form={form}
+          editing={Boolean(editingId)}
+          saving={save.isPending}
+          onChange={(event) => {
+            const { name, value, type, checked } = event.target;
+            setForm((previous) => ({ ...previous, [name]: type === "checkbox" ? checked : value }));
+          }}
+          onSubmit={(event) => { event.preventDefault(); save.mutate(); }}
+          onCancel={() => { setForm(null); setEditingId(null); setError(""); }}
+        />
+      )}
+      {error && <p role="alert" className="mt-4 text-sm text-[#963b33]">{error}</p>}
+    </section>
+  );
 };
 
 export default AddressManager;

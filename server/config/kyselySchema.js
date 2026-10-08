@@ -30,13 +30,15 @@
 /**
  * @typedef {Object} User
  * @property {string} id
- * @property {string} username
+ * @property {string=} username Legacy field, unused for new accounts
  * @property {string} email
  * @property {string} password
  * @property {string=} full_name
  * @property {string=} phone
  * @property {string=} city
  * @property {string=} address
+ * @property {Date=} birth_date
+ * @property {'en' | 'bg'=} preferred_language
  * @property {Date} created_at
  * @property {Date} updated_at
  */
@@ -50,6 +52,9 @@
  * @property {string=} email
  * @property {string} city
  * @property {string} address
+ * @property {string=} postal_code
+ * @property {string=} address_line_2
+ * @property {string=} country
  * @property {string=} delivery_notes
  * @property {string} payment_method
  * @property {'new' | 'pending' | 'confirmed' | 'packed' | 'sent' | 'completed' | 'cancelled' | 'canceled'} status

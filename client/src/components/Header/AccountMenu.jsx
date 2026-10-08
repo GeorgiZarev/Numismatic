@@ -19,7 +19,7 @@ const AccountMenu = ({ user, isAdmin, onLogout, t }) => {
 
   return <div ref={rootRef} className="relative hidden sm:block">
     <button type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex h-12 items-center gap-2 rounded-md border border-[#d9e0dc] px-3 text-base font-semibold text-[#244139] hover:border-[#9db4a9] hover:bg-[#f7f9f7]">
-      <FiUser size={21} /> <span className="max-w-24 truncate">{user.full_name || user.username || "Profile"}</span> <FiChevronDown size={18} className={open ? "rotate-180" : ""} />
+      <FiUser size={21} /> <span className="max-w-24 truncate">{user.full_name || user.email || "Profile"}</span> <FiChevronDown size={18} className={open ? "rotate-180" : ""} />
     </button>
     {open && <div role="menu" className="absolute right-0 mt-2 w-52 rounded-md border border-[#e2e8e3] bg-white p-2 shadow-lg">
       <Link role="menuitem" to="/profile" onClick={() => setOpen(false)} className="block rounded px-3 py-2.5 text-sm text-[#34413e] hover:bg-[#f1f4f2]">{t("nav.profile")}</Link>

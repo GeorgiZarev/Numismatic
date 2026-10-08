@@ -24,8 +24,10 @@ const AdminOrderDetail = ({ order, onClose }) => {
           <p>{order.phone}</p>
           <p className="text-gray-600">{order.email || "No email"}</p>
           <p className="mt-3">
-            {order.city}, {order.address}
+            {order.address}
           </p>
+          {order.address_line_2 && <p>{order.address_line_2}</p>}
+          <p>{[order.postal_code, order.city, order.country].filter(Boolean).join(" ")}</p>
           {order.delivery_notes && (
             <p className="mt-3 text-gray-600">{order.delivery_notes}</p>
           )}

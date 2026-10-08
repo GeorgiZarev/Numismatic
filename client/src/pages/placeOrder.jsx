@@ -15,11 +15,14 @@ const PlaceOrder = () => {
   const [loading, setLoading] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(undefined);
   const [formData, setFormData] = useState({
-    customer_name: user?.full_name || user?.username || "",
+    customer_name: user?.full_name || "",
     phone: user?.phone || "",
     email: user?.email || "",
     city: user?.city || "",
     address: user?.address || "",
+    postal_code: "",
+    address_line_2: "",
+    country: "",
     delivery_notes: "",
     payment_method: "cash_on_delivery",
   });
@@ -31,8 +34,16 @@ const PlaceOrder = () => {
 
   const handleAddressSelect = (address) => {
     setSelectedAddressId(address?.id || "manual");
-    if (address) setFormData((prev) => ({ ...prev, customer_name: address.full_name, phone: address.phone, city: address.city, address: address.address, delivery_notes: address.notes || "" }));
-    else setFormData((prev) => ({ ...prev, customer_name: user?.full_name || user?.username || "", phone: user?.phone || "", city: "", address: "", delivery_notes: "" }));
+    if (address) setFormData((prev) => ({
+      ...prev, customer_name: address.full_name, phone: address.phone,
+      city: address.city, address: address.address, postal_code: address.postal_code || "",
+      address_line_2: address.address_line_2 || "", country: address.country || "",
+      delivery_notes: address.notes || "",
+    }));
+    else setFormData((prev) => ({
+      ...prev, customer_name: user?.full_name || "", phone: user?.phone || "",
+      city: "", address: "", postal_code: "", address_line_2: "", country: "", delivery_notes: "",
+    }));
   };
 
   const handleSubmit = async (event) => {

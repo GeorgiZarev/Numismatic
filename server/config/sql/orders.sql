@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS orders (
   email VARCHAR(255),
   city VARCHAR(120) NOT NULL,
   address TEXT NOT NULL,
+  postal_code VARCHAR(30),
+  address_line_2 TEXT,
+  country VARCHAR(2),
   delivery_notes TEXT,
   payment_method VARCHAR(50) DEFAULT 'cash_on_delivery',
   status VARCHAR(30) DEFAULT 'new' CHECK (status IN ('new', 'pending', 'confirmed', 'packed', 'sent', 'completed', 'cancelled', 'canceled')),
@@ -13,6 +16,10 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS postal_code VARCHAR(30);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS address_line_2 TEXT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS country VARCHAR(2);
 
 ALTER TABLE orders ALTER COLUMN status SET DEFAULT 'new';
 ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check;

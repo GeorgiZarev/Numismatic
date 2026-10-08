@@ -31,13 +31,21 @@ describe("Auth Routes", () => {
    * ! This user is being used if you want the program to return good results
    */
   const testUser = {
-    username: "jestUser",
     email: "jest@example.com",
+    email_confirmation: "jest@example.com",
     password: "123456",
+    first_name: "Jest",
+    last_name: "User",
+    birth_date: "1990-04-12",
+    phone: "+359876305026",
+    city: "Sofia",
+    address: "Example Street 10",
+    postal_code: "1000",
+    country: "BG",
   };
   const testUserFailed = {
-    username: "",
-    email: "jest@example.com",
+    ...testUser,
+    email: "not-an-email",
     password: "1456",
   };
 
@@ -61,7 +69,7 @@ describe("Auth Routes", () => {
     expect(res.body.error.name).toBe("BadRequestError");
     expect(res.body.error.message).toBe("Validation failed");
 
-    const expectedFields = ["username", "email", "password"];
+    const expectedFields = ["email", "password"];
     const errorDetails = res.body.error.details;
 
     expectedFields.forEach((field) => {
@@ -83,7 +91,6 @@ describe("Auth Routes", () => {
     expect(res.statusCode).toBe(201);
     expect(res.body).toBeDefined();
     expect(res.body.user).toBeDefined();
-    expect(res.body.user.username).toBe(testUser.username);
     expect(res.body.user.email).toBe(testUser.email);
   });
 
@@ -94,7 +101,7 @@ describe("Auth Routes", () => {
   // ~DONE
   it("Should FAIL to login user with invalid credentials but cover the validation", async () => {
     const res = await request(app).post("/api/auth/login").send({
-      username: "nonexistentUser",
+      email: "nonexistent@example.com",
       password: "wrongPassword",
     });
 
@@ -111,7 +118,7 @@ describe("Auth Routes", () => {
   it("Should SUCCESSFULLY login user, and check if the authentication token is provided", async () => {
     await request(app).post("/api/auth/register").send(testUser);
     const res = await request(app).post("/api/auth/login").send({
-      username: testUser.username,
+      email: testUser.email,
       password: testUser.password,
     });
 
@@ -119,7 +126,7 @@ describe("Auth Routes", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.user).toBeDefined();
-    expect(res.body.user.username).toBe(testUser.username);
+    expect(res.body.user.email).toBe(testUser.email);
 
     const cookies = res.headers["set-cookie"];
     expect(cookies).toBeDefined();
@@ -167,7 +174,6 @@ describe("Auth Routes", () => {
     expect(res.body).toBeDefined();
     expect(res.body.message).toBe("Access granted!");
     expect(res.body.user).toBeDefined();
-    expect(res.body.user).toHaveProperty("username", testUser.username);
     expect(res.body.user).toHaveProperty("email", testUser.email);
   });
 

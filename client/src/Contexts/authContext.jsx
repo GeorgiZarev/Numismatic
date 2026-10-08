@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await loginUser(credentials);
       setUser(data.user);
+      return data.user;
     } catch (err) {
       setError(
         err.response?.data?.error?.message ||
@@ -46,8 +47,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (payload) => {
     try {
       await registerUser(payload);
-      await login({
-        username: payload.username,
+      return await login({
+        email: payload.email,
         password: payload.password,
       });
     } catch (err) {

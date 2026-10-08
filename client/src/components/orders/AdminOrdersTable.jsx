@@ -57,8 +57,9 @@ const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {
                 ))}
               </td>
               <td className="p-3">
-                <p>{order.city}</p>
                 <p>{order.address}</p>
+                {order.address_line_2 && <p>{order.address_line_2}</p>}
+                <p>{[order.postal_code, order.city, order.country].filter(Boolean).join(" ")}</p>
                 {order.delivery_notes && (
                   <p className="text-gray-500">{order.delivery_notes}</p>
                 )}

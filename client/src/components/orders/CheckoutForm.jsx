@@ -1,3 +1,5 @@
+import AddressDetailsFields from "../address/AddressDetailsFields";
+
 const CheckoutForm = ({
   error,
   formData,
@@ -36,22 +38,7 @@ const CheckoutForm = ({
           placeholder="Email"
           className="border p-3 rounded"
         />
-        <input
-          name="city"
-          value={formData.city}
-          onChange={onChange}
-          placeholder="City"
-          required
-          className="border p-3 rounded"
-        />
-        <input
-          name="address"
-          value={formData.address}
-          onChange={onChange}
-          placeholder="Address or courier office"
-          required
-          className="border p-3 rounded sm:col-span-2"
-        />
+        <div className="sm:col-span-2"><AddressDetailsFields data={formData} onChange={onChange} /></div>
         <textarea
           name="delivery_notes"
           value={formData.delivery_notes}

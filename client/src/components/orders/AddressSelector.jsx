@@ -17,7 +17,7 @@ const AddressSelector = ({ selectedId, onSelect }) => {
     <legend className="font-semibold mb-3">Delivery address</legend>
     <div className="grid gap-2">{addresses.map((item) => <label key={item.id} className="flex items-start gap-3 border rounded p-3 cursor-pointer">
       <input type="radio" name="saved_address" className="mt-1" checked={selectedId === item.id} onChange={() => onSelect(item)} />
-      <span><strong>{item.label}</strong>{item.is_default ? " (default)" : ""}<br />{item.full_name}, {item.city}, {item.address}</span>
+      <span><strong>{item.label}</strong>{item.is_default ? " (default)" : ""}<br />{item.full_name}, {item.address}{item.address_line_2 ? `, ${item.address_line_2}` : ""}, {[item.postal_code, item.city, item.country].filter(Boolean).join(" ")}</span>
     </label>)}
     <label className="flex items-center gap-3 border rounded p-3 cursor-pointer"><input type="radio" name="saved_address" checked={selectedId === "manual"} onChange={() => onSelect(null)} />Enter another address for this order</label></div>
   </fieldset>;

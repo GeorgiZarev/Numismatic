@@ -7,6 +7,9 @@ export const orderCreateSchema = Joi.object({
   email: Joi.string().email().allow("", null),
   city: Joi.string().min(2).max(120).required(),
   address: Joi.string().min(5).required(),
+  postal_code: Joi.string().trim().max(30).allow("", null).optional(),
+  address_line_2: Joi.string().trim().max(255).allow("", null).optional(),
+  country: Joi.string().trim().uppercase().length(2).allow("", null).optional(),
   delivery_notes: Joi.string().allow("", null),
   payment_method: Joi.string()
     .valid("cash_on_delivery", "bank_transfer")

@@ -7,36 +7,38 @@ export const Users = {
       .where("email", "=", email)
       .execute(),
 
-  getByUsername: async (username) =>
-    await db
-      .selectFrom("users")
-      .selectAll()
-      .where("username", "=", username)
-      .execute(),
-
-  create: async ({ username, email, password }) =>
+  create: async ({ email, password, full_name, phone, city, address, birth_date, preferred_language }) =>
     await db
       .insertInto("users")
       .values({
         id: db.fn("uuid_generate_v4"),
-        username,
         email,
         password,
+        full_name,
+        phone,
+        city,
+        address,
+        birth_date,
+        preferred_language,
       })
-      .returning(["id", "username", "email", "created_at"])
+      .returning(["id", "email", "created_at"])
       .execute(),
+
+  remove: async (id) =>
+    await db.deleteFrom("users").where("id", "=", id).execute(),
 
   getPublicProfile: async (id) =>
     await db
       .selectFrom("users")
       .select([
         "id",
-        "username",
         "email",
         "full_name",
         "phone",
         "city",
         "address",
+        "birth_date",
+        "preferred_language",
         "created_at",
         "updated_at",
       ])
@@ -53,12 +55,13 @@ export const Users = {
       .where("id", "=", id)
       .returning([
         "id",
-        "username",
         "email",
         "full_name",
         "phone",
         "city",
         "address",
+        "birth_date",
+        "preferred_language",
         "created_at",
         "updated_at",
       ])

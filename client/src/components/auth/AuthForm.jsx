@@ -1,97 +1,48 @@
-const AuthForm = ({
-  error,
-  formData,
-  isRegistering,
-  loading,
-  onChange,
-  onSubmit,
-  onToggleMode,
-}) => {
+import { useTranslation } from "react-i18next";
+import { contactEmail } from "../../utils/contactDetails";
+import AuthField from "./AuthField";
+import RegistrationFields from "./RegistrationFields";
+
+const AuthForm = ({ forms }) => {
+  const { t } = useTranslation();
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="w-full max-w-md bg-white p-6 sm:p-8 rounded-lg border shadow-sm"
-    >
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
-          {isRegistering ? "Create account" : "Login"}
-        </h1>
-        <p className="text-gray-600 mt-2">
-          {isRegistering
-            ? "Create a simple profile to order and see your orders."
-            : "Login to your Zarev Gold & Coins profile."}
-        </p>
-      </div>
+    <main className="mx-auto max-w-[1340px] pb-20 pt-12 sm:pt-16">
+      <section aria-labelledby="existing-customer-title" className="border-b border-[#dce3df] pb-14 sm:pb-16">
+        <h1 id="existing-customer-title" className="font-serif text-[32px] font-semibold leading-tight text-[#142e28] sm:text-[38px]">{t("auth.existingCustomer")}</h1>
+        <p className="mt-3 text-base text-[#53655b]">{t("auth.existingIntro")}</p>
 
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Username
-      </label>
-      <input
-        type="text"
-        name="username"
-        value={formData.username}
-        onChange={onChange}
-        required
-        className="border p-3 mb-4 w-full rounded"
-      />
+        <form onSubmit={forms.submitLogin} className="mt-8" aria-busy={forms.loginLoading}>
+          <div className="grid gap-5 md:grid-cols-2 md:gap-8">
+            <AuthField id="login-email" name="email" type="email" label={t("auth.email")} value={forms.loginData.email} onChange={forms.changeLogin} autoComplete="email" t={t} />
+            <AuthField id="login-password" name="password" type="password" label={t("auth.password")} value={forms.loginData.password} onChange={forms.changeLogin} autoComplete="current-password" t={t} />
+          </div>
+          {forms.loginError && <p role="alert" className="mt-5 text-sm text-[#a0312c]">{forms.loginError}</p>}
+          <div className="mt-5 grid items-center gap-5 md:grid-cols-2 md:gap-8">
+            <button type="submit" disabled={forms.loginLoading} className="min-h-12 bg-[#c69a5d] px-6 text-sm font-semibold uppercase text-white transition-colors hover:bg-[#ad8147] disabled:opacity-60">
+              {forms.loginLoading ? t("auth.pleaseWait") : t("auth.login")}
+            </button>
+            <a href={contactEmail.href} className="justify-self-start border-b border-[#c69a5d] pb-1 text-sm font-medium text-[#17342c] hover:text-[#8b602f] md:justify-self-end">{t("auth.loginHelp")}</a>
+          </div>
+        </form>
+      </section>
 
-      {isRegistering && (
-        <>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={onChange}
-            required
-            className="border p-3 mb-4 w-full rounded"
-          />
-        </>
-      )}
+      <section aria-labelledby="new-customer-title" className="pt-14 sm:pt-16">
+        <h2 id="new-customer-title" className="font-serif text-[32px] font-semibold leading-tight text-[#142e28] sm:text-[38px]">{t("auth.newCustomer")}</h2>
+        <p className="mt-3 text-base text-[#53655b]">{t("auth.newIntro")}</p>
 
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Password
-      </label>
-      <input
-        type="password"
-        name="password"
-        value={formData.password}
-        onChange={onChange}
-        required
-        minLength={isRegistering ? 6 : undefined}
-        className="border p-3 mb-4 w-full rounded"
-      />
-
-      {error && (
-        <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded text-sm mb-4">
-          {error}
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-orange-500 hover:bg-orange-600 text-white p-3 rounded transition disabled:opacity-70"
-      >
-        {loading
-          ? "Please wait..."
-          : isRegistering
-            ? "Create account"
-            : "Login"}
-      </button>
-
-      <button
-        type="button"
-        onClick={onToggleMode}
-        className="w-full mt-4 text-gray-700 underline"
-      >
-        {isRegistering
-          ? "Already have an account? Login"
-          : "Need an account? Register"}
-      </button>
-    </form>
+        <form onSubmit={forms.submitRegistration} className="mt-8" aria-busy={forms.registrationLoading}>
+          <RegistrationFields data={forms.registrationData} onChange={forms.changeRegistration} t={t} />
+          <p className="mt-3 text-sm text-[#65766b]">{t("auth.passwordHint")}</p>
+          {forms.registrationError && <p role="alert" className="mt-5 text-sm text-[#a0312c]">{forms.registrationError}</p>}
+          <div className="mt-8 flex justify-end border-t border-[#dce3df] pt-7">
+            <button type="submit" disabled={forms.registrationLoading} className="min-h-12 w-full bg-[#c69a5d] px-8 text-sm font-semibold uppercase text-white transition-colors hover:bg-[#ad8147] disabled:opacity-60 sm:w-auto sm:min-w-60">
+              {forms.registrationLoading ? t("auth.pleaseWait") : t("auth.createAccount")}
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
   );
 };
 

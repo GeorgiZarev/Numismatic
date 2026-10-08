@@ -24,9 +24,17 @@ app.use(errorHandler);
 let authCookie;
 
 const testUser = {
-  username: "coinTester",
   email: "coin@test.com",
+  email_confirmation: "coin@test.com",
   password: "123456",
+  first_name: "Coin",
+  last_name: "Tester",
+  birth_date: "1990-04-12",
+  phone: "+359876305026",
+  city: "Sofia",
+  address: "Example Street 10",
+  postal_code: "1000",
+  country: "BG",
 };
 
 const logErrorResponse = (res, label = "💥 Error Response") => {
@@ -37,7 +45,7 @@ beforeAll(async () => {
   await request(app).post("/api/auth/register").send(testUser);
 
   const res = await request(app).post("/api/auth/login").send({
-    username: testUser.username,
+    email: testUser.email,
     password: testUser.password,
   });
 
