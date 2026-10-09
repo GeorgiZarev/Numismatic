@@ -25,6 +25,15 @@ export const updateCoin = async (id, data) => {
   return res.data;
 };
 
+export const updateCoinField = async (id, field, value) => {
+  const data = new FormData();
+  data.append(field, String(value));
+  const res = await axiosInstance.put(`/coins/${id}`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+};
+
 export const deleteCoin = async (id) => {
   const res = await axiosInstance.delete(`/coins/${id}`);
   return res.data;

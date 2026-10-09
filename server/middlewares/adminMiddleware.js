@@ -2,7 +2,7 @@ import ForbiddenError from "../errors/ForbiddenError.js";
 
 const fallbackAdminEmails = ["admin@gmail.com"];
 
-export const requireAdmin = (req, res, next) => {
+export const isAdminUser = (user) => {
   const configuredEmails = process.env.ADMIN_EMAILS?.split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
@@ -12,7 +12,11 @@ export const requireAdmin = (req, res, next) => {
       ? configuredEmails
       : fallbackAdminEmails;
 
-  if (!adminEmails.includes(req.user.email?.toLowerCase())) {
+  return adminEmails.includes(user?.email?.toLowerCase());
+};
+
+export const requireAdmin = (req, res, next) => {
+  if (!isAdminUser(req.user)) {
     return next(new ForbiddenError("Admin access required."));
   }
 

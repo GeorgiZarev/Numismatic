@@ -6,11 +6,15 @@ import { useCart } from "../Contexts/cartContext";
 import CheckoutForm from "../components/orders/CheckoutForm";
 import OrderSummary from "../components/orders/OrderSummary";
 import AddressSelector from "../components/orders/AddressSelector";
+import { useCartAvailability } from "../hooks/useCartAvailability";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PlaceOrder = () => {
   const { items, total, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const availability = useCartAvailability(items);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(undefined);
@@ -49,6 +53,10 @@ const PlaceOrder = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+    if (availability.isLoading || availability.isError || availability.issues.length > 0) {
+      setError("Some products are unavailable or exceed the current stock. Please review your cart.");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -60,6 +68,8 @@ const PlaceOrder = () => {
         })),
       });
       clearCart();
+      queryClient.invalidateQueries({ queryKey: ["home-products"] });
+      queryClient.invalidateQueries({ queryKey: ["shop-products"] });
       navigate("/orders", {
         state: { orderCreated: true },
       });
@@ -89,6 +99,7 @@ const PlaceOrder = () => {
     <div className="py-10 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
       <CheckoutForm
         error={error}
+        disabled={availability.isLoading || availability.isError || availability.issues.length > 0}
         formData={formData}
         loading={loading}
         onChange={handleChange}

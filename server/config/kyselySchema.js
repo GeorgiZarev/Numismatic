@@ -26,6 +26,9 @@
  * @property {'active' | 'draft' | 'sold' | 'hidden'} status
  * @property {Date} created_at
  * @property {Date | null} restocked_at
+ * @property {number} stock_quantity
+ * @property {'hide' | 'show' | 'review_delete'} zero_stock_action
+ * @property {Date | null} expected_delivery_date
  */
 
 /**

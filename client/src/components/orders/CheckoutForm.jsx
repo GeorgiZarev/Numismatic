@@ -4,6 +4,7 @@ const CheckoutForm = ({
   error,
   formData,
   loading,
+  disabled,
   onChange,
   onSubmit,
   addressSelector,
@@ -67,7 +68,7 @@ const CheckoutForm = ({
       )}
 
       <button
-        disabled={loading}
+        disabled={loading || disabled}
         className="mt-6 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded disabled:opacity-70"
       >
         {loading ? "Placing order..." : "Place order"}

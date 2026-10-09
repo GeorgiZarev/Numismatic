@@ -1,58 +1,14 @@
 import db from "../../config/kysely.js";
 import { sql } from "kysely";
-
-const unavailableStatuses = ["draft", "sold", "hidden"];
+import { sql as neonSql } from "../../config/NeonClient.js";
 
 export const Orders = {
   create: async ({ userId, orderData, items }) => {
-    const coinIds = items.map((item) => item.coin_id);
-    const coins = await db
-      .selectFrom("coins")
-      .select(["id", "name", "photo_url", "price", "status"])
-      .where("id", "in", coinIds)
-      .execute();
-
-    const coinMap = new Map(coins.map((coin) => [coin.id, coin]));
-    const orderItems = items.map((item) => {
-      const coin = coinMap.get(item.coin_id);
-      if (!coin) {
-        throw new Error(`Coin not found: ${item.coin_id}`);
-      }
-      if (unavailableStatuses.includes(coin.status)) {
-        throw new Error(`Coin is not available: ${coin.name}`);
-      }
-
-      return {
-        coin_id: coin.id,
-        coin_name: coin.name,
-        photo_url: coin.photo_url,
-        price: Number(coin.price),
-        quantity: Number(item.quantity || 1),
-      };
-    });
-
-    const total = orderItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
+    const [result] = await neonSql(
+      "SELECT place_order_with_stock($1::uuid, $2::jsonb, $3::jsonb) AS id",
+      [userId, JSON.stringify(orderData), JSON.stringify(items)]
     );
-
-    const [order] = await db
-      .insertInto("orders")
-      .values({
-        ...orderData,
-        user_id: userId,
-        total,
-      })
-      .returningAll()
-      .execute();
-
-    const savedItems = await db
-      .insertInto("order_items")
-      .values(orderItems.map((item) => ({ ...item, order_id: order.id })))
-      .returningAll()
-      .execute();
-
-    return { ...order, items: savedItems };
+    return Orders.getById(result.id);
   },
 
   getByUserId: async (userId) => {
@@ -115,14 +71,8 @@ export const Orders = {
   },
 
   updateStatus: async (id, status) => {
-    const [order] = await db
-      .updateTable("orders")
-      .set({ status, updated_at: new Date() })
-      .where("id", "=", id)
-      .returningAll()
-      .execute();
-
-    return order;
+    await neonSql("SELECT update_order_status_with_stock($1::uuid, $2::text)", [id, status]);
+    return Orders.getById(id);
   },
 };
 

@@ -8,6 +8,7 @@ import { useCart } from "../../Contexts/cartContext";
 import { formatMoney } from "../../utils/money";
 import { getConsumableCategoryLabel } from "../../utils/consumableCategories";
 import ProductFacts from "../products/ProductFacts";
+import { expectedDeliveryDate, isPurchasable } from "../../utils/inventory";
 
 const LargeCoinCard = () => {
   const { t } = useTranslation();
@@ -85,7 +86,8 @@ const LargeCoinCard = () => {
     : coin.product_type === "investment"
       ? t("nav.investment")
       : t(`shop.accessoryCategories.${coin.consumable_category}`, { defaultValue: getConsumableCategoryLabel(coin.consumable_category) });
-  const available = !coin.status || coin.status === "active";
+  const available = isPurchasable(coin);
+  const deliveryDate = expectedDeliveryDate(coin);
 
   return (
     <main className="mx-auto max-w-[1500px] px-5 pb-20 pt-8 sm:px-8 lg:pt-12">
@@ -102,6 +104,8 @@ const LargeCoinCard = () => {
           <p className="mb-4 text-xs font-semibold uppercase text-[#536b60]">{category}</p>
           <h1 className="max-w-[22ch] font-serif text-[32px] font-semibold leading-tight text-[#112b26] sm:text-[40px]">{coin.name}</h1>
           <p className="mt-8 border-b border-[#dce3df] pb-7 text-[30px] font-semibold text-[#142f28]">{formatMoney(coin.price)}</p>
+          {!available && <p className="mt-4 text-sm font-semibold text-[#875b35]">{t("shop.outOfStock")}</p>}
+          {deliveryDate && <p className="mt-1 text-sm text-[#52645b]">{t("shop.expectedDelivery", { date: new Intl.DateTimeFormat(t("shop.dateLocale")).format(deliveryDate) })}</p>}
 
           <button
             type="button"

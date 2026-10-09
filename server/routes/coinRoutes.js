@@ -7,7 +7,7 @@ import {
   deleteCoin,
 } from "../controllers/coinController.js";
 
-import { authenticateUser } from "../middlewares/authMiddleware.js";
+import { authenticateUser, optionalAuthenticateUser } from "../middlewares/authMiddleware.js";
 import { requireAdmin } from "../middlewares/adminMiddleware.js";
 import upload from "../middlewares/upload.js";
 
@@ -24,8 +24,8 @@ const router = express.Router();
 /**
  * * Public Routes
  */
-router.get("/", validateCoinQuery, getCoins);
-router.get("/:id", validateCoinIdParam, getCoin);
+router.get("/", validateCoinQuery, optionalAuthenticateUser, getCoins);
+router.get("/:id", validateCoinIdParam, optionalAuthenticateUser, getCoin);
 
 /**
  * * Protected Routes

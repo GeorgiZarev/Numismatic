@@ -1,2 +1,2 @@
-export const restockTimestamp = (previousStatus, nextStatus, now = new Date()) =>
-  previousStatus === "sold" && nextStatus === "active" ? now : null;
+export const restockTimestamp = (previousQuantity, nextQuantity, now = new Date()) =>
+  nextQuantity !== undefined && Number(nextQuantity) > Number(previousQuantity) ? now : null;

@@ -2,10 +2,12 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../Contexts/cartContext";
 import { formatMoney } from "../utils/money";
+import { useCartAvailability } from "../hooks/useCartAvailability";
 
 function Cart() {
   const { items, removeFromCart, total, updateQuantity } = useCart();
   const navigate = useNavigate();
+  const availability = useCartAvailability(items);
 
   if (items.length === 0) {
     return (
@@ -43,11 +45,15 @@ function Cart() {
               <p className="text-orange-600 font-semibold mt-2">
                 {formatMoney(item.price)}
               </p>
+              {!availability.isLoading && !availability.isError && availability.issues.some(({ id }) => id === item.id) && (
+                <p className="mt-2 text-sm font-semibold text-red-700">Only {availability.byId.get(item.id)?.stock_quantity || 0} available. Adjust or remove this item.</p>
+              )}
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3">
               <input
                 type="number"
                 min="1"
+                max={availability.byId.get(item.id)?.stock_quantity || undefined}
                 value={item.quantity}
                 onChange={(event) => updateQuantity(item.id, event.target.value)}
                 className="border rounded p-2 w-20"
@@ -72,10 +78,12 @@ function Cart() {
         </div>
         <button
           onClick={() => navigate("/place-order")}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded"
+          disabled={availability.isLoading || availability.isError || availability.issues.length > 0}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded disabled:cursor-not-allowed disabled:opacity-50"
         >
           Continue to checkout
         </button>
+        {availability.isError && <p role="alert" className="text-sm text-red-700">Could not verify stock. Please try again.</p>}
       </div>
     </div>
   );

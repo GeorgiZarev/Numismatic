@@ -19,6 +19,7 @@ export const CartProvider = ({ children }) => {
   const addToCart = (coin, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.id === coin.id);
+      if (Number(coin.stock_quantity) < (existing?.quantity || 0) + quantity) return prev;
       if (existing) {
         return prev.map((item) =>
           item.id === coin.id
@@ -49,7 +50,7 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = (coinId, quantity) => {
     const nextQuantity = Number(quantity);
-    if (nextQuantity < 1) return;
+    if (!Number.isInteger(nextQuantity) || nextQuantity < 1) return;
 
     setItems((prev) =>
       prev.map((item) =>

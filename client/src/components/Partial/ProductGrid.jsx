@@ -13,6 +13,7 @@ const ProductGrid = ({ products }) => {
             price={coin.price}
             type={coin.product_type}
             category={coin.consumable_category}
+            stockQuantity={coin.stock_quantity}
           />
       ))}
     </div>

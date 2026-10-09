@@ -10,16 +10,21 @@ export const Coins = {
       .selectFrom("coins")
       .selectAll()
       .where("status", "=", "active")
+      .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]))
       .orderBy("created_at", "desc")
       .execute();
   },
 
-  getById: async (id) => {
-    return await db
+  getById: async (id, includeUnavailable = false) => {
+    let query = db
       .selectFrom("coins")
       .selectAll()
-      .where("id", "=", id)
-      .execute();
+      .where("id", "=", id);
+    if (!includeUnavailable) {
+      query = query.where("status", "=", "active")
+        .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]));
+    }
+    return query.execute();
   },
 
   getByCountry: async (country) => {
@@ -27,6 +32,8 @@ export const Coins = {
       .selectFrom("coins")
       .selectAll()
       .where("country", "=", country)
+      .where("status", "=", "active")
+      .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]))
       .execute();
   },
 
@@ -38,19 +45,28 @@ export const Coins = {
       .execute();
   },
 
-  update: async (id, coinData) => {
-    return await db
+  update: async (id, coinData, expectedQuantity) => {
+    let query = db
       .updateTable("coins")
       .set(coinData)
-      .where("id", "=", id)
-      .returningAll()
-      .execute();
+      .where("id", "=", id);
+    if (coinData.stock_quantity !== undefined) {
+      query = query.where("stock_quantity", "=", expectedQuantity);
+    }
+    return query.returningAll().execute();
   },
 
   delete: async (id) => {
     return await db
       .deleteFrom("coins")
       .where("id", "=", id)
+      .where(({ not, exists, selectFrom }) => not(exists(
+        selectFrom("order_items")
+          .innerJoin("orders", "orders.id", "order_items.order_id")
+          .select("order_items.id")
+          .whereRef("order_items.coin_id", "=", "coins.id")
+          .where("orders.status", "not in", ["sent", "completed", "cancelled", "canceled"])
+      )))
       .returning(["id"])
       .execute();
   },
@@ -59,7 +75,8 @@ export const Coins = {
     let query = db.selectFrom("coins").selectAll();
 
     if (filters.includeUnavailable !== "true") {
-      query = query.where("status", "=", "active");
+      query = query.where("status", "=", "active")
+        .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]));
     } else if (filters.status) {
       query = query.where("status", "=", filters.status);
     }

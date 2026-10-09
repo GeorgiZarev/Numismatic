@@ -26,6 +26,12 @@ async function initDB() {
       console.log(`✅ Executed ${file}`);
     }
 
+    for (const file of ["place_order_with_stock.sql", "update_order_status_with_stock.sql"]) {
+      const rawSQL = fs.readFileSync(path.resolve("config/sql", file), "utf-8");
+      await sql(rawSQL);
+      console.log(`✅ Executed ${file}`);
+    }
+
     console.log("✅ Database initialized successfully.");
   } catch (error) {
     console.error("❌ Error initializing database:", error);

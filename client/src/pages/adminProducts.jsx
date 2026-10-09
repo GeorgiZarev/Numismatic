@@ -3,14 +3,31 @@ import { Link } from "react-router-dom";
 import { FiPlus, FiX } from "react-icons/fi";
 import AdminProductList from "../components/products/AdminProductList";
 import CoinAdminForm from "../components/products/CoinAdminForm";
+import ProductStatusModal from "../components/products/ProductStatusModal";
+import ProductMethodModal from "../components/products/ProductMethodModal";
 import { useCoins } from "../hooks/useCoins";
 import { buildCoinFormData, coinToForm } from "../utils/coinForm";
+import { useQueryClient } from "@tanstack/react-query";
+import { updateCoinField } from "../api/coins";
 
 const AdminProducts = () => {
   const { coins, deleteCoin, error, fetchCoins, loading, updateCoin } = useCoins();
+  const queryClient = useQueryClient();
   const [editingCoin, setEditingCoin] = useState(null);
   const [formData, setFormData] = useState(null);
   const [saveError, setSaveError] = useState("");
+  const [statusProduct, setStatusProduct] = useState(null);
+  const [statusError, setStatusError] = useState("");
+  const [statusSaving, setStatusSaving] = useState(false);
+  const [methodProduct, setMethodProduct] = useState(null);
+  const [methodError, setMethodError] = useState("");
+  const [methodSaving, setMethodSaving] = useState(false);
+
+  const refreshCatalog = () => {
+    queryClient.invalidateQueries({ queryKey: ["home-products"] });
+    queryClient.invalidateQueries({ queryKey: ["shop-products"] });
+    queryClient.invalidateQueries({ queryKey: ["cart-availability"] });
+  };
 
   useEffect(() => {
     fetchCoins({ includeUnavailable: "true" });
@@ -24,6 +41,7 @@ const AdminProducts = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    setSaveError("");
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -36,7 +54,11 @@ const AdminProducts = () => {
     setSaveError("");
 
     try {
-      await updateCoin(editingCoin.id, buildCoinFormData(formData));
+      const result = await updateCoin(editingCoin.id, buildCoinFormData(formData));
+      if (Number(result.coin?.stock_quantity) !== Number(formData.stock_quantity)) {
+        throw new Error("The quantity was not saved. Please reload the page and try again.");
+      }
+      refreshCatalog();
       setEditingCoin(null);
       setFormData(null);
       await fetchCoins({ includeUnavailable: "true" });
@@ -44,14 +66,59 @@ const AdminProducts = () => {
       setSaveError(
         err.response?.data?.error?.message ||
           err.response?.data?.message ||
+          err.message ||
           "Could not save product."
       );
+    }
+  };
+
+  const handleStatusSave = async (status) => {
+    setStatusError("");
+    setStatusSaving(true);
+    try {
+      const data = new FormData();
+      data.append("status", status);
+      const result = await updateCoin(statusProduct.id, data);
+      if (result.coin?.status !== status) throw new Error("The status was not saved. Please reload and try again.");
+      refreshCatalog();
+      await fetchCoins({ includeUnavailable: "true" });
+      setStatusProduct(null);
+    } catch (err) {
+      setStatusError(err.response?.data?.error?.message || err.response?.data?.message || err.message || "Could not update status.");
+    } finally {
+      setStatusSaving(false);
+    }
+  };
+
+  const handleInlineSave = async (coin, field, value) => {
+    const result = await updateCoinField(coin.id, field, value);
+    if (Number(result.coin?.[field]) !== value) {
+      throw new Error(`The ${field === "price" ? "price" : "quantity"} was not saved. Please reload and try again.`);
+    }
+    refreshCatalog();
+    await fetchCoins({ includeUnavailable: "true" });
+  };
+
+  const handleMethodSave = async (method) => {
+    setMethodError("");
+    setMethodSaving(true);
+    try {
+      const result = await updateCoinField(methodProduct.id, "zero_stock_action", method);
+      if (result.coin?.zero_stock_action !== method) throw new Error("The method was not saved. Please reload and try again.");
+      refreshCatalog();
+      await fetchCoins({ includeUnavailable: "true" });
+      setMethodProduct(null);
+    } catch (err) {
+      setMethodError(err.response?.data?.error?.message || err.response?.data?.message || err.message || "Could not update method.");
+    } finally {
+      setMethodSaving(false);
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this product?")) return;
     await deleteCoin(id);
+    refreshCatalog();
     await fetchCoins({ includeUnavailable: "true" });
   };
 
@@ -74,7 +141,26 @@ const AdminProducts = () => {
         coins={coins}
         onDelete={handleDelete}
         onEdit={startEdit}
+        onChangeStatus={(coin) => { setStatusError(""); setStatusProduct(coin); }}
+        onChangeMethod={(coin) => { setMethodError(""); setMethodProduct(coin); }}
+        onUpdateField={handleInlineSave}
       />
+
+      {statusProduct && <ProductStatusModal
+        product={statusProduct}
+        saving={statusSaving}
+        error={statusError}
+        onClose={() => setStatusProduct(null)}
+        onSave={handleStatusSave}
+      />}
+
+      {methodProduct && <ProductMethodModal
+        product={methodProduct}
+        saving={methodSaving}
+        error={methodError}
+        onClose={() => setMethodProduct(null)}
+        onSave={handleMethodSave}
+      />}
 
       {editingCoin && formData && (
         <div className="fixed inset-0 z-[120] overflow-y-auto bg-[#142521]/45 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={`Edit ${editingCoin.name}`}>
@@ -91,12 +177,12 @@ const AdminProducts = () => {
             <CoinAdminForm
               formData={formData}
               loading={loading}
+              error={saveError}
               mode="edit"
               onChange={handleChange}
               onFileChange={handleFileChange}
               onSubmit={handleSubmit}
             />
-            {saveError && <p role="alert" className="m-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 sm:mx-8">{saveError}</p>}
           </div>
         </div>
       )}

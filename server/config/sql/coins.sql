@@ -25,11 +25,25 @@ CREATE TABLE IF NOT EXISTS coins (
   number VARCHAR,
   status VARCHAR(30) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'draft', 'sold', 'hidden')),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  restocked_at TIMESTAMP
+  restocked_at TIMESTAMP,
+  stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
+  zero_stock_action VARCHAR(20) NOT NULL DEFAULT 'hide' CHECK (zero_stock_action IN ('hide', 'show', 'review_delete')),
+  expected_delivery_date DATE
 );
 
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS status VARCHAR(30) NOT NULL DEFAULT 'active';
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS restocked_at TIMESTAMP;
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS stock_quantity INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS zero_stock_action VARCHAR(20) NOT NULL DEFAULT 'hide';
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS expected_delivery_date DATE;
+ALTER TABLE coins ALTER COLUMN stock_quantity SET DEFAULT 0;
+ALTER TABLE coins ALTER COLUMN stock_quantity SET NOT NULL;
+ALTER TABLE coins ALTER COLUMN zero_stock_action SET DEFAULT 'hide';
+ALTER TABLE coins ALTER COLUMN zero_stock_action SET NOT NULL;
+ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_stock_quantity_check;
+ALTER TABLE coins ADD CONSTRAINT coins_stock_quantity_check CHECK (stock_quantity >= 0);
+ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_zero_stock_action_check;
+ALTER TABLE coins ADD CONSTRAINT coins_zero_stock_action_check CHECK (zero_stock_action IN ('hide', 'show', 'review_delete'));
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS product_type VARCHAR(30) NOT NULL DEFAULT 'coin';
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS consumable_category VARCHAR(30);
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_consumable_category_check;

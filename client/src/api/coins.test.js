@@ -1,22 +1,23 @@
-import { fetchCoins } from "./coins";
 import { axiosInstance } from "../utils/axios";
+import { updateCoinField } from "./coins";
 
 jest.mock("../utils/axios", () => ({
-  axiosInstance: { get: jest.fn() },
+  axiosInstance: { put: jest.fn() },
 }));
 
-afterEach(() => jest.clearAllMocks());
-
-test("returns products from the API", async () => {
-  const products = [{ id: "coin-1", name: "Coin" }];
-  axiosInstance.get.mockResolvedValue({ data: products });
-
-  await expect(fetchCoins({ product_type: "coin" })).resolves.toEqual(products);
-  expect(axiosInstance.get).toHaveBeenCalledWith("/coins?product_type=coin");
+beforeEach(() => {
+  axiosInstance.put.mockReset();
+  axiosInstance.put.mockResolvedValue({ data: { coin: { stock_quantity: 10, price: 45 } } });
 });
 
-test("rejects a response that is not a product list", async () => {
-  axiosInstance.get.mockResolvedValue({ data: "<html>Not found</html>" });
+test.each([
+  ["stock_quantity", 10],
+  ["price", 45.5],
+])("inline %s update sends only its own value", async (field, value) => {
+  await updateCoinField("product-id", field, value);
 
-  await expect(fetchCoins()).rejects.toThrow("unexpected response");
+  const [url, data, config] = axiosInstance.put.mock.calls[0];
+  expect(url).toBe("/coins/product-id");
+  expect([...data.entries()]).toEqual([[field, String(value)]]);
+  expect(config.headers["Content-Type"]).toBe("multipart/form-data");
 });

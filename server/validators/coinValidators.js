@@ -62,6 +62,9 @@ export const coinCreationSchema = Joi.object({
   coin_grading: Joi.string().optional(),
   number: Joi.string().optional(),
   status: Joi.string().valid("active", "draft", "sold", "hidden").optional(),
+  stock_quantity: Joi.number().integer().min(0).required(),
+  zero_stock_action: Joi.string().valid("hide", "show", "review_delete").default("hide"),
+  expected_delivery_date: Joi.date().iso().allow(null, "").optional(),
   product_type: Joi.string().valid("coin", "investment", "consumable").default("coin"),
   consumable_category: Joi.string()
     .valid("capsules", "cleaning_solutions", "cardboard_holders")
@@ -113,6 +116,9 @@ export const updateCoinSchema = Joi.object({
   coin_grading: Joi.string(),
   number: Joi.string(),
   status: Joi.string().valid("active", "draft", "sold", "hidden"),
+  stock_quantity: Joi.number().integer().min(0),
+  zero_stock_action: Joi.string().valid("hide", "show", "review_delete"),
+  expected_delivery_date: Joi.date().iso().allow(null, ""),
   product_type: Joi.string().valid("coin", "investment", "consumable"),
   consumable_category: Joi.string().valid("capsules", "cleaning_solutions", "cardboard_holders"),
 })

@@ -4,10 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import CoinAdminForm from "../components/products/CoinAdminForm";
 import { buildCoinFormData, emptyCoinForm } from "../utils/coinForm";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CoinCreate = () => {
   const { createCoin } = useCoins();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState(emptyCoinForm);
 
@@ -29,7 +31,12 @@ const CoinCreate = () => {
     setLoading(true);
 
     try {
-      await createCoin(buildCoinFormData(formData));
+      const result = await createCoin(buildCoinFormData(formData));
+      if (Number(result.coin?.stock_quantity) !== Number(formData.stock_quantity)) {
+        throw new Error("The quantity was not saved. Please reload the page and try again.");
+      }
+      queryClient.invalidateQueries({ queryKey: ["home-products"] });
+      queryClient.invalidateQueries({ queryKey: ["shop-products"] });
       navigate("/admin/products");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
@@ -42,7 +49,7 @@ const CoinCreate = () => {
           setError(backendError.message || "Failed to create product.");
         }
       } else {
-        setError("Failed to create product. Try again.");
+        setError(err.message || "Failed to create product. Try again.");
       }
     } finally {
       setLoading(false);
@@ -56,11 +63,11 @@ const CoinCreate = () => {
       <CoinAdminForm
         formData={formData}
         loading={loading}
+        error={error}
         onChange={handleChange}
         onFileChange={handleFileChange}
         onSubmit={handleSubmit}
       />
-      {error && <p role="alert" className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
     </div>
   );
 };

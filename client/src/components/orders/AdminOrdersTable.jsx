@@ -1,13 +1,11 @@
 import { formatMoney } from "../../utils/money";
 
-const statuses = ["new", "confirmed", "packed", "sent", "completed", "cancelled"];
+const statuses = ["new", "confirmed", "packed", "sent", "completed"];
 
 const getStatusOptions = (currentStatus) => {
-  if (["pending", "canceled"].includes(currentStatus)) {
-    return [currentStatus, ...statuses];
-  }
-
-  return statuses;
+  if (["cancelled", "canceled", "completed"].includes(currentStatus)) return [currentStatus];
+  const currentIndex = currentStatus === "pending" ? 0 : statuses.indexOf(currentStatus);
+  return [currentStatus, ...statuses.slice(currentIndex + 1), ...(currentStatus === "sent" ? [] : ["cancelled"])];
 };
 
 const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {

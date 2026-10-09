@@ -24,3 +24,15 @@ export const authenticateUser = (req, res, next) => {
     next(new ForbiddenError("Invalid token."));
   }
 };
+
+export const optionalAuthenticateUser = (req, res, next) => {
+  const token = req.cookies?.auth_token;
+  if (token) {
+    try {
+      req.user = verifyToken(token);
+    } catch {
+      // A stale cookie must not block public product pages.
+    }
+  }
+  next();
+};

@@ -16,10 +16,7 @@ export const createOrder = async (req, res, next) => {
       order,
     });
   } catch (err) {
-    if (err.message?.startsWith("Coin not found")) {
-      return next(new BadRequestError(err.message));
-    }
-    if (err.message?.startsWith("Coin is not available")) {
+    if (/^(Insufficient stock|Invalid product quantity|Order must contain)/.test(err.message || "")) {
       return next(new BadRequestError(err.message));
     }
     next(err);
@@ -64,6 +61,10 @@ export const updateOrderStatus = async (req, res, next) => {
       order,
     });
   } catch (err) {
+    if (err.message === "Order not found") return next(new NotFoundError(err.message));
+    if (/^(Cancelled orders|Dispatched orders|Order status cannot)/.test(err.message || "")) {
+      return next(new BadRequestError(err.message));
+    }
     next(err);
   }
 };

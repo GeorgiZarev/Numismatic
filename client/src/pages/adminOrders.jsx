@@ -42,6 +42,7 @@ const AdminOrders = () => {
   return (
     <div className="py-10">
       <h1 className="text-3xl font-bold mb-8">Admin orders</h1>
+      {statusMutation.isError && <p role="alert" className="mb-4 text-sm text-red-700">{statusMutation.error?.response?.data?.error?.message || "Could not update order status."}</p>}
       <AdminOrderFilters filters={filters} onChange={setFilters} />
       <AdminOrdersTable
         orders={orders}

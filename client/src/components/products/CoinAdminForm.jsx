@@ -1,6 +1,7 @@
 import { FiCheck } from "react-icons/fi";
 import CoinDetailFields from "./CoinDetailFields";
 import ProductPhotoField from "./ProductPhotoField";
+import ProductInventoryFields from "./ProductInventoryFields";
 import { consumableCategories } from "../../utils/consumableCategories";
 
 const countries = ["Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States"];
@@ -13,7 +14,7 @@ const statuses = [
 
 const inputClass = "mt-2 h-11 w-full rounded-md border border-[#dce4df] bg-white px-3.5 text-sm text-[#203730] outline-none transition-colors placeholder:text-[#96a19b] focus:border-[#4b8a70] focus:ring-2 focus:ring-[#d9e9de]";
 
-const CoinAdminForm = ({ formData, loading, mode = "create", onChange, onFileChange, onSubmit }) => {
+const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, onFileChange, onSubmit }) => {
   const isCoin = formData.product_type === "coin";
   const isConsumable = formData.product_type === "consumable";
 
@@ -76,6 +77,7 @@ const CoinAdminForm = ({ formData, loading, mode = "create", onChange, onFileCha
 
         <aside className="space-y-7 border-t border-[#e7ece8] bg-[#fbfcfa] p-5 sm:p-8 lg:border-l lg:border-t-0">
           <ProductPhotoField photo={formData.photo} photoUrl={formData.photo_url} onChange={onFileChange} />
+          <ProductInventoryFields formData={formData} onChange={onChange} />
           <label className="block border-t border-[#e7ece8] pt-6">
             <span className="text-sm font-semibold text-[#203730]">Status</span>
             <select name="status" value={formData.status} onChange={onChange} className={inputClass}>
@@ -85,7 +87,8 @@ const CoinAdminForm = ({ formData, loading, mode = "create", onChange, onFileCha
         </aside>
       </div>
 
-      <div className="flex justify-end border-t border-[#e7ece8] bg-white px-5 py-5 sm:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#e7ece8] bg-white px-5 py-5 sm:px-8">
+        {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : <span />}
         <button type="submit" disabled={loading} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-[#235b50] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#19473e] disabled:cursor-wait disabled:opacity-60 sm:w-auto">
           <FiCheck size={18} aria-hidden="true" />
           {loading ? "Saving..." : mode === "edit" ? "Save changes" : "Create product"}
