@@ -40,10 +40,9 @@ export const coinCreationSchema = Joi.object({
     "any.required": "Currency is required",
   }),
   country: Joi.string()
-    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States")
+    .trim().max(100)
     .when("product_type", { is: "coin", then: Joi.required(), otherwise: Joi.optional() })
     .messages({
-      "any.only": "Country must be a valid Balkan country",
       "any.required": "Country is required",
     }),
 
@@ -51,6 +50,8 @@ export const coinCreationSchema = Joi.object({
   price_value: Joi.string().optional(),
   composition_metal: Joi.string().optional(),
   weight: Joi.string().optional(),
+  fineness: Joi.number().integer().min(0).max(1000).allow(null, "").optional(),
+  pure_weight: Joi.number().min(0).allow(null, "").optional(),
   diameter: Joi.string().optional(),
   shape: Joi.string().optional(),
   technique: Joi.string().optional(),
@@ -69,6 +70,11 @@ export const coinCreationSchema = Joi.object({
   consumable_category: Joi.string()
     .valid("capsules", "cleaning_solutions", "cardboard_holders")
     .when("product_type", { is: "consumable", then: Joi.required(), otherwise: Joi.optional() }),
+  company: Joi.string().trim().max(255).when("consumable_category", { is: "cleaning_solutions", then: Joi.required(), otherwise: Joi.allow("").optional() }),
+  volume_ml: Joi.number().integer().min(1).when("consumable_category", { is: "cleaning_solutions", then: Joi.required(), otherwise: Joi.optional() }),
+  suitable_metals: Joi.string().trim().max(255).when("consumable_category", { is: "cleaning_solutions", then: Joi.required(), otherwise: Joi.optional() }),
+  pieces_per_box: Joi.number().integer().min(1).when("consumable_category", { is: Joi.valid("capsules", "cardboard_holders").required(), then: Joi.required(), otherwise: Joi.allow(null, "").optional() }),
+  size_stock: Joi.string().max(10000).when("consumable_category", { is: Joi.valid("capsules", "cardboard_holders").required(), then: Joi.required(), otherwise: Joi.optional() }),
 });
 
 export const updateCoinSchema = Joi.object({
@@ -95,16 +101,15 @@ export const updateCoinSchema = Joi.object({
     "string.base": "Currency must be a string",
   }),
   country: Joi.string()
-    .valid("Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States")
-    .messages({
-      "any.only": "Country must be a valid Balkan country",
-    }),
+    .trim().max(100),
 
   // Optional fields
   monarch: Joi.string(),
   price_value: Joi.string(),
   composition_metal: Joi.string(),
   weight: Joi.string(),
+  fineness: Joi.number().integer().min(0).max(1000).allow(null, ""),
+  pure_weight: Joi.number().min(0).allow(null, ""),
   diameter: Joi.string(),
   shape: Joi.string(),
   technique: Joi.string(),
@@ -121,6 +126,11 @@ export const updateCoinSchema = Joi.object({
   expected_delivery_date: Joi.date().iso().allow(null, ""),
   product_type: Joi.string().valid("coin", "investment", "consumable"),
   consumable_category: Joi.string().valid("capsules", "cleaning_solutions", "cardboard_holders"),
+  company: Joi.string().trim().max(255).allow(""),
+  volume_ml: Joi.number().integer().min(1).allow(null, ""),
+  suitable_metals: Joi.string().trim().max(255).allow(""),
+  pieces_per_box: Joi.number().integer().min(1).allow(null, ""),
+  size_stock: Joi.string().max(10000),
 })
   .min(1)
   .messages({
@@ -128,17 +138,7 @@ export const updateCoinSchema = Joi.object({
   });
 
 export const coinQuerySchema = Joi.object({
-  country: Joi.string()
-    .valid(
-      "Montenegro",
-      "Bulgaria",
-      "Serbia",
-      "Romania",
-      "Greece",
-      "Ottoman Empire",
-      "United States"
-    )
-    .optional(),
+  country: Joi.string().trim().max(100).optional(),
 
   composition_metal: Joi.string().optional(),
   coin_grading: Joi.string().optional(),

@@ -9,6 +9,30 @@ const baseProduct = {
 };
 
 describe("product inventory validation", () => {
+  test("accepts the Peru coin facts shown in the new form", () => {
+    const result = coinCreationSchema.validate({
+      ...baseProduct,
+      name: "1 Libra Peru 1918 NGC MS 62",
+      country: "Peru",
+      year: 1918,
+      coin_grading: "NGC MS 62",
+      denomination: "1 Libra",
+      weight: "7.99",
+      fineness: 917,
+      pure_weight: 7.32,
+      mintage: 600000,
+      diameter: "22.00",
+      stock_quantity: 1,
+    });
+    expect(result.error).toBeUndefined();
+    expect(result.value.country).toBe("Peru");
+  });
+
+  test("rejects fineness outside parts per thousand", () => {
+    expect(updateCoinSchema.validate({ fineness: 1001 }).error).toBeDefined();
+    expect(updateCoinSchema.validate({ fineness: "", pure_weight: "" }).error).toBeUndefined();
+  });
+
   test("requires a nonnegative integer quantity on creation", () => {
     expect(coinCreationSchema.validate(baseProduct).error).toBeDefined();
     expect(coinCreationSchema.validate({ ...baseProduct, stock_quantity: -1 }).error).toBeDefined();

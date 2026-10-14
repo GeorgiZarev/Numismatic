@@ -9,7 +9,6 @@ const CATEGORY_LABELS = {
 export const shopTitleKey = (productType) => CATEGORY_LABELS[productType] || "shop.allItems";
 
 const API_FILTERS = [
-  "country",
   "composition_metal",
   "coin_grading",
   "minPrice",
@@ -45,6 +44,7 @@ export const toApiFilters = (filters) =>
 
 export const filterLocalProducts = (products, filters) =>
   products.filter((product) => {
+    if (filters.country && product.country !== filters.country) return false;
     const year = Number(product.year);
     if (filters.minYear && (!year || year < Number(filters.minYear))) return false;
     if (filters.maxYear && (!year || year > Number(filters.maxYear))) return false;

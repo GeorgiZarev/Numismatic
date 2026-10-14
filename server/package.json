@@ -8,7 +8,8 @@
   "type": "module",
   "scripts": {
     "test": "nodemon --experimental-vm-modules node_modules/.bin/jest",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "migrate:accessories": "node scripts/migrateAccessoryInventory.mjs"
   },
   "keywords": [],
   "author": "",
