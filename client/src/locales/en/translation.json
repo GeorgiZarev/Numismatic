@@ -273,7 +273,11 @@
     "accessories": "Accessories",
     "viewAll": "View all",
     "loading": "Loading products...",
-    "noProducts": "No products available yet."
+    "noProducts": "No products available yet.",
+    "numismaticCoins": "Numismatic coins",
+    "investmentCoins": "Investment coins",
+    "gold": "Gold",
+    "silver": "Silver"
   },
   "header": {
     "coins_with": "Coins with",
