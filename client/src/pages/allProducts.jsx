@@ -16,7 +16,7 @@ const AllProducts = () => {
   const isCategory = catalog.filters.product_type !== "all";
 
   return (
-    <main className="mx-auto max-w-[1500px] pb-20 pt-6 sm:pt-9">
+    <main className="mx-auto max-w-[1500px] pb-20 pt-6 sm:pt-9 2xl:relative 2xl:left-1/2 2xl:w-[calc(100%+4vw)] 2xl:max-w-[1560px] 2xl:-translate-x-1/2">
       <nav aria-label={t("shop.breadcrumb")} className="flex flex-wrap items-center gap-2 text-xs text-[#607168]">
         <Link to="/" className="hover:text-[#173d34] hover:underline">{t("nav.home")}</Link>
         <FiChevronRight aria-hidden="true" />
@@ -35,8 +35,8 @@ const AllProducts = () => {
         {title}
       </h1>
 
-      <div className="grid gap-6 lg:grid-cols-[250px_minmax(0,1fr)] xl:gap-10 xl:grid-cols-[270px_minmax(0,1fr)]">
-        <ShopFilters filters={catalog.filters} onChange={catalog.updateFilter} onReset={catalog.resetFilters} />
+      <div className="grid gap-6 lg:grid-cols-[250px_minmax(0,1fr)] xl:gap-10 xl:grid-cols-[270px_minmax(0,1fr)] 2xl:gap-8">
+        <ShopFilters filters={catalog.filters} countries={catalog.countries} grades={catalog.grades} onChange={catalog.updateFilter} onReset={catalog.resetFilters} />
 
         <div className="min-w-0">
           <ShopToolbar
@@ -58,7 +58,7 @@ const AllProducts = () => {
           )}
 
           {!catalog.isLoading && !catalog.isError && catalog.pageProducts.length > 0 && (
-            <div className={`grid gap-4 sm:gap-5 ${catalog.view === "list" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3"}`}>
+            <div className={`grid gap-4 sm:gap-5 2xl:gap-4 ${catalog.view === "list" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"}`}>
               {catalog.pageProducts.map((product) => <ShopProductCard key={product.id} product={product} view={catalog.view} />)}
             </div>
           )}

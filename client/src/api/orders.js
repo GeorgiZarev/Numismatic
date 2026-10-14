@@ -20,6 +20,11 @@ export const fetchAllOrders = async (params = {}) => {
   return res.data;
 };
 
+export const fetchOrderCities = async () => {
+  const res = await axiosInstance.get("/orders/cities");
+  return res.data;
+};
+
 export const updateOrderStatus = async (id, status) => {
   const res = await axiosInstance.patch(`/orders/${id}/status`, { status });
   return res.data;

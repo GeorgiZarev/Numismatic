@@ -12,6 +12,15 @@ test("shop category and search map to supported API filters", () => {
   expect(filterLocalProducts([{ year: 1964, denomination: "Half dollar" }, { year: 1899, denomination: "Dollar" }], filters)).toHaveLength(1);
 });
 
+test("country filters locally so new countries remain available in the filter", () => {
+  const filters = readShopFilters(new URLSearchParams("country=Peru"));
+  expect(toApiFilters(filters)).toEqual({});
+  expect(filterLocalProducts([
+    { country: "Peru", year: 1918 },
+    { country: "Bulgaria", year: 1918 },
+  ], filters)).toEqual([{ country: "Peru", year: 1918 }]);
+});
+
 test("shop title follows the selected product category", () => {
   expect(shopTitleKey("all")).toBe("shop.allItems");
   expect(shopTitleKey("coin")).toBe("nav.coins");

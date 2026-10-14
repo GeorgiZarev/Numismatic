@@ -2,9 +2,10 @@ import { FiCheck } from "react-icons/fi";
 import CoinDetailFields from "./CoinDetailFields";
 import ProductPhotoField from "./ProductPhotoField";
 import ProductInventoryFields from "./ProductInventoryFields";
+import AccessoryDetailFields from "./AccessoryDetailFields";
+import AccessorySizesField from "./AccessorySizesField";
 import { consumableCategories } from "../../utils/consumableCategories";
 
-const countries = ["Montenegro", "Bulgaria", "Serbia", "Romania", "Greece", "United States"];
 const statuses = [
   ["active", "Active"],
   ["draft", "Draft"],
@@ -14,23 +15,23 @@ const statuses = [
 
 const inputClass = "mt-2 h-11 w-full rounded-md border border-[#dce4df] bg-white px-3.5 text-sm text-[#203730] outline-none transition-colors placeholder:text-[#96a19b] focus:border-[#4b8a70] focus:ring-2 focus:ring-[#d9e9de]";
 
-const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, onFileChange, onSubmit }) => {
+const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, onFileChange, onSizesChange, onSubmit }) => {
   const isCoin = formData.product_type === "coin";
   const isConsumable = formData.product_type === "consumable";
 
   return (
     <form onSubmit={onSubmit} aria-busy={loading} className={`overflow-hidden bg-white font-sans ${mode === "edit" ? "" : "rounded-md border border-[#dfe6e1] shadow-sm"}`}>
       <div className="grid lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="space-y-8 p-5 sm:p-8">
+        <div className="min-w-0 space-y-8 p-5 sm:p-8">
           <section>
             <h3 className="mb-5 text-base font-semibold text-[#203730]">Product information</h3>
-            <fieldset>
+            <fieldset className="min-w-0">
               <legend className="mb-2 text-sm font-medium text-[#354840]">Product type</legend>
-              <div className="inline-flex w-full rounded-md bg-[#f1f4f1] p-1 sm:w-auto">
+              <div className="grid w-full grid-cols-3 rounded-md bg-[#f1f4f1] p-1 sm:inline-flex sm:w-auto">
                 {[["coin", "Coin"], ["investment", "Investment product"], ["consumable", "Accessory"]].map(([value, label]) => (
-                  <label key={value} className="flex-1 cursor-pointer sm:flex-none">
+                  <label key={value} className="min-w-0 cursor-pointer sm:flex-none">
                     <input className="peer sr-only" type="radio" name="product_type" value={value} checked={(formData.product_type || "coin") === value} onChange={onChange} />
-                    <span className="block rounded px-5 py-2.5 text-center text-sm font-semibold text-[#66746a] transition-colors peer-checked:bg-white peer-checked:text-[#235b50] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[#6a9c80]">{label}</span>
+                    <span className="block rounded px-2 py-2.5 text-center text-xs font-semibold text-[#66746a] transition-colors peer-checked:bg-white peer-checked:text-[#235b50] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[#6a9c80] sm:px-5 sm:text-sm">{label}</span>
                   </label>
                 ))}
               </div>
@@ -53,26 +54,20 @@ const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, on
                 <textarea name="description" value={formData.description || ""} onChange={onChange} rows="4" className="mt-2 min-h-28 w-full resize-y rounded-md border border-[#dce4df] bg-white px-3.5 py-3 text-sm text-[#203730] outline-none focus:border-[#4b8a70] focus:ring-2 focus:ring-[#d9e9de]" />
               </label>
               <label className="block min-w-0">
-                <span className="text-sm font-medium text-[#354840]">Price *</span>
+                <span className="text-sm font-medium text-[#354840]">{isConsumable ? "Price per box *" : "Price *"}</span>
                 <span className="relative block">
                   <span aria-hidden="true" className="absolute left-3.5 top-[calc(50%+4px)] -translate-y-1/2 text-sm font-semibold text-[#64746a]">€</span>
                   <input type="number" name="price" min="0" step="0.01" value={formData.price} onChange={onChange} required className={`${inputClass} pl-8`} />
                 </span>
               </label>
-              {isCoin && <label className="block min-w-0">
-                <span className="text-sm font-medium text-[#354840]">Year *</span>
-                <input type="number" name="year" value={formData.year} onChange={onChange} required className={inputClass} />
-              </label>}
-              {isCoin && <label className="block min-w-0 sm:col-span-2">
-                <span className="text-sm font-medium text-[#354840]">Country *</span>
-                <select name="country" value={formData.country || "Montenegro"} onChange={onChange} required className={inputClass}>
-                  {countries.map((country) => <option key={country} value={country}>{country}</option>)}
-                </select>
-              </label>}
             </div>
           </section>
 
           {isCoin && <CoinDetailFields formData={formData} onChange={onChange} inputClass={inputClass} />}
+          {isConsumable && <AccessoryDetailFields formData={formData} onChange={onChange} />}
+          {isConsumable && ["capsules", "cardboard_holders"].includes(formData.consumable_category) && (
+            <AccessorySizesField sizes={formData.size_stock} recordedQuantity={formData.stock_quantity} onChange={onSizesChange} />
+          )}
         </div>
 
         <aside className="space-y-7 border-t border-[#e7ece8] bg-[#fbfcfa] p-5 sm:p-8 lg:border-l lg:border-t-0">

@@ -39,7 +39,9 @@ run("inventory SQL against an isolated database", () => {
       CREATE TABLE coins (
         id uuid PRIMARY KEY, name text NOT NULL, price numeric(10,2) NOT NULL,
         photo_url text, status text NOT NULL DEFAULT 'active',
+        product_type text NOT NULL DEFAULT 'coin', consumable_category text,
         stock_quantity integer NOT NULL CHECK (stock_quantity >= 0),
+        size_stock jsonb NOT NULL DEFAULT '[]'::jsonb,
         zero_stock_action text NOT NULL DEFAULT 'hide', expected_delivery_date date,
         restocked_at timestamp
       );
@@ -48,13 +50,19 @@ run("inventory SQL against an isolated database", () => {
         customer_name text NOT NULL, phone text NOT NULL, email text, city text NOT NULL,
         address text NOT NULL, postal_code text, address_line_2 text, country text,
         delivery_notes text, payment_method text, total numeric(10,2) NOT NULL,
-        status text NOT NULL DEFAULT 'new', updated_at timestamp DEFAULT now()
+        status text NOT NULL DEFAULT 'new', stock_committed boolean NOT NULL DEFAULT false,
+        updated_at timestamp DEFAULT now()
       );
       CREATE TABLE order_items (
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(), order_id uuid NOT NULL REFERENCES orders(id),
         coin_id uuid REFERENCES coins(id), coin_name text NOT NULL, photo_url text,
-        price numeric(10,2) NOT NULL, quantity integer NOT NULL
+        price numeric(10,2) NOT NULL, quantity integer NOT NULL, size_mm numeric(6,2)
       );
+      CREATE VIEW pending_stock_reservations AS
+      SELECT order_items.coin_id, order_items.size_mm, SUM(order_items.quantity)::integer AS quantity
+      FROM order_items JOIN orders ON orders.id = order_items.order_id
+      WHERE orders.status IN ('new', 'pending') AND NOT orders.stock_committed AND order_items.coin_id IS NOT NULL
+      GROUP BY order_items.coin_id, order_items.size_mm;
     `);
     for (const file of ["place_order_with_stock.sql", "update_order_status_with_stock.sql"]) {
       await first.query(fs.readFileSync(path.resolve("config/sql", file), "utf8"));
@@ -86,6 +94,16 @@ run("inventory SQL against an isolated database", () => {
     return id;
   };
 
+  const addSizedProduct = async (sizes) => {
+    const id = randomUUID();
+    const quantity = sizes.reduce((total, size) => total + size.stock_quantity, 0);
+    await first.query(
+      "INSERT INTO coins(id, name, price, stock_quantity, size_stock, product_type, consumable_category) VALUES($1, $2, $3, $4, $5::jsonb, 'consumable', 'capsules')",
+      [id, `Box ${id}`, 12, quantity, JSON.stringify(sizes)]
+    );
+    return id;
+  };
+
   const place = (client, items) => client.query(
     "SELECT place_order_with_stock($1::uuid, $2::jsonb, $3::jsonb) AS id",
     [userId, JSON.stringify(orderData), JSON.stringify(items)]
@@ -99,7 +117,7 @@ run("inventory SQL against an isolated database", () => {
     ]);
     expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
     expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
-    expect((await first.query("SELECT stock_quantity FROM coins WHERE id=$1", [id])).rows[0].stock_quantity).toBe(0);
+    expect((await first.query("SELECT stock_quantity FROM coins WHERE id=$1", [id])).rows[0].stock_quantity).toBe(1);
     expect((await first.query("SELECT COUNT(*)::int AS count FROM orders")).rows[0].count).toBe(1);
   });
 
@@ -153,5 +171,77 @@ run("inventory SQL against an isolated database", () => {
     await expect(first.query("SELECT update_order_status_with_stock($1::uuid, 'cancelled')", [orderId]))
       .rejects.toThrow(/Dispatched orders/);
     expect((await first.query("SELECT stock_quantity FROM coins WHERE id=$1", [id])).rows[0].stock_quantity).toBe(0);
+  });
+
+  test("a pending order reserves one size; approval deducts it; cancelling an approved order restores once", async () => {
+    const id = await addSizedProduct([{ size_mm: 15, stock_quantity: 1 }, { size_mm: 17, stock_quantity: 2 }]);
+    const orderId = (await place(first, [{ coin_id: id, size_mm: 15, quantity: 1 }])).rows[0].id;
+    let product = (await first.query("SELECT stock_quantity, size_stock FROM coins WHERE id=$1", [id])).rows[0];
+    expect(product.stock_quantity).toBe(3);
+    expect(product.size_stock).toEqual([{ size_mm: 15, stock_quantity: 1 }, { size_mm: 17, stock_quantity: 2 }]);
+    await expect(place(first, [{ coin_id: id, size_mm: 15, quantity: 1 }])).rejects.toThrow(/Insufficient stock/);
+    await first.query("SELECT update_order_status_with_stock($1::uuid, 'confirmed')", [orderId]);
+    product = (await first.query("SELECT stock_quantity, size_stock FROM coins WHERE id=$1", [id])).rows[0];
+    expect(product.stock_quantity).toBe(2);
+    expect(product.size_stock[0].stock_quantity).toBe(0);
+    await first.query("SELECT update_order_status_with_stock($1::uuid, 'cancelled')", [orderId]);
+    await first.query("SELECT update_order_status_with_stock($1::uuid, 'cancelled')", [orderId]);
+    product = (await first.query("SELECT stock_quantity, size_stock FROM coins WHERE id=$1", [id])).rows[0];
+    expect(product.stock_quantity).toBe(3);
+    expect(product.size_stock[0].stock_quantity).toBe(1);
+  });
+
+  test("cancelling a pending order only releases its reservation", async () => {
+    const id = await addCoin(2);
+    const orderId = (await place(first, [{ coin_id: id, quantity: 2 }])).rows[0].id;
+    await expect(place(first, [{ coin_id: id, quantity: 1 }])).rejects.toThrow(/Insufficient stock/);
+    await first.query("SELECT update_order_status_with_stock($1::uuid, 'cancelled')", [orderId]);
+    expect((await first.query("SELECT stock_quantity FROM coins WHERE id=$1", [id])).rows[0].stock_quantity).toBe(2);
+    await place(first, [{ coin_id: id, quantity: 2 }]);
+  });
+
+  test("approval fails clearly when real stock no longer covers the order", async () => {
+    const id = await addCoin(2);
+    const orderId = (await place(first, [{ coin_id: id, quantity: 2 }])).rows[0].id;
+    await first.query("UPDATE coins SET stock_quantity=1 WHERE id=$1", [id]);
+    await expect(first.query("SELECT update_order_status_with_stock($1::uuid, 'confirmed')", [orderId]))
+      .rejects.toThrow(/Not enough stock to approve/);
+    expect((await first.query("SELECT status FROM orders WHERE id=$1", [orderId])).rows[0].status).toBe("new");
+  });
+
+  test("legacy orders that already took stock are not deducted twice", async () => {
+    const id = await addCoin(5);
+    const orderId = (await place(first, [{ coin_id: id, quantity: 2 }])).rows[0].id;
+    await first.query("UPDATE orders SET stock_committed=true WHERE id=$1", [orderId]);
+    await first.query("SELECT update_order_status_with_stock($1::uuid, 'confirmed')", [orderId]);
+    expect((await first.query("SELECT stock_quantity FROM coins WHERE id=$1", [id])).rows[0].stock_quantity).toBe(5);
+  });
+
+  test("legacy capsule stock without sizes cannot be purchased", async () => {
+    const id = await addSizedProduct([]);
+    await first.query("UPDATE coins SET stock_quantity=40 WHERE id=$1", [id]);
+    await expect(place(first, [{ coin_id: id, quantity: 1 }])).rejects.toThrow(/Sizes are not configured/);
+    expect((await first.query("SELECT COUNT(*)::int AS count FROM orders")).rows[0].count).toBe(0);
+  });
+
+  test("a missing size rejects the whole mixed order", async () => {
+    const regular = await addCoin(1);
+    const sized = await addSizedProduct([{ size_mm: 15, stock_quantity: 1 }]);
+    await expect(place(first, [
+      { coin_id: regular, quantity: 1 },
+      { coin_id: sized, size_mm: 17, quantity: 1 },
+    ])).rejects.toThrow(/Insufficient stock/);
+    expect((await first.query("SELECT stock_quantity FROM coins WHERE id=$1", [regular])).rows[0].stock_quantity).toBe(1);
+    expect((await first.query("SELECT COUNT(*)::int AS count FROM orders")).rows[0].count).toBe(0);
+  });
+
+  test("two simultaneous orders cannot reserve the last box of one size", async () => {
+    const id = await addSizedProduct([{ size_mm: 15, stock_quantity: 1 }]);
+    const results = await Promise.allSettled([
+      place(first, [{ coin_id: id, size_mm: 15, quantity: 1 }]),
+      place(second, [{ coin_id: id, size_mm: 15, quantity: 1 }]),
+    ]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
   });
 });

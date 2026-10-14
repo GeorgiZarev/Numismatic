@@ -41,6 +41,14 @@ export const getAllOrders = async (req, res, next) => {
   }
 };
 
+export const getOrderCities = async (req, res, next) => {
+  try {
+    res.status(200).json(await Orders.getCities());
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getOrder = async (req, res, next) => {
   try {
     const order = await Orders.getById(req.params.id);
@@ -62,7 +70,7 @@ export const updateOrderStatus = async (req, res, next) => {
     });
   } catch (err) {
     if (err.message === "Order not found") return next(new NotFoundError(err.message));
-    if (/^(Cancelled orders|Dispatched orders|Order status cannot)/.test(err.message || "")) {
+    if (/^(Cancelled orders|Dispatched orders|Order status cannot|Not enough stock|Cannot restore removed size|Size .* no longer exists|Unknown order status)/.test(err.message || "")) {
       return next(new BadRequestError(err.message));
     }
     next(err);

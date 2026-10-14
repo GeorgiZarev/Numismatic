@@ -1,4 +1,6 @@
 import { formatMoney } from "../../utils/money";
+import ProductPhoto from "../products/ProductPhoto";
+import OrderStatusBadge from "./OrderStatusBadge";
 
 const OrderList = ({ orders }) => {
   if (orders.length === 0) {
@@ -16,16 +18,14 @@ const OrderList = ({ orders }) => {
                 {new Date(order.created_at).toLocaleString()}
               </p>
             </div>
-            <span className="h-fit bg-orange-100 text-orange-700 px-3 py-1 rounded text-sm">
-              {order.status}
-            </span>
+            <OrderStatusBadge status={order.status} />
           </div>
           <div className="space-y-2">
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
                 <span className="flex items-center gap-3 min-w-0">
-                  {item.photo_url ? <img src={item.photo_url} alt="" className="w-12 h-12 object-contain border rounded bg-gray-50 flex-none" /> : <span className="w-12 h-12 border rounded bg-gray-50 flex-none" />}
-                  <span>{item.quantity} x {item.coin_name}</span>
+                  <ProductPhoto src={item.photo_url} size="sm" />
+                  <span>{item.quantity} x {item.coin_name}{item.size_mm != null ? ` (${item.size_mm} mm)` : ""}</span>
                 </span>
                 <span className="whitespace-nowrap">{formatMoney(item.price)}</span>
               </div>

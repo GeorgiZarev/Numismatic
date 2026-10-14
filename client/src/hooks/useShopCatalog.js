@@ -23,6 +23,15 @@ export const useShopCatalog = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const countries = useMemo(() =>
+    [...new Set(data.filter((product) => product.product_type === "coin")
+      .map((product) => product.country).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+  [data]);
+  const grades = useMemo(() =>
+    [...new Set(data.filter((product) => product.product_type === "coin")
+      .map((product) => product.coin_grading).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+  [data]);
+
   const products = useMemo(() => {
     const matching = filterLocalProducts(data, filters);
     return filters.sort ? matching : matching.sort((a, b) =>
@@ -64,7 +73,7 @@ export const useShopCatalog = () => {
   };
 
   return {
-    filters, products, pageProducts, page, setPage, pageSize, changePageSize,
+    filters, countries, grades, products, pageProducts, page, setPage, pageSize, changePageSize,
     pageCount, view, setView, isLoading, isError, error,
     updateFilter, updateSort, resetFilters: () => setSearchParams({}),
   };

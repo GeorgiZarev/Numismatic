@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPlus, FiX } from "react-icons/fi";
 import AdminProductList from "../components/products/AdminProductList";
+import AdminProductFilters from "../components/products/AdminProductFilters";
+import AdminAccessoryStockTable from "../components/products/AdminAccessoryStockTable";
+import AdminCleaningSolutionsTable from "../components/products/AdminCleaningSolutionsTable";
 import CoinAdminForm from "../components/products/CoinAdminForm";
 import ProductStatusModal from "../components/products/ProductStatusModal";
 import ProductMethodModal from "../components/products/ProductMethodModal";
+import ProductSizesModal from "../components/products/ProductSizesModal";
 import { useCoins } from "../hooks/useCoins";
-import { buildCoinFormData, coinToForm } from "../utils/coinForm";
+import { buildCoinFormData, coinToForm, savedInventoryMatches } from "../utils/coinForm";
+import { buildSizeStockUpdate } from "../utils/productSizes";
 import { useQueryClient } from "@tanstack/react-query";
 import { updateCoinField } from "../api/coins";
+import { filterAdminProducts } from "../utils/adminProductFilters";
 
 const AdminProducts = () => {
   const { coins, deleteCoin, error, fetchCoins, loading, updateCoin } = useCoins();
@@ -22,6 +28,12 @@ const AdminProducts = () => {
   const [methodProduct, setMethodProduct] = useState(null);
   const [methodError, setMethodError] = useState("");
   const [methodSaving, setMethodSaving] = useState(false);
+  const [sizesProduct, setSizesProduct] = useState(null);
+  const [sizesError, setSizesError] = useState("");
+  const [sizesSaving, setSizesSaving] = useState(false);
+  const [productType, setProductType] = useState("all");
+  const [accessoryCategory, setAccessoryCategory] = useState("");
+  const visibleProducts = filterAdminProducts(coins, productType, accessoryCategory);
 
   const refreshCatalog = () => {
     queryClient.invalidateQueries({ queryKey: ["home-products"] });
@@ -55,8 +67,8 @@ const AdminProducts = () => {
 
     try {
       const result = await updateCoin(editingCoin.id, buildCoinFormData(formData));
-      if (Number(result.coin?.stock_quantity) !== Number(formData.stock_quantity)) {
-        throw new Error("The quantity was not saved. Please reload the page and try again.");
+      if (!savedInventoryMatches(result.coin, formData)) {
+        throw new Error("The size quantities were not saved. Please try again.");
       }
       refreshCatalog();
       setEditingCoin(null);
@@ -115,6 +127,24 @@ const AdminProducts = () => {
     }
   };
 
+  const handleSizesSave = async (sizes) => {
+    setSizesError("");
+    setSizesSaving(true);
+    try {
+      const result = await updateCoin(sizesProduct.id, buildSizeStockUpdate(sizes));
+      if (!savedInventoryMatches(result.coin, { ...sizesProduct, size_stock: sizes })) {
+        throw new Error("The size quantities were not saved. Please try again.");
+      }
+      refreshCatalog();
+      await fetchCoins({ includeUnavailable: "true" });
+      setSizesProduct(null);
+    } catch (err) {
+      setSizesError(err.response?.data?.error?.message || err.response?.data?.message || err.message || "Could not save stock.");
+    } finally {
+      setSizesSaving(false);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this product?")) return;
     await deleteCoin(id);
@@ -137,14 +167,42 @@ const AdminProducts = () => {
       {loading && <p className="mb-4">Loading products...</p>}
       {error && <p className="mb-4 text-red-600">{error}</p>}
 
-      <AdminProductList
-        coins={coins}
-        onDelete={handleDelete}
-        onEdit={startEdit}
-        onChangeStatus={(coin) => { setStatusError(""); setStatusProduct(coin); }}
-        onChangeMethod={(coin) => { setMethodError(""); setMethodProduct(coin); }}
-        onUpdateField={handleInlineSave}
+      <AdminProductFilters
+        productType={productType}
+        category={accessoryCategory}
+        onProductType={(type) => { setProductType(type); setAccessoryCategory(""); }}
+        onCategory={setAccessoryCategory}
       />
+
+      {productType === "consumable" && accessoryCategory === "cleaning_solutions" ? (
+        <AdminCleaningSolutionsTable
+          products={visibleProducts}
+          onDelete={handleDelete}
+          onEdit={startEdit}
+          onChangeStatus={(coin) => { setStatusError(""); setStatusProduct(coin); }}
+          onChangeMethod={(coin) => { setMethodError(""); setMethodProduct(coin); }}
+          onUpdateField={handleInlineSave}
+        />
+      ) : ["capsules", "cardboard_holders"].includes(accessoryCategory) && productType === "consumable" ? (
+        <AdminAccessoryStockTable
+          products={visibleProducts}
+          onDelete={handleDelete}
+          onEdit={startEdit}
+          onChangeStatus={(coin) => { setStatusError(""); setStatusProduct(coin); }}
+          onChangeMethod={(coin) => { setMethodError(""); setMethodProduct(coin); }}
+          onUpdateField={handleInlineSave}
+        />
+      ) : (
+        <AdminProductList
+          coins={visibleProducts}
+          onDelete={handleDelete}
+          onEdit={startEdit}
+          onEditSizes={(coin) => { setSizesError(""); setSizesProduct(coin); }}
+          onChangeStatus={(coin) => { setStatusError(""); setStatusProduct(coin); }}
+          onChangeMethod={(coin) => { setMethodError(""); setMethodProduct(coin); }}
+          onUpdateField={handleInlineSave}
+        />
+      )}
 
       {statusProduct && <ProductStatusModal
         product={statusProduct}
@@ -152,6 +210,14 @@ const AdminProducts = () => {
         error={statusError}
         onClose={() => setStatusProduct(null)}
         onSave={handleStatusSave}
+      />}
+
+      {sizesProduct && <ProductSizesModal
+        product={sizesProduct}
+        saving={sizesSaving}
+        error={sizesError}
+        onClose={() => setSizesProduct(null)}
+        onSave={handleSizesSave}
       />}
 
       {methodProduct && <ProductMethodModal
@@ -181,6 +247,7 @@ const AdminProducts = () => {
               mode="edit"
               onChange={handleChange}
               onFileChange={handleFileChange}
+              onSizesChange={(sizes) => setFormData((prev) => ({ ...prev, size_stock: sizes }))}
               onSubmit={handleSubmit}
             />
           </div>

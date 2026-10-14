@@ -3,12 +3,14 @@ import { getConsumableCategoryLabel } from "../../utils/consumableCategories";
 import { getZeroStockAction } from "../../utils/zeroStockAction";
 import ProductStatusBadge from "./ProductStatusBadge";
 import InlineProductField from "./InlineProductField";
+import { requiresProductSize } from "../../utils/productSizes";
+import ProductPhoto from "./ProductPhoto";
 
 const formatDate = (value) => value
   ? new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(value))
   : "Not yet";
 
-const AdminProductList = ({ coins, onDelete, onEdit, onChangeStatus, onChangeMethod, onUpdateField }) => {
+const AdminProductList = ({ coins, onDelete, onEdit, onEditSizes, onChangeStatus, onChangeMethod, onUpdateField }) => {
   if (coins.length === 0) {
     return <p className="text-gray-600">No products found.</p>;
   }
@@ -45,11 +47,7 @@ const AdminProductList = ({ coins, onDelete, onEdit, onChangeStatus, onChangeMet
                 <div className="flex min-w-0 items-center gap-3">
                   {coin.photo_url && (
                     <Link to={`/product/${coin.id}`} aria-label={`Open ${coin.name}`} className="shrink-0">
-                      <img
-                        src={coin.photo_url}
-                        alt=""
-                        className="w-14 h-14 object-contain rounded border"
-                      />
+                      <ProductPhoto src={coin.photo_url} size="md" />
                     </Link>
                   )}
                   <div className="min-w-0">
@@ -66,7 +64,8 @@ const AdminProductList = ({ coins, onDelete, onEdit, onChangeStatus, onChangeMet
               </td>
               <td className="p-3"><InlineProductField product={coin} field="price" onSave={onUpdateField} /></td>
               <td className="p-3">
-                <InlineProductField product={coin} field="stock_quantity" onSave={onUpdateField} />
+                {requiresProductSize(coin) ? <button type="button" onClick={() => onEditSizes(coin)} title="Sizes and quantities" className="underline-offset-2 hover:underline">{coin.stock_quantity} boxes</button> : <InlineProductField product={coin} field="stock_quantity" onSave={onUpdateField} />}
+                {Number(coin.reserved_quantity) > 0 && <p className="mt-1 text-xs font-semibold text-[#a36b00]">{coin.reserved_quantity} reserved in pending orders</p>}
                 {Number(coin.stock_quantity) === 0 && coin.zero_stock_action === "review_delete" && (
                   <p className="mt-1 text-xs font-semibold text-red-700">Review for deletion</p>
                 )}

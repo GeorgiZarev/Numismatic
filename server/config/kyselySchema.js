@@ -6,13 +6,20 @@
  * @property {number} price
  * @property {string=} monarch
  * @property {number} year
- * @property {'Montenegro' | 'Bulgaria' | 'Serbia' | 'Romania' | 'Greece' | 'United States'} country
+ * @property {string} country
  * @property {string=} price_value
  * @property {string} currency
  * @property {'coin' | 'investment' | 'consumable'} product_type
  * @property {'capsules' | 'cleaning_solutions' | 'cardboard_holders'=} consumable_category
+ * @property {string=} company
+ * @property {number=} volume_ml
+ * @property {string=} suitable_metals
+ * @property {number=} pieces_per_box
+ * @property {{size_mm: number, stock_quantity: number}[]} size_stock
  * @property {string=} composition_metal
  * @property {string=} weight
+ * @property {number=} fineness Parts per thousand
+ * @property {number=} pure_weight Grams
  * @property {string=} diameter
  * @property {string=} shape
  * @property {string=} technique
@@ -76,6 +83,7 @@
  * @property {string=} photo_url
  * @property {number} price
  * @property {number} quantity
+ * @property {number | null} size_mm
  */
 
 /**

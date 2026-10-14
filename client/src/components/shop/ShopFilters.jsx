@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FiChevronDown, FiSliders } from "react-icons/fi";
 import { consumableCategories } from "../../utils/consumableCategories";
 
-const countries = ["Bulgaria", "Serbia", "Romania", "Greece", "Montenegro", "Ottoman Empire", "United States"];
 const materials = ["Silver", "Gold", "Copper", "Bronze"];
-const grades = ["MS-70", "MS-65", "XF", "VF", "Fine"];
 
 const FilterSection = ({ title, children }) => (
   <details className="group border-b border-[#e4e8e6] py-1">
@@ -34,12 +32,14 @@ const SelectFilter = ({ label, value, options, onChange, allLabel }) => (
   </>
 );
 
-const ShopFilters = ({ filters, onChange, onReset }) => {
+const ShopFilters = ({ filters, countries = [], grades = [], onChange, onReset }) => {
   const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const showCoinFilters = filters.product_type === "all" || filters.product_type === "coin";
   const showMaterial = filters.product_type !== "consumable";
   const showAccessories = filters.product_type === "all" || filters.product_type === "consumable";
+  const countryOptions = [...new Set([filters.country, ...countries].filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const gradeOptions = [...new Set([filters.coin_grading, ...grades].filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
   return (
     <div className="lg:w-[250px] lg:shrink-0 xl:w-[270px]">
@@ -66,7 +66,7 @@ const ShopFilters = ({ filters, onChange, onReset }) => {
         </FilterSection>
 
         {showCoinFilters && <FilterSection title={t("filters.country")}>
-          <SelectFilter label="country" value={filters.country} options={countries.map((country) => ({ value: country, label: country }))} onChange={(value) => onChange("country", value)} allLabel={t("shop.allCountries")} />
+          <SelectFilter label="country" value={filters.country} options={countryOptions.map((country) => ({ value: country, label: country }))} onChange={(value) => onChange("country", value)} allLabel={t("shop.allCountries")} />
         </FilterSection>}
 
         {showCoinFilters && <FilterSection title={t("shop.year")}>
@@ -88,7 +88,7 @@ const ShopFilters = ({ filters, onChange, onReset }) => {
         </FilterSection>
 
         {showCoinFilters && <FilterSection title={t("filters.grading")}>
-          <SelectFilter label="grade" value={filters.coin_grading} options={grades.map((grade) => ({ value: grade, label: grade }))} onChange={(value) => onChange("coin_grading", value)} allLabel={t("shop.allGrades")} />
+          <SelectFilter label="grade" value={filters.coin_grading} options={gradeOptions.map((grade) => ({ value: grade, label: grade }))} onChange={(value) => onChange("coin_grading", value)} allLabel={t("shop.allGrades")} />
         </FilterSection>}
 
         {showCoinFilters && <FilterSection title={t("shop.denomination")}>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { availableForSize, cartItemKey, hasProductSizes } from "../utils/productSizes";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "numisora_cart";
@@ -16,13 +17,15 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (coin, quantity = 1) => {
+  const addToCart = (coin, quantity = 1, sizeMm = null) => {
     setItems((prev) => {
-      const existing = prev.find((item) => item.id === coin.id);
-      if (Number(coin.stock_quantity) < (existing?.quantity || 0) + quantity) return prev;
+      if (hasProductSizes(coin) && sizeMm === null) return prev;
+      const key = cartItemKey({ id: coin.id, size_mm: sizeMm });
+      const existing = prev.find((item) => cartItemKey(item) === key);
+      if (availableForSize(coin, sizeMm) < (existing?.quantity || 0) + quantity) return prev;
       if (existing) {
         return prev.map((item) =>
-          item.id === coin.id
+          cartItemKey(item) === key
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
@@ -38,23 +41,24 @@ export const CartProvider = ({ children }) => {
           photo_url: coin.photo_url,
           country: coin.country,
           year: coin.year,
+          size_mm: sizeMm,
           quantity,
         },
       ];
     });
   };
 
-  const removeFromCart = (coinId) => {
-    setItems((prev) => prev.filter((item) => item.id !== coinId));
+  const removeFromCart = (key) => {
+    setItems((prev) => prev.filter((item) => cartItemKey(item) !== key));
   };
 
-  const updateQuantity = (coinId, quantity) => {
+  const updateQuantity = (key, quantity) => {
     const nextQuantity = Number(quantity);
     if (!Number.isInteger(nextQuantity) || nextQuantity < 1) return;
 
     setItems((prev) =>
       prev.map((item) =>
-        item.id === coinId ? { ...item, quantity: nextQuantity } : item
+        cartItemKey(item) === key ? { ...item, quantity: nextQuantity } : item
       )
     );
   };

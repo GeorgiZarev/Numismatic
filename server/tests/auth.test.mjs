@@ -10,6 +10,13 @@ import errorHandler from "../middlewares/errorHandler.js";
 
 dotenv.config();
 
+// These suites register users and run DELETE FROM users/coins on the configured
+// database. They only run when RUN_DESTRUCTIVE_DB_TESTS=true points at a throwaway DB.
+const runDestructive = process.env.RUN_DESTRUCTIVE_DB_TESTS === "true";
+const describeDb = runDestructive ? describe : describe.skip;
+const beforeAllDb = runDestructive ? beforeAll : () => {};
+const afterAllDb = runDestructive ? afterAll : () => {};
+
 const app = express();
 
 app.use(express.json());
@@ -19,14 +26,14 @@ app.use(errorHandler);
 
 let authCookie;
 
-afterAll(async () => {
+afterAllDb(async () => {
   await sql`DELETE FROM users`;
 });
 
 /**
  * * Testing the auth routes
  */
-describe("Auth Routes", () => {
+describeDb("Auth Routes", () => {
   /**
    * ! This user is being used if you want the program to return good results
    */

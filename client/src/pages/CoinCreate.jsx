@@ -3,7 +3,7 @@ import { useCoins } from "../hooks/useCoins";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import CoinAdminForm from "../components/products/CoinAdminForm";
-import { buildCoinFormData, emptyCoinForm } from "../utils/coinForm";
+import { buildCoinFormData, emptyCoinForm, savedInventoryMatches } from "../utils/coinForm";
 import { useQueryClient } from "@tanstack/react-query";
 
 const CoinCreate = () => {
@@ -32,8 +32,8 @@ const CoinCreate = () => {
 
     try {
       const result = await createCoin(buildCoinFormData(formData));
-      if (Number(result.coin?.stock_quantity) !== Number(formData.stock_quantity)) {
-        throw new Error("The quantity was not saved. Please reload the page and try again.");
+      if (!savedInventoryMatches(result.coin, formData)) {
+        throw new Error("The size quantities were not saved. Please try again.");
       }
       queryClient.invalidateQueries({ queryKey: ["home-products"] });
       queryClient.invalidateQueries({ queryKey: ["shop-products"] });
@@ -66,6 +66,7 @@ const CoinCreate = () => {
         error={error}
         onChange={handleChange}
         onFileChange={handleFileChange}
+        onSizesChange={(sizes) => setFormData((prev) => ({ ...prev, size_stock: sizes }))}
         onSubmit={handleSubmit}
       />
     </div>

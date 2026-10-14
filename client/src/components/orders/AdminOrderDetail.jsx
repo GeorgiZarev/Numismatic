@@ -1,4 +1,6 @@
 import { formatMoney } from "../../utils/money";
+import ProductPhoto from "../products/ProductPhoto";
+import OrderStatusBadge from "./OrderStatusBadge";
 
 const AdminOrderDetail = ({ order, onClose }) => {
   if (!order) return null;
@@ -8,7 +10,7 @@ const AdminOrderDetail = ({ order, onClose }) => {
       <div className="w-full max-w-xl bg-white h-full overflow-y-auto p-6 shadow-xl">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-2xl font-bold">Order #{order.id.slice(0, 8)}</h2>
+            <h2 className="flex flex-wrap items-center gap-3 text-2xl font-bold">Order #{order.id.slice(0, 8)} <OrderStatusBadge status={order.status} /></h2>
             <p className="text-gray-500">
               {new Date(order.created_at).toLocaleString()}
             </p>
@@ -39,14 +41,11 @@ const AdminOrderDetail = ({ order, onClose }) => {
             {order.items.map((item) => (
               <div key={item.id} className="flex gap-3">
                 {item.photo_url && (
-                  <img
-                    src={item.photo_url}
-                    alt={item.coin_name}
-                    className="w-16 h-16 object-cover rounded border"
-                  />
+                  <ProductPhoto src={item.photo_url} alt={item.coin_name} size="md" />
                 )}
                 <div className="flex-1">
                   <p className="font-medium">{item.coin_name}</p>
+                  {item.size_mm != null && <p className="text-sm text-gray-600">{item.size_mm} mm · box</p>}
                   <p className="text-sm text-gray-600">
                     {item.quantity} x {formatMoney(item.price)}
                   </p>

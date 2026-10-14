@@ -1,6 +1,18 @@
 import db from "../../config/kysely.js";
 import { sql } from "kysely";
 
+// Customers only see products with boxes left after pending-order reservations.
+const hasShownStock = (eb) => eb.or([
+  sql`stock_quantity - COALESCE((SELECT SUM(r.quantity) FROM pending_stock_reservations r WHERE r.coin_id = coins.id), 0) > 0`,
+  eb("zero_stock_action", "=", "show"),
+]);
+
+const hasRequiredSizes = sql`NOT (
+  product_type = 'consumable'
+  AND consumable_category IN ('capsules', 'cardboard_holders')
+  AND jsonb_array_length(size_stock) = 0
+)`;
+
 /**
  * * Coin-related DB queries using Kysely
  */
@@ -10,7 +22,8 @@ export const Coins = {
       .selectFrom("coins")
       .selectAll()
       .where("status", "=", "active")
-      .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]))
+      .where(hasShownStock)
+      .where(hasRequiredSizes)
       .orderBy("created_at", "desc")
       .execute();
   },
@@ -22,7 +35,8 @@ export const Coins = {
       .where("id", "=", id);
     if (!includeUnavailable) {
       query = query.where("status", "=", "active")
-        .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]));
+        .where(hasShownStock)
+        .where(hasRequiredSizes);
     }
     return query.execute();
   },
@@ -33,7 +47,8 @@ export const Coins = {
       .selectAll()
       .where("country", "=", country)
       .where("status", "=", "active")
-      .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]))
+      .where(hasShownStock)
+      .where(hasRequiredSizes)
       .execute();
   },
 
@@ -45,7 +60,7 @@ export const Coins = {
       .execute();
   },
 
-  update: async (id, coinData, expectedQuantity) => {
+  update: async (id, coinData, expectedQuantity, expectedSizeStock) => {
     let query = db
       .updateTable("coins")
       .set(coinData)
@@ -53,8 +68,26 @@ export const Coins = {
     if (coinData.stock_quantity !== undefined) {
       query = query.where("stock_quantity", "=", expectedQuantity);
     }
+    if (coinData.size_stock !== undefined) {
+      query = query.where("size_stock", "=", sql`${JSON.stringify(expectedSizeStock)}::jsonb`);
+    }
     return query.returningAll().execute();
   },
+
+  getReservations: async (ids) => ids.length === 0 ? [] : db
+    .selectFrom("pending_stock_reservations")
+    .selectAll()
+    .where("coin_id", "in", ids)
+    .execute(),
+
+  getOpenOrderSizes: async (id) => db
+    .selectFrom("order_items")
+    .innerJoin("orders", "orders.id", "order_items.order_id")
+    .select("order_items.size_mm")
+    .where("order_items.coin_id", "=", id)
+    .where("order_items.size_mm", "is not", null)
+    .where("orders.status", "not in", ["sent", "completed", "cancelled", "canceled"])
+    .execute(),
 
   delete: async (id) => {
     return await db
@@ -76,7 +109,8 @@ export const Coins = {
 
     if (filters.includeUnavailable !== "true") {
       query = query.where("status", "=", "active")
-        .where((eb) => eb.or([eb("stock_quantity", ">", 0), eb("zero_stock_action", "=", "show")]));
+        .where(hasShownStock)
+        .where(hasRequiredSizes);
     } else if (filters.status) {
       query = query.where("status", "=", filters.status);
     }
