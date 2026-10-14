@@ -13,6 +13,13 @@ import errorHandler from "../middlewares/errorHandler.js";
 
 dotenv.config();
 
+// These suites register users and run DELETE FROM users/coins on the configured
+// database. They only run when RUN_DESTRUCTIVE_DB_TESTS=true points at a throwaway DB.
+const runDestructive = process.env.RUN_DESTRUCTIVE_DB_TESTS === "true";
+const describeDb = runDestructive ? describe : describe.skip;
+const beforeAllDb = runDestructive ? beforeAll : () => {};
+const afterAllDb = runDestructive ? afterAll : () => {};
+
 const app = express();
 
 app.use(express.json());
@@ -41,7 +48,7 @@ const logErrorResponse = (res, label = "💥 Error Response") => {
   console.log(`${label}:`, JSON.stringify(res.body, null, 2));
 };
 
-beforeAll(async () => {
+beforeAllDb(async () => {
   await request(app).post("/api/auth/register").send(testUser);
 
   const res = await request(app).post("/api/auth/login").send({
@@ -53,11 +60,11 @@ beforeAll(async () => {
   authCookie = cookies?.[0];
 });
 
-afterAll(async () => {
+afterAllDb(async () => {
   await sql`DELETE FROM coins`;
 });
 
-describe("Coin Routes", () => {
+describeDb("Coin Routes", () => {
   /**
    * & PUBLIC ROUTES
    * ! Testing getCoins route

@@ -1,6 +1,10 @@
 import ApiError from "../errors/ApiError.js";
 
 const errorHandler = (err, req, res, next) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.error(`[${req.method} ${req.originalUrl}]`, err.message, JSON.stringify(err.details || ""));
+  }
+
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
       error: {

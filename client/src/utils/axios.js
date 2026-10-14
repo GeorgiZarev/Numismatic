@@ -1,11 +1,12 @@
 import axios from "axios";
 
-const isLocalhost =
-  typeof window !== "undefined" && window.location.hostname === "localhost";
+const localHosts = ["localhost", "127.0.0.1"];
+const hostname = typeof window !== "undefined" ? window.location.hostname : "";
 
+// Keep the API on the same hostname as the page so auth cookies stay same-site.
 const API_BASE_URL =
   process.env.REACT_APP_API_URL ||
-  (isLocalhost ? "http://localhost:3001/api" : "/api");
+  (localHosts.includes(hostname) ? `http://${hostname}:3001/api` : "/api");
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
