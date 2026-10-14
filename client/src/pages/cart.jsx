@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../Contexts/cartContext";
 import { formatMoney } from "../utils/money";
 import { useCartAvailability } from "../hooks/useCartAvailability";
+import { availableForSize, cartItemKey } from "../utils/productSizes";
+import ProductPhoto from "../components/products/ProductPhoto";
 
 function Cart() {
   const { items, removeFromCart, total, updateQuantity } = useCart();
@@ -29,37 +31,34 @@ function Cart() {
       <div className="grid gap-4">
         {items.map((item) => (
           <div
-            key={item.id}
+            key={cartItemKey(item)}
             className="flex flex-col sm:flex-row gap-4 border rounded-lg p-4 bg-white shadow-sm"
           >
-            <img
-              src={item.photo_url || "https://placehold.co/120x120"}
-              alt={item.name}
-              className="w-28 h-28 object-cover rounded bg-gray-100"
-            />
+            <ProductPhoto src={item.photo_url} alt={item.name} size="lg" />
             <div className="flex-1">
               <h2 className="text-xl font-semibold">{item.name}</h2>
+              {item.size_mm != null && <p className="text-sm text-[#52645b]">{item.size_mm} mm · box</p>}
               <p className="text-gray-600">
                 {item.country} {item.year ? `- ${item.year}` : ""}
               </p>
               <p className="text-orange-600 font-semibold mt-2">
                 {formatMoney(item.price)}
               </p>
-              {!availability.isLoading && !availability.isError && availability.issues.some(({ id }) => id === item.id) && (
-                <p className="mt-2 text-sm font-semibold text-red-700">Only {availability.byId.get(item.id)?.stock_quantity || 0} available. Adjust or remove this item.</p>
+              {!availability.isLoading && !availability.isError && availability.issueKeys.has(cartItemKey(item)) && (
+                <p className="mt-2 text-sm font-semibold text-red-700">Only {availableForSize(availability.byId.get(item.id), item.size_mm)} available. Adjust or remove this item.</p>
               )}
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3">
               <input
                 type="number"
                 min="1"
-                max={availability.byId.get(item.id)?.stock_quantity || undefined}
+                max={availableForSize(availability.byId.get(item.id), item.size_mm) || undefined}
                 value={item.quantity}
-                onChange={(event) => updateQuantity(item.id, event.target.value)}
+                onChange={(event) => updateQuantity(cartItemKey(item), event.target.value)}
                 className="border rounded p-2 w-20"
               />
               <button
-                onClick={() => removeFromCart(item.id)}
+                onClick={() => removeFromCart(cartItemKey(item))}
                 className="text-red-600 text-sm"
               >
                 Remove
