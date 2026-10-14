@@ -2,6 +2,7 @@ import express from "express";
 import {
   createOrder,
   getAllOrders,
+  getOrderCities,
   getOrder,
   getMyOrders,
   updateOrderStatus,
@@ -21,6 +22,7 @@ router.use(authenticateUser);
 router.post("/", validateOrderCreation, createOrder);
 router.get("/my", getMyOrders);
 router.get("/", requireAdmin, validateOrderQuery, getAllOrders);
+router.get("/cities", requireAdmin, getOrderCities);
 router.get("/:id", requireAdmin, getOrder);
 router.patch("/:id/status", requireAdmin, validateOrderStatus, updateOrderStatus);
 

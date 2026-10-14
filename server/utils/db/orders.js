@@ -2,6 +2,8 @@ import db from "../../config/kysely.js";
 import { sql } from "kysely";
 import { sql as neonSql } from "../../config/NeonClient.js";
 
+const orderDay = sql`(created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Sofia')::date`;
+
 export const Orders = {
   create: async ({ userId, orderData, items }) => {
     const [result] = await neonSql(
@@ -33,6 +35,17 @@ export const Orders = {
     return order;
   },
 
+  getCities: async () => {
+    const rows = await db
+      .selectFrom("orders")
+      .select(sql`MIN(TRIM(city))`.as("city"))
+      .where(sql`TRIM(city)`, "<>", "")
+      .groupBy(sql`LOWER(TRIM(city))`)
+      .orderBy(sql`LOWER(TRIM(city))`)
+      .execute();
+    return rows.map((row) => row.city);
+  },
+
   getAll: async (filters = {}) => {
     let query = db
       .selectFrom("orders")
@@ -55,12 +68,17 @@ export const Orders = {
       );
     }
 
-    if (filters.fromDate) {
-      query = query.where("created_at", ">=", new Date(filters.fromDate));
+    if (filters.city?.trim()) {
+      query = query.where(sql`LOWER(TRIM(city))`, "=", filters.city.trim().toLowerCase());
     }
 
-    if (filters.toDate) {
-      query = query.where("created_at", "<=", new Date(filters.toDate));
+    // Whole calendar days in the shop's time zone; a start date alone means that single day.
+    if (filters.fromDate) {
+      query = query
+        .where(orderDay, ">=", sql`${filters.fromDate}::date`)
+        .where(orderDay, "<=", sql`${filters.toDate || filters.fromDate}::date`);
+    } else if (filters.toDate) {
+      query = query.where(orderDay, "<=", sql`${filters.toDate}::date`);
     }
 
     const orders = await query
