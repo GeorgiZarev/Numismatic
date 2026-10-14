@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FiShoppingBag } from "react-icons/fi";
+import { FiMinus, FiPlus, FiShoppingBag } from "react-icons/fi";
 import { useCoins } from "../../hooks/useCoins";
+import useProductTitle from "../../hooks/useProductTitle";
 import { useAuth } from "../../Contexts/authContext";
 import { useCart } from "../../Contexts/cartContext";
 import { formatMoney } from "../../utils/money";
 import { getConsumableCategoryLabel } from "../../utils/consumableCategories";
 import ProductFacts from "../products/ProductFacts";
 import { expectedDeliveryDate, isPurchasable } from "../../utils/inventory";
+import { availableForSize, cartItemKey, requiresProductSize } from "../../utils/productSizes";
+import SizeSelect from "../shop/SizeSelect";
+import { buildProductDetailUpdate } from "../../utils/productDetailForm";
 
 const LargeCoinCard = () => {
   const { t } = useTranslation();
@@ -18,7 +22,7 @@ const LargeCoinCard = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { getCoin, deleteCoin, updateCoin } = useCoins();
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
 
   const [errorMessage, setErrorMessage] = useState("");
   const [saving, setSaving] = useState(false);
@@ -26,6 +30,13 @@ const LargeCoinCard = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
+  useProductTitle(coin?.name);
+
+  useEffect(() => { setSelectedSize(""); setQuantity(1); }, [id]);
+  useEffect(() => { setQuantity(1); }, [selectedSize]);
 
   useEffect(() => {
     const fetchCoin = async () => {
@@ -54,14 +65,7 @@ const LargeCoinCard = () => {
     setErrorMessage("");
     setSaving(true);
 
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "" && key !== "photo_url") {
-        data.append(key, ["year", "price", "mintage"].includes(key) ? Number(value) : value);
-      }
-    });
-
-    if (file) data.append("photo", file);
+    const data = buildProductDetailUpdate(coin, formData, file);
 
     try {
       const updated = await updateCoin(id, data);
@@ -87,6 +91,14 @@ const LargeCoinCard = () => {
       ? t("nav.investment")
       : t(`shop.accessoryCategories.${coin.consumable_category}`, { defaultValue: getConsumableCategoryLabel(coin.consumable_category) });
   const available = isPurchasable(coin);
+  const sized = requiresProductSize(coin);
+  const sizeMm = sized && selectedSize !== "" ? Number(selectedSize) : null;
+  const inCart = items.find((item) => cartItemKey(item) === cartItemKey({ id: coin.id, size_mm: sizeMm }))?.quantity || 0;
+  const maxQuantity = sized && sizeMm === null ? 0 : Math.max(0, availableForSize(coin, sizeMm) - inCart);
+  const canPurchase = available && maxQuantity > 0 && (!sized || sizeMm !== null);
+  const clampQuantity = (value) => Math.min(Math.max(1, Math.floor(Number(value)) || 1), Math.max(1, maxQuantity));
+  const setClampedQuantity = (value) => setQuantity(clampQuantity(value));
+  const stepQuantity = (step) => setQuantity((previous) => clampQuantity(previous + step));
   const deliveryDate = expectedDeliveryDate(coin);
 
   return (
@@ -106,16 +118,35 @@ const LargeCoinCard = () => {
           <p className="mt-8 border-b border-[#dce3df] pb-7 text-[30px] font-semibold text-[#142f28]">{formatMoney(coin.price)}</p>
           {!available && <p className="mt-4 text-sm font-semibold text-[#875b35]">{t("shop.outOfStock")}</p>}
           {deliveryDate && <p className="mt-1 text-sm text-[#52645b]">{t("shop.expectedDelivery", { date: new Intl.DateTimeFormat(t("shop.dateLocale")).format(deliveryDate) })}</p>}
+          {sized && (
+            <SizeSelect
+              sizes={coin.size_stock}
+              value={selectedSize}
+              onChange={setSelectedSize}
+              label={t("shop.sizeMm")}
+              placeholder={t("shop.chooseSize")}
+              availableLabel={t("shop.boxesAvailable")}
+              outOfStockLabel={t("shop.outOfStock")}
+            />
+          )}
 
-          <button
-            type="button"
-            disabled={!available}
-            onClick={() => { addToCart(coin); navigate("/cart"); }}
-            className="mt-8 flex min-h-14 w-full items-center justify-center gap-3 bg-[#c69a5d] px-6 text-sm font-semibold uppercase text-white transition-colors hover:bg-[#ad8147] disabled:cursor-not-allowed disabled:bg-[#9ea8a1]"
-          >
-            <FiShoppingBag size={18} aria-hidden="true" />
-            {available ? t("shop.addToCart") : t("coinDetails.unavailable")}
-          </button>
+          <div className="mt-8 flex gap-3">
+            <div className="flex min-h-14 shrink-0 items-center border border-[#cdd5d1] bg-white" role="group" aria-label={t("shop.quantity")}>
+              <button type="button" onClick={() => stepQuantity(-1)} disabled={!canPurchase || quantity <= 1} aria-label={t("shop.decreaseQuantity")} className="grid h-14 w-11 place-items-center text-[#20312e] hover:bg-[#f1f4f1] disabled:cursor-not-allowed disabled:opacity-40"><FiMinus aria-hidden="true" /></button>
+              <input type="number" min="1" max={Math.max(1, maxQuantity)} step="1" value={quantity} disabled={!canPurchase} onChange={(event) => setClampedQuantity(event.target.value)} aria-label={t("shop.quantity")} className="h-14 w-12 border-x border-[#e3e9e5] text-center text-[#20312e] [appearance:textfield] focus:outline-none disabled:bg-white disabled:opacity-40 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+              <button type="button" onClick={() => stepQuantity(1)} disabled={!canPurchase || quantity >= maxQuantity} aria-label={t("shop.increaseQuantity")} className="grid h-14 w-11 place-items-center text-[#20312e] hover:bg-[#f1f4f1] disabled:cursor-not-allowed disabled:opacity-40"><FiPlus aria-hidden="true" /></button>
+            </div>
+            <button
+              type="button"
+              disabled={!canPurchase}
+              onClick={() => { addToCart(coin, Math.min(quantity, maxQuantity), sizeMm); navigate("/cart"); }}
+              className="flex min-h-14 min-w-0 flex-1 items-center justify-center gap-3 bg-[#c69a5d] px-4 text-sm font-semibold uppercase text-white transition-colors hover:bg-[#ad8147] disabled:cursor-not-allowed disabled:bg-[#9ea8a1]"
+            >
+              <FiShoppingBag size={18} aria-hidden="true" className="shrink-0" />
+              <span className="text-center leading-tight">{available ? t("shop.addToCart") : t("coinDetails.unavailable")}</span>
+            </button>
+          </div>
+          {available && inCart > 0 && <p className="mt-2 text-xs text-[#52645b]">{t("shop.alreadyInCart", { count: inCart })}</p>}
 
           <div className="mt-10">
             <ProductFacts product={coin} editMode={editMode} formData={formData} onChange={handleChange} onFileChange={(event) => setFile(event.target.files[0])} t={t} />
