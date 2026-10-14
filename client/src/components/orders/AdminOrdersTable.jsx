@@ -1,16 +1,12 @@
 import { formatMoney } from "../../utils/money";
+import { useTranslation } from "react-i18next";
+import ProductPhoto from "../products/ProductPhoto";
+import { normalizeOrderStatus, ORDER_STATUSES, orderStatusClass } from "../../utils/orderStatus";
 
-const statuses = ["new", "confirmed", "packed", "sent", "completed"];
-
-const getStatusOptions = (currentStatus) => {
-  if (["cancelled", "canceled", "completed"].includes(currentStatus)) return [currentStatus];
-  const currentIndex = currentStatus === "pending" ? 0 : statuses.indexOf(currentStatus);
-  return [currentStatus, ...statuses.slice(currentIndex + 1), ...(currentStatus === "sent" ? [] : ["cancelled"])];
-};
-
-const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {
+const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange, emptyMessage = "No customer orders yet." }) => {
+  const { t } = useTranslation();
   if (orders.length === 0) {
-    return <p className="text-gray-600">No customer orders yet.</p>;
+    return <p className="text-gray-600">{emptyMessage}</p>;
   }
 
   return (
@@ -49,8 +45,8 @@ const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {
               <td className="p-3">
                 {order.items.map((item) => (
                   <p key={item.id} className="flex items-center gap-2 mb-2">
-                    {item.photo_url ? <img src={item.photo_url} alt="" className="w-10 h-10 object-contain border rounded bg-gray-50" /> : <span className="w-10 h-10 border rounded bg-gray-50" />}
-                    {item.quantity} x {item.coin_name}
+                    <ProductPhoto src={item.photo_url} size="xs" />
+                    {item.quantity} x {item.coin_name}{item.size_mm != null ? ` (${item.size_mm} mm)` : ""}
                   </p>
                 ))}
               </td>
@@ -66,19 +62,20 @@ const AdminOrdersTable = ({ orders, onOpenOrder, onStatusChange }) => {
                 {formatMoney(order.total)}
               </td>
               <td className="p-3">
-                <select
-                  value={order.status}
-                  onChange={(event) =>
-                    onStatusChange(order.id, event.target.value)
-                  }
-                  className="border rounded p-2"
-                >
-                  {getStatusOptions(order.status).map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
+                <label className="block">
+                  <span className="sr-only">{t("adminOrders.changeStatus")}</span>
+                  <select
+                    value={normalizeOrderStatus(order.status)}
+                    onChange={(event) => onStatusChange(order, event.target.value)}
+                    className={`block min-h-10 rounded border px-2 text-sm font-semibold ${orderStatusClass(order.status)}`}
+                  >
+                    {[...new Set([normalizeOrderStatus(order.status), ...ORDER_STATUSES])].map((status) => (
+                      <option key={status} value={status} className="bg-white text-[#203730]">
+                        {t(`adminOrders.statuses.${status}`, { defaultValue: status })}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </td>
             </tr>
           ))}
