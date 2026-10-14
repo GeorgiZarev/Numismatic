@@ -6,9 +6,9 @@ const OrderSummary = ({ items, total }) => {
       <h2 className="text-xl font-semibold mb-4">Order summary</h2>
       <div className="space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="flex justify-between gap-3 text-sm">
+          <div key={`${item.id}:${item.size_mm ?? ""}`} className="flex justify-between gap-3 text-sm">
             <span>
-              {item.quantity} x {item.name}
+              {item.quantity} x {item.name}{item.size_mm != null ? ` (${item.size_mm} mm)` : ""}
             </span>
             <span>{formatMoney(item.price * item.quantity)}</span>
           </div>

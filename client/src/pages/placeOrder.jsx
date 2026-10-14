@@ -65,6 +65,7 @@ const PlaceOrder = () => {
         items: items.map((item) => ({
           coin_id: item.id,
           quantity: item.quantity,
+          ...(item.size_mm != null && { size_mm: item.size_mm }),
         })),
       });
       clearCart();
