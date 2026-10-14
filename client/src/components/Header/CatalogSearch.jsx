@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
-const CatalogSearch = ({ t, onSearch, compact = false }) => {
+const CatalogSearch = ({ t, onSearch, compact = false, autoFocus = false }) => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
@@ -20,6 +20,7 @@ const CatalogSearch = ({ t, onSearch, compact = false }) => {
       <input
         id={compact ? "catalog-search-mobile" : "catalog-search-desktop"}
         type="search"
+        autoFocus={autoFocus}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={t("nav.search")}

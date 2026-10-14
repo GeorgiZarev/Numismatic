@@ -18,7 +18,7 @@ const ProductMenu = ({ t }) => {
       <NavLink
         to="/all-products"
         onClick={() => setOpen(false)}
-        className="inline-flex min-h-12 items-center rounded-l-md pl-3 pr-1 text-base font-medium text-inherit focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]"
+        className="inline-flex min-h-12 items-center whitespace-nowrap rounded-l-md pl-1.5 pr-1 text-[15px] font-medium xl:pl-3 xl:text-base text-inherit focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#235b50]"
       >
         {t("nav.products")}
       </NavLink>

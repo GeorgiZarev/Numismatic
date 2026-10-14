@@ -21,7 +21,7 @@ const MobileMenu = ({ open, onClose, user, isAdmin, itemCount, language, onLangu
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] 2xl:hidden" role="presentation">
+    <div className="fixed inset-0 z-[100] lg:hidden" role="presentation">
       <button type="button" aria-label="Close menu" className="absolute inset-0 bg-[#142521]/35" onClick={onClose} />
       <div role="dialog" aria-modal="true" aria-label={t("nav.menu")} className="absolute inset-y-0 right-0 w-[min(22rem,90vw)] overflow-y-auto bg-white shadow-xl flex flex-col">
         <div className="flex items-center justify-between border-b border-[#e7eae8] px-5 py-5">

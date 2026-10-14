@@ -32,7 +32,7 @@ const NavLinks = ({ t, isAdmin, mobile = false, onNavigate }) => {
             : isActive;
           return mobile
             ? `block rounded-md px-4 py-3 text-base font-medium transition-colors ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#34413e] hover:bg-[#f5f6f5]"}`
-            : `rounded-md px-3 py-3 text-base font-medium transition-colors ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#46514e] hover:bg-[#f5f6f5] hover:text-[#172c28]"}`;
+            : `whitespace-nowrap rounded-md px-1.5 py-3 text-[15px] font-medium transition-colors xl:px-3 xl:text-base ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#46514e] hover:bg-[#f5f6f5] hover:text-[#172c28]"}`;
         }}
       >
         {t(label)}
