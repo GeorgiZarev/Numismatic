@@ -10,6 +10,7 @@ import MobileMenu from "./MobileMenu";
 import NavLinks from "./NavLinks";
 import AccountMenu from "./AccountMenu";
 import CatalogSearch from "./CatalogSearch";
+import ShopMenu from "./ShopMenu";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -71,6 +72,8 @@ const Navbar = () => {
           <div className="w-full max-w-md"><CatalogSearch t={t} compact autoFocus onSearch={() => setSearchOpen(false)} /></div>
         </div>
       )}
+
+      <ShopMenu t={t} />
 
       <MobileMenu
         open={menuOpen}
