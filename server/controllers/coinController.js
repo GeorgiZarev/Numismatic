@@ -41,7 +41,8 @@ export const getCoin = async (req, res, next) => {
 
 export const createCoin = async (req, res, next) => {
   try {
-    const photo_url = req.file?.path;
+    const photo_url = req.files?.photo?.[0]?.path;
+    const photo_url_2 = req.files?.photo_2?.[0]?.path;
     const sized = usesSizeStock(req.body.product_type, req.body.consumable_category);
     const sizeStock = sized ? parseSizeStock(req.body.size_stock) : [];
 
@@ -66,6 +67,7 @@ export const createCoin = async (req, res, next) => {
       ...(req.body.consumable_category !== "cleaning_solutions" && { volume_ml: null, suitable_metals: null }),
       ...(!["capsules", "cardboard_holders"].includes(req.body.consumable_category) && { pieces_per_box: null }),
       ...(photo_url && { photo_url }),
+      ...(photo_url_2 && { photo_url_2 }),
     };
 
     const [coin] = await Coins.create(coinData);
@@ -151,21 +153,22 @@ export const updateCoin = async (req, res, next) => {
       : restockTimestamp(existingCoin[0].stock_quantity, updates.stock_quantity);
     if (restockedAt) updates.restocked_at = restockedAt;
 
-    if (req.file) {
-      updates.photo_url = req.file.path;
-    }
+    const newPhotos = {
+      photo_url: req.files?.photo?.[0]?.path,
+      photo_url_2: req.files?.photo_2?.[0]?.path,
+    };
+    Object.entries(newPhotos).forEach(([field, url]) => { if (url) updates[field] = url; });
 
     const [updatedCoin] = await Coins.update(id, updates, existingCoin[0].stock_quantity, existingCoin[0].size_stock);
     if (!updatedCoin) throw new ConflictError("Stock changed while editing. Reload the product and try again.");
 
-    if (req.file && existingCoin[0].photo_url) {
-      const publicId = extractPublicId(existingCoin[0].photo_url);
-      if (publicId) {
-        try {
-          await cloudinary.uploader.destroy(publicId);
-        } catch (cleanupError) {
-          console.error("Could not remove replaced product photo:", cleanupError);
-        }
+    for (const [field, url] of Object.entries(newPhotos)) {
+      const publicId = url && existingCoin[0][field] && extractPublicId(existingCoin[0][field]);
+      if (!publicId) continue;
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cleanupError) {
+        console.error("Could not remove replaced product photo:", cleanupError);
       }
     }
 

@@ -58,7 +58,8 @@ const AdminProducts = () => {
   };
 
   const handleFileChange = (event) => {
-    setFormData((prev) => ({ ...prev, photo: event.target.files[0] }));
+    const { name, files } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: files[0] }));
   };
 
   const handleSubmit = async (event) => {

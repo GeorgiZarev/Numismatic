@@ -19,7 +19,7 @@ export const validateWithJoi = (
 
     const isFileUploadOnly =
       allowFileFallback &&
-      req.file &&
+      (req.file || Object.keys(req.files || {}).length > 0) &&
       (!req[property] || Object.keys(req[property]).length === 0);
 
     if (!error || isFileUploadOnly) {

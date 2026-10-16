@@ -33,11 +33,12 @@ const LargeCoinCard = () => {
   const [file, setFile] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   const name = productName(coin, i18n.language);
   useProductTitle(name);
 
-  useEffect(() => { setSelectedSize(""); setQuantity(1); }, [id]);
+  useEffect(() => { setSelectedSize(""); setQuantity(1); setPhotoIndex(0); }, [id]);
   useEffect(() => { setQuantity(1); }, [selectedSize]);
 
   useEffect(() => {
@@ -102,15 +103,28 @@ const LargeCoinCard = () => {
   const setClampedQuantity = (value) => setQuantity(clampQuantity(value));
   const stepQuantity = (step) => setQuantity((previous) => clampQuantity(previous + step));
   const deliveryDate = expectedDeliveryDate(coin);
+  const photos = [coin.photo_url, coin.photo_url_2].filter(Boolean);
+  const photo = photos[photoIndex] || photos[0];
 
   return (
     <main className="mx-auto max-w-[1500px] px-5 pb-20 pt-8 sm:px-8 lg:pt-12">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-12 xl:gap-16">
-        <div className="flex min-h-[340px] items-center justify-center bg-white sm:min-h-[480px] lg:min-h-[610px]">
-          {coin.photo_url ? (
-            <img src={coin.photo_url} alt={name} className="max-h-[650px] max-w-full object-contain" />
-          ) : (
-            <span className="text-sm text-[#66776e]">{t("shop.photoSoon")}</span>
+        <div>
+          <div className="flex min-h-[340px] items-center justify-center bg-white sm:min-h-[480px] lg:min-h-[610px]">
+            {photo ? (
+              <img src={photo} alt={name} className="max-h-[650px] max-w-full object-contain" />
+            ) : (
+              <span className="text-sm text-[#66776e]">{t("shop.photoSoon")}</span>
+            )}
+          </div>
+          {photos.length > 1 && (
+            <div className="mt-4 flex justify-center gap-3">
+              {photos.map((url, index) => (
+                <button key={url} type="button" onClick={() => setPhotoIndex(index)} aria-label={`${name} ${index + 1}`} aria-pressed={photo === url} className={`h-20 w-20 overflow-hidden rounded-md border-2 bg-white p-1 transition-colors ${photo === url ? "border-[#235b50]" : "border-[#dce3df] hover:border-[#9db4a9]"}`}>
+                  <img src={url} alt="" className="h-full w-full object-contain" />
+                </button>
+              ))}
+            </div>
           )}
         </div>
 

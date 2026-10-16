@@ -26,6 +26,7 @@ export const emptyCoinForm = {
   zero_stock_action: "hide",
   expected_delivery_date: "",
   photo: null,
+  photo_2: null,
 };
 
 export const coinToForm = (coin) => ({
@@ -36,6 +37,7 @@ export const coinToForm = (coin) => ({
   year: coin?.year ?? "",
   mintage: coin?.mintage ?? "",
   photo: null,
+  photo_2: null,
   currency: "EUR",
   consumable_category: coin?.consumable_category || "",
   company: coin?.company || "",
@@ -91,9 +93,9 @@ export const buildCoinFormData = (formData) => {
       data.append(key, value ?? "");
       return;
     }
-    if (key === "photo" && value) {
-      data.append("photo", value);
-    } else if (key !== "photo" && value !== "" && value !== null) {
+    if (key === "photo" || key === "photo_2") {
+      if (value) data.append(key, value);
+    } else if (value !== "" && value !== null) {
       data.append(key, value);
     }
   });

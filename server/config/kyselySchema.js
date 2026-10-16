@@ -4,6 +4,7 @@
  * @property {string} name
  * @property {string=} name_bg
  * @property {string} photo_url
+ * @property {string=} photo_url_2
  * @property {number} price
  * @property {string=} monarch
  * @property {number} year

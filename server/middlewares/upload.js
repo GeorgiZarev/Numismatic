@@ -13,4 +13,10 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
+// Products have a main photo and an optional second one.
+export const productPhotos = upload.fields([
+  { name: "photo", maxCount: 1 },
+  { name: "photo_2", maxCount: 1 },
+]);
+
 export default upload;

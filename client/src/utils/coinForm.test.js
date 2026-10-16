@@ -98,3 +98,12 @@ test("coins and investment products send their metal, accessories do not", () =>
   expect(buildCoinFormData(coinToForm({ product_type: "investment", composition_metal: "Silver" })).get("composition_metal")).toBe("Silver");
   expect(buildCoinFormData(coinToForm({ product_type: "consumable", composition_metal: "Gold" })).get("composition_metal")).toBeNull();
 });
+
+test("sends both photos when the second one is chosen", () => {
+  const first = new File(["a"], "front.jpg");
+  const second = new File(["b"], "back.jpg");
+  const data = buildCoinFormData({ ...emptyCoinForm, name: "Lev", photo: first, photo_2: second });
+  expect(data.get("photo")).toBe(first);
+  expect(data.get("photo_2")).toBe(second);
+  expect(buildCoinFormData({ ...emptyCoinForm, name: "Lev" }).has("photo_2")).toBe(false);
+});

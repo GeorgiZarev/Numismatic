@@ -92,6 +92,7 @@ const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, on
 
         <aside className="space-y-7 border-t border-[#e7ece8] bg-[#fbfcfa] p-5 sm:p-8 lg:border-l lg:border-t-0">
           <ProductPhotoField photo={formData.photo} photoUrl={formData.photo_url} onChange={onFileChange} />
+          <ProductPhotoField title="Second photo" name="photo_2" photo={formData.photo_2} photoUrl={formData.photo_url_2} onChange={onFileChange} />
           <ProductInventoryFields formData={formData} onChange={onChange} />
           <label className="block border-t border-[#e7ece8] pt-6">
             <span className="text-sm font-semibold text-[#203730]">Status</span>

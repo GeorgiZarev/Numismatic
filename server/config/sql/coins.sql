@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS coins (
   name_bg VARCHAR(255),
   description TEXT,
   photo_url VARCHAR(255),
+  photo_url_2 VARCHAR(255),
   price DECIMAL(10,2) NOT NULL,
   monarch VARCHAR(255),
   year INTEGER,
@@ -69,6 +70,7 @@ ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_consumable_category_check;
 ALTER TABLE coins ADD CONSTRAINT coins_consumable_category_check CHECK (consumable_category IN ('capsules', 'cleaning_solutions', 'cardboard_holders'));
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS name_bg VARCHAR(255);
+ALTER TABLE coins ADD COLUMN IF NOT EXISTS photo_url_2 VARCHAR(255);
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS fineness INTEGER;
 ALTER TABLE coins ADD COLUMN IF NOT EXISTS pure_weight NUMERIC(10,3);
 ALTER TABLE coins DROP CONSTRAINT IF EXISTS coins_country_check;
