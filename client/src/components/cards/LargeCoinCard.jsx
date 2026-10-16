@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { FiMinus, FiPlus, FiShoppingBag } from "react-icons/fi";
 import { useCoins } from "../../hooks/useCoins";
 import useProductTitle from "../../hooks/useProductTitle";
+import { productName } from "../../utils/productName";
 import { useAuth } from "../../Contexts/authContext";
 import { useCart } from "../../Contexts/cartContext";
 import { formatMoney } from "../../utils/money";
@@ -15,7 +16,7 @@ import SizeSelect from "../shop/SizeSelect";
 import { buildProductDetailUpdate } from "../../utils/productDetailForm";
 
 const LargeCoinCard = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const adminEmails = (process.env.REACT_APP_ADMIN_EMAILS || "admin@gmail.com").split(",").map((email) => email.trim().toLowerCase());
   const isAdmin = adminEmails.includes(user?.email?.toLowerCase());
@@ -33,7 +34,8 @@ const LargeCoinCard = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  useProductTitle(coin?.name);
+  const name = productName(coin, i18n.language);
+  useProductTitle(name);
 
   useEffect(() => { setSelectedSize(""); setQuantity(1); }, [id]);
   useEffect(() => { setQuantity(1); }, [selectedSize]);
@@ -106,7 +108,7 @@ const LargeCoinCard = () => {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:gap-12 xl:gap-16">
         <div className="flex min-h-[340px] items-center justify-center bg-white sm:min-h-[480px] lg:min-h-[610px]">
           {coin.photo_url ? (
-            <img src={coin.photo_url} alt={coin.name} className="max-h-[650px] max-w-full object-contain" />
+            <img src={coin.photo_url} alt={name} className="max-h-[650px] max-w-full object-contain" />
           ) : (
             <span className="text-sm text-[#66776e]">{t("shop.photoSoon")}</span>
           )}
@@ -114,7 +116,7 @@ const LargeCoinCard = () => {
 
         <div className="min-w-0 pt-2 lg:pt-7">
           <p className="mb-4 text-xs font-semibold uppercase text-[#536b60]">{category}</p>
-          <h1 className="max-w-[22ch] font-serif text-[32px] font-semibold leading-tight text-[#112b26] sm:text-[40px]">{coin.name}</h1>
+          <h1 className="max-w-[22ch] font-serif text-[32px] font-semibold leading-tight text-[#112b26] sm:text-[40px]">{name}</h1>
           <p className="mt-8 border-b border-[#dce3df] pb-7 text-[30px] font-semibold text-[#142f28]">{formatMoney(coin.price)}</p>
           {!available && <p className="mt-4 text-sm font-semibold text-[#875b35]">{t("shop.outOfStock")}</p>}
           {deliveryDate && <p className="mt-1 text-sm text-[#52645b]">{t("shop.expectedDelivery", { date: new Intl.DateTimeFormat(t("shop.dateLocale")).format(deliveryDate) })}</p>}

@@ -15,6 +15,7 @@ export const coinCreationSchema = Joi.object({
     "string.empty": "Coin name is required",
     "any.required": "Coin name is required",
   }),
+  name_bg: Joi.string().trim().allow("").max(255).optional(),
   description: Joi.string().allow("").max(5000).optional(),
   photo_url: Joi.string().uri().optional().messages({
     "string.uri": "A valid photo URL is required",
@@ -81,6 +82,7 @@ export const updateCoinSchema = Joi.object({
   name: Joi.string().messages({
     "string.base": "Coin name must be a string",
   }),
+  name_bg: Joi.string().trim().allow("").max(255),
   description: Joi.string().allow("").max(5000),
   photo_url: Joi.string().uri().messages({
     "string.uri": "A valid photo URL is required",

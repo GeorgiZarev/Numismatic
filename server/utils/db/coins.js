@@ -134,6 +134,7 @@ export const Coins = {
       query = query.where((eb) =>
         eb.or([
           sql`LOWER(name) LIKE ${searchTerm}`,
+          sql`LOWER(name_bg) LIKE ${searchTerm}`,
           sql`LOWER(monarch) LIKE ${searchTerm}`,
         ])
       );

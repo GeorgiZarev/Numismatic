@@ -1,5 +1,6 @@
 export const emptyCoinForm = {
   name: "",
+  name_bg: "",
   description: "",
   price: "",
   year: "",
@@ -30,6 +31,7 @@ export const emptyCoinForm = {
 export const coinToForm = (coin) => ({
   ...emptyCoinForm,
   ...coin,
+  name_bg: coin?.name_bg || "",
   price: coin?.price ?? "",
   year: coin?.year ?? "",
   mintage: coin?.mintage ?? "",
@@ -67,6 +69,10 @@ export const buildCoinFormData = (formData) => {
     }
     if (key === "stock_quantity" && sized) {
       data.append(key, productStockQuantity(formData));
+      return;
+    }
+    if (key === "name_bg") {
+      data.append(key, value ?? "");
       return;
     }
     if (key === "expected_delivery_date") {

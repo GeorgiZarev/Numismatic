@@ -13,6 +13,12 @@ const statuses = [
   ["hidden", "Hidden"],
 ];
 
+const productTypes = [
+  ["coin", "Numismatic Coin"],
+  ["investment", "Investment Coin"],
+  ["consumable", "Accessory"],
+];
+
 // Gold and Silver products appear in the header menus.
 const metals = ["Gold", "Silver", "Copper", "Bronze"];
 
@@ -31,7 +37,7 @@ const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, on
             <fieldset className="min-w-0">
               <legend className="mb-2 text-sm font-medium text-[#354840]">Product type</legend>
               <div className="grid w-full grid-cols-3 rounded-md bg-[#f1f4f1] p-1 sm:inline-flex sm:w-auto">
-                {[["coin", "Coin"], ["investment", "Investment product"], ["consumable", "Accessory"]].map(([value, label]) => (
+                {productTypes.map(([value, label]) => (
                   <label key={value} className="min-w-0 cursor-pointer sm:flex-none">
                     <input className="peer sr-only" type="radio" name="product_type" value={value} checked={(formData.product_type || "coin") === value} onChange={onChange} />
                     <span className="block rounded px-2 py-2.5 text-center text-xs font-semibold text-[#66746a] transition-colors peer-checked:bg-white peer-checked:text-[#235b50] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[#6a9c80] sm:px-5 sm:text-sm">{label}</span>
@@ -48,9 +54,13 @@ const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, on
                   {consumableCategories.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </label>}
-              <label className="block min-w-0 sm:col-span-2">
-                <span className="text-sm font-medium text-[#354840]">Product name *</span>
-                <input type="text" name="name" value={formData.name} onChange={onChange} required className={inputClass} />
+              <label className="block min-w-0">
+                <span className="text-sm font-medium text-[#354840]">Product name (EN) *</span>
+                <input type="text" name="name" lang="en" value={formData.name} onChange={onChange} required maxLength={255} className={inputClass} />
+              </label>
+              <label className="block min-w-0">
+                <span className="text-sm font-medium text-[#354840]">Product name (BG)</span>
+                <input type="text" name="name_bg" lang="bg" value={formData.name_bg || ""} onChange={onChange} maxLength={255} placeholder="Shows the English name if empty" className={inputClass} />
               </label>
               <label className="block min-w-0 sm:col-span-2">
                 <span className="text-sm font-medium text-[#354840]">Description</span>

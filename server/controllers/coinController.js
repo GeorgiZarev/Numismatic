@@ -56,6 +56,7 @@ export const createCoin = async (req, res, next) => {
       ...(req.body.pure_weight === "" && { pure_weight: null }),
       ...(req.body.volume_ml === "" && { volume_ml: null }),
       ...(req.body.company === "" && { company: null }),
+      ...(!req.body.name_bg && { name_bg: null }),
       ...(req.body.pieces_per_box === "" && { pieces_per_box: null }),
       ...(Number(sized ? totalSizeStock(sizeStock) : req.body.stock_quantity) > 0 && { expected_delivery_date: null }),
       ...(req.body.zero_stock_action !== "show" && { expected_delivery_date: null }),
@@ -90,6 +91,7 @@ export const updateCoin = async (req, res, next) => {
     const updates = {
       ...req.body,
       currency: "EUR",
+      ...(req.body.name_bg === "" && { name_bg: null }),
       ...(req.body.product_type && req.body.product_type !== "coin" && { year: null, country: null, fineness: null, pure_weight: null }),
       ...(req.body.product_type && req.body.product_type !== "consumable" && { consumable_category: null }),
     };

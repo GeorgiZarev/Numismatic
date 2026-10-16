@@ -2,6 +2,7 @@
  * @typedef {Object} Coin
  * @property {string} id
  * @property {string} name
+ * @property {string=} name_bg
  * @property {string} photo_url
  * @property {number} price
  * @property {string=} monarch
