@@ -1,31 +1,30 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { MobileShopMenu, navItemClass } from "./ShopMenu";
+import InfoMenu, { MobileInfoMenu } from "./InfoMenu";
 
 const links = [
   ["/", "nav.home"],
   ["/all-products", "nav.products"],
-  ["/delivery", "nav.delivery"],
-  ["/about", "nav.about"],
-  ["/contact", "nav.contact"],
 ];
 
 const NavLinks = ({ t, isAdmin, mobile = false, onNavigate }) => {
   const { search } = useLocation();
   // "Products" is only highlighted for the whole shop, not a Gold/Silver view.
   const filtered = /product_type|composition_metal/.test(search);
-  const items = isAdmin ? [...links, ["/admin", "nav.admin"]] : links;
   const renderLink = ([path, label]) => (
     <NavLink key={path} to={path} end={path === "/"} onClick={onNavigate} className={({ isActive }) => navItemClass(isActive && !(path === "/all-products" && filtered), mobile)}>
       {t(label)}
     </NavLink>
   );
+  const adminLink = isAdmin && renderLink(["/admin", "nav.admin"]);
 
-  if (!mobile) return items.map(renderLink);
+  if (!mobile) return <>{links.map(renderLink)}<InfoMenu t={t} />{adminLink}</>;
   return (
     <>
-      {items.slice(0, 2).map(renderLink)}
+      {links.map(renderLink)}
       <MobileShopMenu t={t} onNavigate={onNavigate} />
-      {items.slice(2).map(renderLink)}
+      <MobileInfoMenu t={t} onNavigate={onNavigate} />
+      {adminLink}
     </>
   );
 };

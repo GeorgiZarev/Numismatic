@@ -53,7 +53,8 @@
     "menu": "Меню",
     "create_coin": "Създай монета",
     "logout": "Изход",
-    "consumbales": "Консумативи"
+    "consumbales": "Консумативи",
+    "information": "Информация"
   },
   "auth": {
     "existingCustomer": "Вече имате акаунт?",
