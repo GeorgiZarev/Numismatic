@@ -3,20 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { FiArrowRight, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { fetchCoins } from "../../api/coins";
+import { METALS, SECTIONS, shopUrl } from "../../utils/productMenu";
 
-// The whole shop menu comes from these two lists: each metal is a menu in the
-// top bar, each section is a row inside it. Adding one is a one-line change.
-export const METALS = [
-  { value: "Gold", label: "nav.goldCoins" },
-  { value: "Silver", label: "nav.silverCoins" },
-];
-const SECTIONS = [
-  { type: "coin", label: "home.numismaticCoins" },
-  { type: "investment", label: "home.investmentCoins" },
-];
 const ACCESSORIES_URL = "/all-products?product_type=consumable";
-
-export const shopUrl = (params) => `/all-products?${new URLSearchParams(params)}`;
 
 export const navItemClass = (selected, mobile = false) => mobile
   ? `block rounded-md px-4 py-3 text-base font-medium transition-colors ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#34413e] hover:bg-[#f5f6f5]"}`
