@@ -6,6 +6,7 @@ export const emptyCoinForm = {
   country: "",
   currency: "EUR",
   product_type: "coin",
+  composition_metal: "",
   consumable_category: "",
   company: "",
   volume_ml: "",
@@ -48,10 +49,14 @@ export const coinToForm = (coin) => ({
 export const buildCoinFormData = (formData) => {
   const data = new FormData();
   const sized = formData.product_type === "consumable" && ["capsules", "cardboard_holders"].includes(formData.consumable_category);
-  const removedFields = new Set(["monarch", "price_value", "composition_metal", "shape", "technique", "lettering", "script", "mint_place", "number"]);
+  const removedFields = new Set(["monarch", "price_value", "shape", "technique", "lettering", "script", "mint_place", "number"]);
 
   Object.entries(formData).forEach(([key, value]) => {
     if (removedFields.has(key)) return;
+    if (key === "composition_metal") {
+      if (formData.product_type !== "consumable" && value) data.append(key, value);
+      return;
+    }
     if (key === "size_stock") {
       if (sized) data.append(key, JSON.stringify(value || []));
       return;
