@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { FiArrowRight, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { fetchCoins } from "../../api/coins";
 
 // The whole shop menu comes from these two lists: each metal is a menu in the
@@ -113,6 +113,9 @@ const MetalMenu = ({ metal, label, t, getCountries, selected }) => {
             {activeCountries.length > 0 && (
               <div className={`max-h-[70vh] overflow-y-auto border-l border-[#e7eae8] p-1.5 ${activeCountries.length > 12 ? "w-96" : "w-56"}`}>
                 <CountryLinks type={activeType} metal={metal} countries={activeCountries} className={activeCountries.length > 12 ? "grid grid-cols-2" : ""} />
+                <Link to={shopUrl({ product_type: activeType, composition_metal: metal })} className="mt-1 flex items-center gap-1.5 rounded border-t border-[#e7eae8] px-3 py-2.5 text-[15px] font-semibold text-[#235b50] hover:bg-[#edf3f0]">
+                  {t("home.viewAll")} <FiArrowRight size={16} aria-hidden="true" />
+                </Link>
               </div>
             )}
           </div>
@@ -123,7 +126,7 @@ const MetalMenu = ({ metal, label, t, getCountries, selected }) => {
 };
 
 // Desktop: a bar under the header whose menus open on hover. Clicking a name
-// opens everything in it, so the country lists need no "view all" link.
+// opens everything in it.
 const ShopMenu = ({ t }) => {
   const getCountries = useMenuCountries();
   const selection = useShopSelection();
@@ -137,7 +140,8 @@ const ShopMenu = ({ t }) => {
   );
 };
 
-// Phones have no hover, so the same menus open with a tap.
+// Phones have no hover, so the same menus open with a tap. The section name
+// sits right above its countries, so they need no "view all" link here.
 export const MobileShopMenu = ({ t, onNavigate }) => {
   const [openMetal, setOpenMetal] = useState(null);
   const getCountries = useMenuCountries();

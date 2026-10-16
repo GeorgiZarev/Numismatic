@@ -47,6 +47,7 @@ test("desktop menus open on hover and show countries for the hovered section", (
     "/all-products?product_type=investment&composition_metal=Gold",
     "/all-products?product_type=coin&composition_metal=Gold&country=Austria",
     "/all-products?product_type=coin&composition_metal=Gold&country=Italy",
+    "/all-products?product_type=coin&composition_metal=Gold",
   ]);
   cleanup();
 });
