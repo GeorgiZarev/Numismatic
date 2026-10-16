@@ -92,3 +92,9 @@ test("size stock is serialized and its box total replaces the parent quantity", 
   expect(savedInventoryMatches({ stock_quantity: 40, size_stock: [] }, form)).toBe(false);
   expect(savedInventoryMatches({ stock_quantity: 40, size_stock: [{ size_mm: 15, stock_quantity: 11 }, { size_mm: 17, stock_quantity: 29 }] }, form)).toBe(false);
 });
+
+test("coins and investment products send their metal, accessories do not", () => {
+  expect(buildCoinFormData(coinToForm({ product_type: "coin", composition_metal: "Gold" })).get("composition_metal")).toBe("Gold");
+  expect(buildCoinFormData(coinToForm({ product_type: "investment", composition_metal: "Silver" })).get("composition_metal")).toBe("Silver");
+  expect(buildCoinFormData(coinToForm({ product_type: "consumable", composition_metal: "Gold" })).get("composition_metal")).toBeNull();
+});

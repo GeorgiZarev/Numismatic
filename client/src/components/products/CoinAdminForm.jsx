@@ -13,6 +13,9 @@ const statuses = [
   ["hidden", "Hidden"],
 ];
 
+// Gold and Silver products appear in the header menus.
+const metals = ["Gold", "Silver", "Copper", "Bronze"];
+
 const inputClass = "mt-2 h-11 w-full rounded-md border border-[#dce4df] bg-white px-3.5 text-sm text-[#203730] outline-none transition-colors placeholder:text-[#96a19b] focus:border-[#4b8a70] focus:ring-2 focus:ring-[#d9e9de]";
 
 const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, onFileChange, onSizesChange, onSubmit }) => {
@@ -60,6 +63,13 @@ const CoinAdminForm = ({ formData, loading, error, mode = "create", onChange, on
                   <input type="number" name="price" min="0" step="0.01" value={formData.price} onChange={onChange} required className={`${inputClass} pl-8`} />
                 </span>
               </label>
+              {!isConsumable && <label className="block min-w-0">
+                <span className="text-sm font-medium text-[#354840]">Metal *</span>
+                <select name="composition_metal" value={formData.composition_metal || ""} onChange={onChange} required className={inputClass}>
+                  <option value="" disabled>Choose a metal</option>
+                  {metals.map((metal) => <option key={metal} value={metal}>{metal}</option>)}
+                </select>
+              </label>}
             </div>
           </section>
 
