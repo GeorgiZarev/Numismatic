@@ -53,8 +53,7 @@
     "admin": "Admin",
     "menu": "Menu",
     "create_coin": "Create Coin",
-    "consumables": "Consumables",
-    "information": "Information"
+    "consumables": "Consumables"
   },
   "auth": {
     "existingCustomer": "Already a customer?",
