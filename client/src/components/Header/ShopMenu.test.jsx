@@ -47,7 +47,6 @@ test("desktop menus open on hover and show countries for the hovered section", (
     "/all-products?product_type=investment&composition_metal=Gold",
     "/all-products?product_type=coin&composition_metal=Gold&country=Austria",
     "/all-products?product_type=coin&composition_metal=Gold&country=Italy",
-    "/all-products?product_type=coin&composition_metal=Gold",
   ]);
   cleanup();
 });
@@ -59,7 +58,6 @@ test("mobile menu opens a metal with a tap", () => {
   expect(hrefs(container.querySelector("#mobile-shop-menu-silver"))).toEqual([
     "/all-products?product_type=coin&composition_metal=Silver",
     "/all-products?product_type=coin&composition_metal=Silver&country=France",
-    "/all-products?product_type=coin&composition_metal=Silver",
     "/all-products?product_type=investment&composition_metal=Silver",
   ]);
   cleanup();

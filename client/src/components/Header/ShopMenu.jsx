@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { FiArrowRight, FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { fetchCoins } from "../../api/coins";
 
 // The whole shop menu comes from these two lists: each metal is a menu in the
@@ -52,7 +52,6 @@ const useShopSelection = () => {
 const barItemClass = (selected) => `inline-flex h-12 items-center gap-1.5 whitespace-nowrap border-b-2 px-3 text-[14px] font-semibold uppercase tracking-[0.04em] transition-colors ${selected ? "border-[#235b50] text-[#235b50]" : "border-transparent text-[#223b35] hover:text-[#235b50]"}`;
 
 const countryLinkClass = "flex items-center gap-2 rounded px-3 py-1.5 text-[15px] text-[#34413e] hover:bg-[#edf3f0] hover:text-[#235b50] focus-visible:bg-[#edf3f0] focus-visible:outline-none";
-const viewAllClass = "flex items-center gap-1.5 rounded px-3 py-2.5 text-[15px] font-semibold text-[#235b50] hover:bg-[#edf3f0]";
 
 const CountryLinks = ({ type, metal, countries, onNavigate, className }) => (
   <div className={className}>
@@ -114,9 +113,6 @@ const MetalMenu = ({ metal, label, t, getCountries, selected }) => {
             {activeCountries.length > 0 && (
               <div className={`max-h-[70vh] overflow-y-auto border-l border-[#e7eae8] p-1.5 ${activeCountries.length > 12 ? "w-96" : "w-56"}`}>
                 <CountryLinks type={activeType} metal={metal} countries={activeCountries} className={activeCountries.length > 12 ? "grid grid-cols-2" : ""} />
-                <Link to={shopUrl({ product_type: activeType, composition_metal: metal })} className={`mt-1 border-t border-[#e7eae8] ${viewAllClass}`}>
-                  {t("home.viewAll")} <FiArrowRight size={16} aria-hidden="true" />
-                </Link>
               </div>
             )}
           </div>
@@ -127,7 +123,7 @@ const MetalMenu = ({ metal, label, t, getCountries, selected }) => {
 };
 
 // Desktop: a bar under the header whose menus open on hover. Clicking a name
-// opens everything in it.
+// opens everything in it, so the country lists need no "view all" link.
 const ShopMenu = ({ t }) => {
   const getCountries = useMenuCountries();
   const selection = useShopSelection();
@@ -166,14 +162,7 @@ export const MobileShopMenu = ({ t, onNavigate }) => {
                   return (
                     <div key={type} className="py-1">
                       <Link to={url} onClick={onNavigate} className="block rounded-md px-3 py-2.5 text-base font-medium text-[#235b50] hover:bg-[#f5f6f5]">{t(sectionLabel)}</Link>
-                      {countries.length > 0 && (
-                        <>
-                          <CountryLinks type={type} metal={metal} countries={countries} onNavigate={onNavigate} className="grid grid-cols-2" />
-                          <Link to={url} onClick={onNavigate} className={viewAllClass}>
-                            {t("home.viewAll")} <FiArrowRight size={16} aria-hidden="true" />
-                          </Link>
-                        </>
-                      )}
+                      {countries.length > 0 && <CountryLinks type={type} metal={metal} countries={countries} onNavigate={onNavigate} className="grid grid-cols-2" />}
                     </div>
                   );
                 })}
