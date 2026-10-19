@@ -6,7 +6,6 @@ const links = [
   ["/all-products", "nav.products"],
   ["/delivery", "nav.delivery"],
   ["/about", "nav.about"],
-  ["/contact", "nav.contact"],
 ];
 
 const NavLinks = ({ t, isAdmin, mobile = false, onNavigate }) => {

@@ -36,6 +36,7 @@ export const CartProvider = ({ children }) => {
         {
           id: coin.id,
           name: coin.name,
+          name_bg: coin.name_bg,
           price: Number(coin.price),
           currency: "EUR",
           photo_url: coin.photo_url,

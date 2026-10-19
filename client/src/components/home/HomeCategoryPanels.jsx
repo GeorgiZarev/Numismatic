@@ -1,37 +1,41 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FiArrowRight, FiChevronRight } from "react-icons/fi";
-import coinsImage from "../../Assets/images/category-coins.jpg";
-import investmentImage from "../../Assets/images/category-investment.jpg";
+import { FiChevronRight } from "react-icons/fi";
+import goldImage from "../../Assets/images/category-investment.jpg";
+import silverImage from "../../Assets/images/category-coins.jpg";
 import accessoriesImage from "../../Assets/images/category-accessories.jpg";
+import { consumableCategories } from "../../utils/consumableCategories";
+import { METALS, SECTIONS, shopUrl } from "../../utils/productMenu";
 
-const METALS = [
-  { value: "Gold", label: "home.gold" },
-  { value: "Silver", label: "home.silver" },
+const metalTile = ({ value, tile }, image, imageClass) => ({
+  key: value,
+  title: tile,
+  url: shopUrl({ composition_metal: value }),
+  image,
+  imageClass,
+  links: SECTIONS.map(({ type, label }) => ({ label, url: shopUrl({ product_type: type, composition_metal: value }) })),
+});
+
+// Gold and Silver come from the same lists as the header menus.
+const tiles = [
+  metalTile(METALS[0], goldImage, "object-[center_20%] lg:object-top"),
+  metalTile(METALS[1], silverImage, "object-center"),
+  {
+    key: "accessories",
+    title: "nav.accessories",
+    url: shopUrl({ product_type: "consumable" }),
+    image: accessoriesImage,
+    imageClass: "object-top",
+    links: consumableCategories.map(({ value, label }) => ({
+      label: `shop.accessoryCategories.${value}`,
+      defaultLabel: label,
+      url: shopUrl({ product_type: "consumable", consumable_category: value }),
+    })),
+  },
 ];
 
-const categories = [
-  { type: "coin", label: "home.numismaticCoins", image: coinsImage, metals: true },
-  { type: "investment", label: "home.investmentCoins", image: investmentImage, metals: true },
-  { type: "consumable", label: "nav.accessories", image: accessoriesImage },
-];
-
-const tileClass = "group relative isolate block h-[230px] overflow-hidden bg-gray-900 text-white sm:h-[300px] lg:h-[650px]";
 const focusClass = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
-
-const TileImage = ({ type, image, index }) => (
-  <>
-    <img
-      src={image}
-      alt=""
-      className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${type === "investment" ? "object-[center_20%] lg:object-top" : type === "consumable" ? "object-top" : "object-center"}`}
-      loading={index === 0 ? "eager" : "lazy"}
-      decoding="async"
-    />
-    <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" aria-hidden="true" />
-  </>
-);
 
 const HomeCategoryPanels = () => {
   const { t } = useTranslation();
@@ -41,48 +45,39 @@ const HomeCategoryPanels = () => {
       aria-label={t("nav.products")}
       className="-mx-4 grid grid-cols-1 gap-px bg-white sm:-mx-[5vw] md:-mx-[7vw] lg:-mx-[9vw] lg:grid-cols-3"
     >
-      {categories.map(({ type, label, image, metals }, index) => metals ? (
-        <div key={type} className={tileClass}>
-          <TileImage type={type} image={image} index={index} />
+      {tiles.map(({ key, title, url, image, imageClass, links }, index) => (
+        <div key={key} className="group relative isolate block h-[260px] overflow-hidden bg-gray-900 text-white sm:h-[320px] lg:h-[650px]">
+          <img
+            src={image}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${imageClass}`}
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
+          />
+          <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" aria-hidden="true" />
           <div className="absolute inset-x-5 bottom-5 sm:inset-x-8 sm:bottom-8">
             <Link
-              to={`/all-products?product_type=${type}`}
-              className={`text-sm font-medium uppercase tracking-[0.14em] text-white/85 hover:text-white hover:underline sm:text-base ${focusClass}`}
+              to={url}
+              className={`group/title inline-flex items-center gap-2 font-serif text-[30px] font-semibold leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)] sm:text-4xl lg:text-[clamp(32px,3.2vw,52px)] ${focusClass}`}
             >
-              {t(label)}
+              <span className="border-b-2 border-transparent transition-colors group-hover/title:border-white">{t(title)}</span>
+              <FiChevronRight className="h-7 w-7 shrink-0 transition-transform group-hover/title:translate-x-1 lg:h-9 lg:w-9" aria-hidden="true" />
             </Link>
-            <ul className="mt-2 flex gap-8 sm:mt-3 lg:mt-4 lg:flex-col lg:gap-3">
-              {METALS.map((metal) => (
-                <li key={metal.value}>
+            <ul className="mt-2 flex flex-col gap-1.5 sm:mt-3 lg:mt-4 lg:gap-2.5">
+              {links.map(({ label, defaultLabel, url: linkUrl }) => (
+                <li key={linkUrl}>
                   <Link
-                    to={`/all-products?product_type=${type}&composition_metal=${metal.value}`}
-                    className={`group/metal inline-flex items-center gap-2 font-serif text-[27px] font-semibold leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)] sm:text-3xl lg:text-[clamp(30px,3vw,48px)] ${focusClass}`}
+                    to={linkUrl}
+                    className={`group/link inline-flex items-center gap-1.5 text-base font-medium text-white/90 hover:text-white sm:text-lg ${focusClass}`}
                   >
-                    <span className="border-b-2 border-transparent transition-colors group-hover/metal:border-white">
-                      {t(metal.label)}
-                    </span>
-                    <FiChevronRight className="h-6 w-6 shrink-0 transition-transform group-hover/metal:translate-x-1 lg:h-8 lg:w-8" aria-hidden="true" />
+                    <span className="border-b border-transparent transition-colors group-hover/link:border-white">{t(label, { defaultValue: defaultLabel })}</span>
+                    <FiChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover/link:translate-x-1" aria-hidden="true" />
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
         </div>
-      ) : (
-        <Link
-          key={type}
-          to={`/all-products?product_type=${type}`}
-          className={`${tileClass} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white`}
-          aria-label={t(label)}
-        >
-          <TileImage type={type} image={image} index={index} />
-          <span className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-4 sm:inset-x-8 sm:bottom-8">
-            <span className="max-w-[85%] font-serif text-[27px] font-semibold leading-tight sm:text-3xl lg:text-[clamp(24px,2.3vw,38px)]">
-              {t(label)}
-            </span>
-            <FiArrowRight className="mb-1 h-6 w-6 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-          </span>
-        </Link>
       ))}
     </nav>
   );

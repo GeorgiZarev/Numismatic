@@ -63,3 +63,14 @@ test("mobile menu opens a metal with a tap", () => {
   ]);
   cleanup();
 });
+
+test("accessories menu lists each kind of accessory", () => {
+  const { container, cleanup } = renderInto(<ShopMenu t={t} />);
+  hover(container.querySelector('[aria-controls="shop-menu-accessories"]'));
+  expect(hrefs(container).slice(-3)).toEqual([
+    "/all-products?product_type=consumable&consumable_category=capsules",
+    "/all-products?product_type=consumable&consumable_category=cleaning_solutions",
+    "/all-products?product_type=consumable&consumable_category=cardboard_holders",
+  ]);
+  cleanup();
+});

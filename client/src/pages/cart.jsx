@@ -1,6 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useCart } from "../Contexts/cartContext";
+import { productName } from "../utils/productName";
 import { formatMoney } from "../utils/money";
 import { useCartAvailability } from "../hooks/useCartAvailability";
 import { availableForSize, cartItemKey } from "../utils/productSizes";
@@ -10,6 +12,7 @@ function Cart() {
   const { items, removeFromCart, total, updateQuantity } = useCart();
   const navigate = useNavigate();
   const availability = useCartAvailability(items);
+  const { i18n } = useTranslation();
 
   if (items.length === 0) {
     return (
@@ -34,9 +37,9 @@ function Cart() {
             key={cartItemKey(item)}
             className="flex flex-col sm:flex-row gap-4 border rounded-lg p-4 bg-white shadow-sm"
           >
-            <ProductPhoto src={item.photo_url} alt={item.name} size="lg" />
+            <ProductPhoto src={item.photo_url} alt={productName(item, i18n.language)} size="lg" />
             <div className="flex-1">
-              <h2 className="text-xl font-semibold">{item.name}</h2>
+              <h2 className="text-xl font-semibold">{productName(item, i18n.language)}</h2>
               {item.size_mm != null && <p className="text-sm text-[#52645b]">{item.size_mm} mm · box</p>}
               <p className="text-gray-600">
                 {item.country} {item.year ? `- ${item.year}` : ""}

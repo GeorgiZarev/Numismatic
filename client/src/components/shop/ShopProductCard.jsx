@@ -7,9 +7,11 @@ import { getConsumableCategoryLabel } from "../../utils/consumableCategories";
 import { expectedDeliveryDate, isPurchasable } from "../../utils/inventory";
 import { hasProductSizes } from "../../utils/productSizes";
 import ProductPhoto from "../products/ProductPhoto";
+import { productName } from "../../utils/productName";
 
 const ShopProductCard = ({ product, view }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const name = productName(product, i18n.language);
   const { items, addToCart } = useCart();
   const inCart = items.some((item) => item.id === product.id);
   const category = product.product_type === "coin"
@@ -23,10 +25,10 @@ const ShopProductCard = ({ product, view }) => {
 
   return (
     <article className={`flex min-w-0 overflow-hidden rounded-md border border-[#e1e5e2] bg-white transition-colors hover:border-[#a8b6ae] ${view === "list" ? "flex-col sm:flex-row" : "flex-col"}`}>
-      <Link to={`/product/${product.id}`} className={`group block shrink-0 ${view === "list" ? "sm:w-[220px]" : ""}`} aria-label={product.name}>
+      <Link to={`/product/${product.id}`} className={`group block shrink-0 ${view === "list" ? "sm:w-[220px]" : ""}`} aria-label={name}>
         <ProductPhoto
           src={product.photo_url}
-          alt={product.name}
+          alt={name}
           imageClassName="transition-transform duration-300 group-hover:scale-[1.03]"
           fallback={<span className="px-4 text-center text-sm text-[#6a7970]">{t("shop.photoSoon")}</span>}
         />
@@ -35,7 +37,7 @@ const ShopProductCard = ({ product, view }) => {
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="border-b border-[#e5e9e6] bg-[#f7f8f7] px-4 py-2 text-xs font-semibold uppercase text-[#52645b]">{category}</div>
         <div className="flex flex-1 flex-col px-4 pb-4 pt-4">
-          <Link to={`/product/${product.id}`} title={product.name} className="block truncate font-serif text-lg font-semibold leading-snug text-[#112c27] hover:underline">{product.name}</Link>
+          <Link to={`/product/${product.id}`} title={name} className="block truncate font-serif text-lg font-semibold leading-snug text-[#112c27] hover:underline">{name}</Link>
           {details && <p className="mt-1 text-sm text-[#637168]">{details}</p>}
           {product.description && <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[#43544b]">{product.description}</p>}
           {!available && <p className="mt-3 text-sm font-semibold text-[#875b35]">{t("shop.outOfStock")}</p>}

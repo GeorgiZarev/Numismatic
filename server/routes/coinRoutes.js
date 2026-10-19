@@ -9,7 +9,7 @@ import {
 
 import { authenticateUser, optionalAuthenticateUser } from "../middlewares/authMiddleware.js";
 import { requireAdmin } from "../middlewares/adminMiddleware.js";
-import upload from "../middlewares/upload.js";
+import { productPhotos } from "../middlewares/upload.js";
 
 import {
   validateCoinCreation,
@@ -34,7 +34,7 @@ router.post(
   "/",
   authenticateUser,
   requireAdmin,
-  upload.single("photo"),
+  productPhotos,
   validateCoinCreation,
   createCoin
 );
@@ -42,7 +42,7 @@ router.put(
   "/:id",
   authenticateUser,
   requireAdmin,
-  upload.single("photo"),
+  productPhotos,
   validateCoinUpdate,
   updateCoin
 );

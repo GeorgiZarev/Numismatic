@@ -56,7 +56,7 @@ const AdminProductList = ({ coins, onDelete, onEdit, onEditSizes, onChangeStatus
                       {coin.product_type === "consumable"
                         ? getConsumableCategoryLabel(coin.consumable_category)
                         : coin.product_type === "investment"
-                          ? "Investment product"
+                          ? "Investment coin"
                           : `${coin.country || ""} ${coin.year || ""}`}
                     </p>
                   </div>

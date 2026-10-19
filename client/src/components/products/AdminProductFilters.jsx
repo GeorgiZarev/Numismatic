@@ -2,8 +2,8 @@ import { consumableCategories } from "../../utils/consumableCategories";
 
 const productTypes = [
   ["all", "All products"],
-  ["coin", "Coins"],
-  ["investment", "Investment products"],
+  ["coin", "Numismatic coins"],
+  ["investment", "Investment coins"],
   ["consumable", "Accessories"],
 ];
 

@@ -3,20 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { FiArrowRight, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { fetchCoins } from "../../api/coins";
+import { METALS, SECTIONS, shopUrl } from "../../utils/productMenu";
+import { consumableCategories } from "../../utils/consumableCategories";
 
-// The whole shop menu comes from these two lists: each metal is a menu in the
-// top bar, each section is a row inside it. Adding one is a one-line change.
-export const METALS = [
-  { value: "Gold", label: "nav.goldCoins" },
-  { value: "Silver", label: "nav.silverCoins" },
-];
-const SECTIONS = [
-  { type: "coin", label: "home.numismaticCoins" },
-  { type: "investment", label: "home.investmentCoins" },
-];
 const ACCESSORIES_URL = "/all-products?product_type=consumable";
-
-export const shopUrl = (params) => `/all-products?${new URLSearchParams(params)}`;
+const accessoryLinks = (t) => consumableCategories.map(({ value, label }) => ({
+  value,
+  label: t(`shop.accessoryCategories.${value}`, { defaultValue: label }),
+  url: shopUrl({ product_type: "consumable", consumable_category: value }),
+}));
 
 export const navItemClass = (selected, mobile = false) => mobile
   ? `block rounded-md px-4 py-3 text-base font-medium transition-colors ${selected ? "bg-[#edf3f0] text-[#235b50]" : "text-[#34413e] hover:bg-[#f5f6f5]"}`
@@ -125,6 +120,43 @@ const MetalMenu = ({ metal, label, t, getCountries, selected }) => {
   );
 };
 
+const AccessoriesMenu = ({ t, selected }) => {
+  const [open, setOpen] = useState(false);
+  const closeTimer = useRef(null);
+  const { pathname, search } = useLocation();
+
+  const show = () => { clearTimeout(closeTimer.current); setOpen(true); };
+  const hideSoon = () => { clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => setOpen(false), 150); };
+
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+  useEffect(() => { setOpen(false); }, [pathname, search]);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={show}
+      onMouseLeave={hideSoon}
+      onFocus={show}
+      onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) hideSoon(); }}
+      onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}
+    >
+      <Link to={ACCESSORIES_URL} aria-haspopup="true" aria-expanded={open} aria-controls="shop-menu-accessories" className={barItemClass(selected || open)}>
+        {t("nav.accessories")}
+        <FiChevronDown size={17} aria-hidden="true" className={`transition-transform ${open ? "rotate-180" : ""}`} />
+      </Link>
+      {open && (
+        <ul id="shop-menu-accessories" className="absolute left-0 top-full z-50 w-64 rounded-b-md border border-t-0 border-[#dfe6e1] bg-white p-1.5 shadow-lg">
+          {accessoryLinks(t).map(({ value, label, url }) => (
+            <li key={value}>
+              <Link to={url} className="block rounded px-3 py-3 text-base text-[#34413e] transition-colors hover:bg-[#edf3f0] hover:text-[#235b50]">{label}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 // Desktop: a bar under the header whose menus open on hover. Clicking a name
 // opens everything in it.
 const ShopMenu = ({ t }) => {
@@ -135,7 +167,7 @@ const ShopMenu = ({ t }) => {
       {METALS.map(({ value, label }) => (
         <MetalMenu key={value} metal={value} label={label} t={t} getCountries={getCountries} selected={selection.metal === value} />
       ))}
-      <Link to={ACCESSORIES_URL} className={barItemClass(selection.type === "consumable")}>{t("nav.accessories")}</Link>
+      <AccessoriesMenu t={t} selected={selection.type === "consumable"} />
     </nav>
   );
 };
@@ -175,7 +207,22 @@ export const MobileShopMenu = ({ t, onNavigate }) => {
           </div>
         );
       })}
-      <Link to={ACCESSORIES_URL} onClick={onNavigate} className={navItemClass(selection.type === "consumable", true)}>{t("nav.accessories")}</Link>
+      <div>
+        <button type="button" aria-expanded={openMetal === "accessories"} aria-controls="mobile-shop-menu-accessories" onClick={() => setOpenMetal(openMetal === "accessories" ? null : "accessories")} className={`flex w-full items-center justify-between text-left ${navItemClass(selection.type === "consumable", true)}`}>
+          {t("nav.accessories")}
+          <FiChevronDown size={20} aria-hidden="true" className={`transition-transform ${openMetal === "accessories" ? "rotate-180" : ""}`} />
+        </button>
+        {openMetal === "accessories" && (
+          <div id="mobile-shop-menu-accessories" className="mb-2 ml-4 border-l border-[#e7eae8] pl-2">
+            <Link to={ACCESSORIES_URL} onClick={onNavigate} className="block rounded-md px-3 py-2.5 text-base font-medium text-[#235b50] hover:bg-[#f5f6f5]">{t("home.viewAll")}</Link>
+            {accessoryLinks(t).map(({ value, label, url }) => (
+              <Link key={value} to={url} onClick={onNavigate} className={countryLinkClass}>
+                <span aria-hidden="true" className="text-[#9aa5a0]">—</span>{label}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 };
